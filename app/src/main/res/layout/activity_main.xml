@@ -26,10 +26,10 @@
         android:hint="Spielername" />
 
     <Button
+        android:id="@+id/btnStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start!"
-        android:id="@+id/btnStart"
         android:layout_alignBottom="@+id/txtUsername"
         android:layout_toRightOf="@+id/txtUsername"
         android:layout_toEndOf="@+id/txtUsername" />
