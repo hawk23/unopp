@@ -57,8 +57,6 @@ public class GameSession {
         }
     }
 
-    public 
-
     public static int get_MAX_PLAYERS() {
         return MAX_PLAYERS;
     }
