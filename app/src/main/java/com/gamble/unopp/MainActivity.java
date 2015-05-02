@@ -12,8 +12,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.gamble.unopp.connection.requests.CreatePlayerRequest;
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+
+
+public class MainActivity extends ActionBarActivity {
 
     private static final String PREFS = "prefs";
     private static final String PREF_NAME = "name";
@@ -32,15 +41,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
 
-        Button mainButton = (Button) findViewById(R.id.btnStart);
-        mainButton.setOnClickListener(this);
-
         inputName = (EditText) findViewById(R.id.txtUsername);
 
         sharedPreferences = getSharedPreferences(PREFS, MODE_PRIVATE);
         setNameFromPrefs();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -64,13 +69,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View v) {
+    public void startGame(View v) {
         String inputName = this.inputName.getText().toString();
 
         SharedPreferences.Editor e = sharedPreferences.edit();
         e.putString(PREF_NAME, inputName);
         e.commit();
+
+        CreatePlayerRequest request = new CreatePlayerRequest();
+        request.setName(inputName);
+
+        try {
+            URL url = new URL(request.getUrl());
+            URLConnection urlConnection = url.openConnection();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+        }
+        catch (Exception ex) {
+
+        }
 
         // create an Intent to take you over to the Lobby
         Intent lobbyIntent = new Intent(this, LobbyActivity.class);
