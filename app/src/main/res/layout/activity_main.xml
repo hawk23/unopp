@@ -32,5 +32,6 @@
         android:text="Start!"
         android:layout_alignBottom="@+id/txtUsername"
         android:layout_toRightOf="@+id/txtUsername"
-        android:layout_toEndOf="@+id/txtUsername" />
+        android:layout_toEndOf="@+id/txtUsername"
+        android:onClick="startGame"/>
 </RelativeLayout>
