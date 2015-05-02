@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Unopp</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="activity_lobby">Lobby</string>
+    <string name="create_new_game">Neues Spiel erstellen</string>
+    <string name="existing_games">Vorhandene Spiele</string>
+</resources>
