@@ -9,7 +9,7 @@ public class CreatePlayerRequest extends Request {
 
     public CreatePlayerRequest() {
         super();
-
+        this.setCmd("createPlayer");
         this.service = LOBBY_SERVICE;
     }
 
