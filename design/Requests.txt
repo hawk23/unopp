@@ -1,0 +1,163 @@
+Name wird in lokaler Datei gespeichert
+
+
+Requests:
+---------
+
+LobbyService.php
+
+Service.aspx?cmd=createGameSession&player=3&gameSessionName=Marios Game&location=blub
+
+{
+    "status":   1,
+    "message":  "Spieler erfolgreich erstellt",
+    "response": {
+        "player": {
+            "id":           3,
+            "name":         "Mario"
+        }
+    }
+}
+
+
+Service.aspx?cmd=updateLocation&player=1&location=blub&gameSession=1
+
+{
+    "status":   1,
+    "message":  "updated location successfully",
+    "response": {}
+}
+
+Service.aspx?cmd=isGameSessionValid&gameSession=1
+
+{
+    "status":   1,
+    "message":  "Spiel gültig",
+    "response": {}
+}
+
+{
+    "status":   0,
+    "message":  "Spieler gekickt",
+    "response": {[
+        {
+        "id":           1,
+        "name":         "Albert"
+        }
+    ]
+    }
+}
+
+
+Service.aspx?cmd=createPlayer&name=Mario
+
+{
+    "status":   1,
+    "message":  "Spieler erfolgreich erstellt",
+    "response": {
+        "player": {
+            "id":           3,
+            "name":         "Mario"
+        }
+    }
+}
+
+
+
+Service.aspx?cmd=getAvailableGameSessions
+
+[
+{
+    "id":               1,
+    "name":             "Albertos Game",
+    "started":          false,
+    "currentPlayers":   2,
+    "host": {
+        "id":           1,
+        "name":         "Albert"
+    },
+    "players": [
+    {
+        "id":           1,
+        "name":         "Albert"
+    },
+    {
+        "id":           2,
+        "name":         "Roland"
+    }
+    ]
+},
+{
+    "id":               2,
+    "name":             "Rolands Game",
+    "currentPlayers":   1,
+    "host": {
+        "id":           1,
+        "name":         "Roland"
+    },
+    "players": [
+    {
+        "id":           2,
+        "name":         "Roland"
+    }
+    ]
+}
+]
+
+
+Service.aspx?cmd=joinGameSession&gamesession=1&player=3
+
+{
+    "status":   1,
+    "message":  "Erfoglreich beigetreten",
+    "response":{
+        "gameSession": {
+            "id":               1,
+            "name":             "Albertos Game",
+            "started":          false,
+            "currentPlayers":   2,
+            "host": {
+                "id":           1,
+                "name":         "Albert"
+            },
+            "players": [
+            {
+                "id":           1,
+                "name":         "Albert"
+            },
+            {
+                "id":           2,
+                "name":         "Roland"
+            },
+            {
+                "id":           3,
+                "name":         "Mario"
+            }
+            ]
+        }
+    }
+}
+
+{
+    "status":   0,
+    "message":  "Spiel voll",
+    "response":{}
+}
+
+
+Service.aspx?cmd=leaveGameSession&gamesession=1&player=3
+
+{
+    "status":   1,
+    "message":  "Erfoglreich verlassen",
+    "response": {}
+    }
+}
+
+
+
+/* 
+status:
+1   OK
+0   NOK
+*/
