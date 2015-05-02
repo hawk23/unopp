@@ -26,4 +26,12 @@ public class Player {
     public void setGameSession(GameSession gameSession) {
         this.gameSession = gameSession;
     }
+
+    public boolean joinGameSession(GameSession gameSession) {
+        return gameSession.addPlayer(this);
+    }
+
+    public boolean leaveGameSession() {
+        return this.gameSession != null && this.gameSession.removePlayer(this);
+    }
 }
