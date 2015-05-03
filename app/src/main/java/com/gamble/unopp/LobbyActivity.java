@@ -4,11 +4,18 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.gamble.unopp.connection.RequestProcessor;
+import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.GetAvailableGameSessionsRequest;
+import com.gamble.unopp.connection.response.Response;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +31,7 @@ public class LobbyActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         // remove title
@@ -31,19 +39,47 @@ public class LobbyActivity extends ActionBarActivity {
 
         setContentView(R.layout.actitvity_lobby);
 
-        username = this.getIntent().getExtras().getString("username");
+        username = this.getIntent().getExtras().getString(IntentValueKeys.USERNAME);
 
         ArrayList existingGames = new ArrayList();
 
         existingGamesListView = (ListView) findViewById(R.id.existingGamesListView);
-        getExistingGames(existingGames);
 
-        mArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, existingGames);
+        this.getAvailableGameSessions();
+    }
+
+    private void getAvailableGameSessions() {
+
+        GetAvailableGameSessionsRequest gameSessionsRequest = new GetAvailableGameSessionsRequest();
+        gameSessionsRequest.setLatitude(0.0);
+        gameSessionsRequest.setLongitude(0.0);
+        gameSessionsRequest.setMaxdistance(10);
+
+        RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
+            @Override
+            public void requestFinished(Response response) {
+
+                //HACK: hardcoded result
+                ArrayList games = new ArrayList();
+
+                games.add("Albert's Game");
+                games.add("Roland's Game");
+
+                displayAvailableGameSessions(games);
+            }
+        });
+        rp.execute(gameSessionsRequest);
+    }
+
+    private void displayAvailableGameSessions(ArrayList games) {
+
+        mArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, games);
         existingGamesListView.setAdapter(mArrayAdapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -51,6 +87,7 @@ public class LobbyActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -64,11 +101,12 @@ public class LobbyActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void getExistingGames(List existingGames) {
+    /**
+     * Eventlisteners for Views
+     */
 
-        // TODO fill with games from other players
+    private void newGameSession (View v) {
 
-        existingGames.add("Albert's Game");
-        existingGames.add("Roland's Game");
+
     }
 }

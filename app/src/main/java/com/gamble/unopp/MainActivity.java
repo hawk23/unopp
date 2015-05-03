@@ -18,9 +18,6 @@ import com.gamble.unopp.connection.response.Response;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final String PREFS = "prefs";
-    private static final String PREF_NAME = "name";
-
     private EditText inputName;
     private SharedPreferences sharedPreferences;
 
@@ -35,10 +32,10 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
-        inputName = (EditText) findViewById(R.id.txtUsername);
+        inputName           = (EditText) findViewById(R.id.txtUsername);
+        sharedPreferences   = getSharedPreferences(SharedPreferencesKeys.PREFS, MODE_PRIVATE);
 
-        sharedPreferences = getSharedPreferences(PREFS, MODE_PRIVATE);
-        setNameFromPrefs();
+        setNameFromPrefs ();
     }
 
     @Override
@@ -64,40 +61,27 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void startGame(View v) {
-        String inputName = this.inputName.getText().toString();
 
-        SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(PREF_NAME, inputName);
+        String inputName            = this.inputName.getText().toString();
+
+        SharedPreferences.Editor e  = sharedPreferences.edit();
+        e.putString(SharedPreferencesKeys.USERNAME, inputName);
         e.commit();
 
         // create an Intent to take you over to the Lobby
         Intent lobbyIntent = new Intent(this, LobbyActivity.class);
 
         // pack away the name into the lobbyIntent
-        lobbyIntent.putExtra("username", inputName);
+        lobbyIntent.putExtra(IntentValueKeys.USERNAME, inputName);
         startActivity(lobbyIntent);
-
-        /*
-        // example request
-        GetAvailableGameSessionsRequest gameSessionsRequest = new GetAvailableGameSessionsRequest();
-        gameSessionsRequest.setLatitude(0.0);
-        gameSessionsRequest.setLongitude(0.0);
-        gameSessionsRequest.setMaxdistance(0.0);
-
-        RequestProcessor rp = new RequestProcessor (new RequestProcessorCallback(){
-            @Override
-            public void requestFinished(Response response) {
-                System.out.println("done!!");
-            }
-        });
-        rp.execute(gameSessionsRequest);
-        */
     }
 
     public void setNameFromPrefs() {
-        String name = sharedPreferences.getString(PREF_NAME, "");
+
+        String name = sharedPreferences.getString(SharedPreferencesKeys.USERNAME, "");
 
         if (name.length() > 0) {
+
             inputName.setText(name);
         }
     }
