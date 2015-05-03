@@ -3,17 +3,17 @@ package com.gamble.unopp.connection.requests;
 /**
  * Created by Mario on 03.05.2015.
  */
-public class GetAvailableGameSessionsRequest extends Request
-{
-    private static final String SOAP_ACTION         = "http://www.w3schools.com/webservices/FahrenheitToCelsius";
-    private static final String SOAP_METHOD         = "FahrenheitToCelsius";
+public class GetAvailableGameSessionsRequest extends Request {
+
+    private static final String SOAP_ACTION         = "http://tempuri.org/ListGames";
+    private static final String SOAP_METHOD         = "ListGames";
 
     private double latitude;
     private double longitude;
     private double maxdistance;
 
-    public GetAvailableGameSessionsRequest()
-    {
+    public GetAvailableGameSessionsRequest() {
+
         super();
 
         this.soapAction = SOAP_ACTION;

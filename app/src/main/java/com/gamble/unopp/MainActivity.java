@@ -14,6 +14,7 @@ import android.widget.EditText;
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.GetAvailableGameSessionsRequest;
+import com.gamble.unopp.connection.response.Response;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -69,15 +70,14 @@ public class MainActivity extends ActionBarActivity {
         e.putString(PREF_NAME, inputName);
         e.commit();
 
-        /*
         // create an Intent to take you over to the Lobby
         Intent lobbyIntent = new Intent(this, LobbyActivity.class);
 
         // pack away the name into the lobbyIntent
         lobbyIntent.putExtra("username", inputName);
         startActivity(lobbyIntent);
-        */
 
+        /*
         // example request
         GetAvailableGameSessionsRequest gameSessionsRequest = new GetAvailableGameSessionsRequest();
         gameSessionsRequest.setLatitude(0.0);
@@ -86,11 +86,12 @@ public class MainActivity extends ActionBarActivity {
 
         RequestProcessor rp = new RequestProcessor (new RequestProcessorCallback(){
             @Override
-            public void requestFinished(String response) {
+            public void requestFinished(Response response) {
                 System.out.println("done!!");
             }
         });
         rp.execute(gameSessionsRequest);
+        */
     }
 
     public void setNameFromPrefs() {
