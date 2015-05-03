@@ -26,11 +26,11 @@ import java.util.List;
  */
 public class LobbyActivity extends ActionBarActivity {
 
-    private String username;
-    private ListView existingGamesListView;
-    private ArrayAdapter mArrayAdapter;
-    private String existingGames;
-    private SharedPreferences sharedPreferences;
+    private String              username;
+    private ListView            existingGamesListView;
+    private ArrayAdapter        mArrayAdapter;
+    private String              existingGames;
+    private SharedPreferences   sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

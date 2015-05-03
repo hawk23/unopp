@@ -21,5 +21,23 @@ public class CreateGameSessionRequest extends Request {
         this.soapMethod = SOAP_METHOD;
     }
 
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+        this.requestParameters.put("gameName", gameName);
+    }
 
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+        this.requestParameters.put("creatorName", creatorName);
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+        this.requestParameters.put("x", Double.toString(latitude));
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+        this.requestParameters.put("y", Double.toString(longitude));
+    }
 }
