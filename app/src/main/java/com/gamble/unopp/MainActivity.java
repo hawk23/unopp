@@ -9,18 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 
-import com.gamble.unopp.connection.requests.CreatePlayerRequest;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-
+import com.gamble.unopp.connection.RequestProcessor;
+import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.GetAvailableGameSessionsRequest;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -76,29 +69,28 @@ public class MainActivity extends ActionBarActivity {
         e.putString(PREF_NAME, inputName);
         e.commit();
 
-        CreatePlayerRequest request = new CreatePlayerRequest();
-        request.setName(inputName);
-
-        try {
-            URL url = new URL(request.getUrl());
-            URLConnection urlConnection = url.openConnection();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            StringBuilder builder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-        }
-        catch (Exception ex) {
-
-        }
-
+        /*
         // create an Intent to take you over to the Lobby
         Intent lobbyIntent = new Intent(this, LobbyActivity.class);
 
         // pack away the name into the lobbyIntent
         lobbyIntent.putExtra("username", inputName);
         startActivity(lobbyIntent);
+        */
+
+        // example request
+        GetAvailableGameSessionsRequest gameSessionsRequest = new GetAvailableGameSessionsRequest();
+        gameSessionsRequest.setLatitude(0.0);
+        gameSessionsRequest.setLongitude(0.0);
+        gameSessionsRequest.setMaxdistance(0.0);
+
+        RequestProcessor rp = new RequestProcessor (new RequestProcessorCallback(){
+            @Override
+            public void requestFinished(String response) {
+                System.out.println("done!!");
+            }
+        });
+        rp.execute(gameSessionsRequest);
     }
 
     public void setNameFromPrefs() {
