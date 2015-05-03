@@ -5,5 +5,5 @@ package com.gamble.unopp;
  */
 public class IntentValueKeys
 {
-    public static final String USERNAME     = "username";
+
 }

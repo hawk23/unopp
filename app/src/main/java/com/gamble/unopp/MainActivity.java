@@ -72,7 +72,6 @@ public class MainActivity extends ActionBarActivity {
         Intent lobbyIntent = new Intent(this, LobbyActivity.class);
 
         // pack away the name into the lobbyIntent
-        lobbyIntent.putExtra(IntentValueKeys.USERNAME, inputName);
         startActivity(lobbyIntent);
     }
 
