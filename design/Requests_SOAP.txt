@@ -1,10 +1,14 @@
 method      = createPlayer
 name        = Mario
 
-<Player>
-    <name>Mario</name>
-    <id>1</id>
-</Player>
+<CreatePlayerResponse xmlns="http://tempuri.org/">
+    <CreatePlayerResult>
+        <Player>
+            <name>Mario</name>
+            <id>1</id>
+        </Player>
+    </CreatePlayerResult>
+</CreatePlayerResponse>
 
 ----------------------------------------------------
 
