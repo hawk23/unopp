@@ -16,6 +16,7 @@ import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreatePlayerRequest;
 import com.gamble.unopp.connection.response.CreatePlayerResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.model.management.UnoDatabase;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -86,12 +87,21 @@ public class MainActivity extends ActionBarActivity {
 
     private void createPlayerFinished (CreatePlayerResponse response) {
 
-        // create an Intent to take you over to the Lobby
-        Intent lobbyIntent = new Intent(this, LobbyActivity.class);
+        if (response != null) {
+            // save player in database
+            UnoDatabase.getInstance().setLocalPlayer(response.getPlayer());
 
-        // pack away the name into the lobbyIntent
-        startActivity(lobbyIntent);
-    }
+            // create an Intent to take you over to the Lobby
+            Intent lobbyIntent = new Intent(this, LobbyActivity.class);
+
+            // pack away the name into the lobbyIntent
+            startActivity(lobbyIntent);
+        }
+        else {
+
+            // TODO
+        }
+   }
 
     public void setNameFromPrefs() {
 

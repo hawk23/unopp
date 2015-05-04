@@ -24,11 +24,9 @@ import java.util.ArrayList;
  */
 public class LobbyActivity extends ActionBarActivity {
 
-    private String              username;
     private ListView            existingGamesListView;
     private ArrayAdapter        mArrayAdapter;
     private String              existingGames;
-    private SharedPreferences   sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +39,6 @@ public class LobbyActivity extends ActionBarActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.actitvity_lobby);
-
-        // get username
-        sharedPreferences   = getSharedPreferences(SharedPreferencesKeys.PREFS, MODE_PRIVATE);
-        username            = sharedPreferences.getString(SharedPreferencesKeys.USERNAME, "");
 
         ArrayList existingGames = new ArrayList();
 
