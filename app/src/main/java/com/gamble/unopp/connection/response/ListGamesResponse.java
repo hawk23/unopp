@@ -25,11 +25,11 @@ public class ListGamesResponse extends Response {
         xmlResponse = "<ListGamesResponse xmlns=\"http://tempuri.org/\">\n" +
                 "  <ListGamesResult>\n" +
                 "    <GameSession>\n" +
-                "        <id>1<id>\n" +
-                "        <maxPlayers>6</maxPlayer>\n" +
+                "        <id>1</id>\n" +
+                "        <maxPlayers>6</maxPlayers>\n" +
                 "        <started>false</started>\n" +
-                "        <name>Mario's Spiel<name>\n" +
-                "        <host>1<host>\n" +
+                "        <name>Mario's Spiel</name>\n" +
+                "        <host>1</host>\n" +
                 "        <Players>\n" +
                 "            <Player>\n" +
                 "                <name>Mario</name>\n" +
@@ -46,11 +46,11 @@ public class ListGamesResponse extends Response {
                 "        </Players>\n" +
                 "    </GameSession>\n" +
                 "    <GameSession>\n" +
-                "        <id>2<id>\n" +
-                "        <maxPlayers>6</maxPlayer>\n" +
+                "        <id>2</id>\n" +
+                "        <maxPlayers>6</maxPlayers>\n" +
                 "        <started>false</started>\n" +
-                "        <name>Peter's Spiel<name>\n" +
-                "        <host>4<host>\n" +
+                "        <name>Peter's Spiel</name>\n" +
+                "        <host>4</host>\n" +
                 "        <Players>\n" +
                 "            <Player>\n" +
                 "                <name>Peter</name>\n" +

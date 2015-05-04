@@ -117,11 +117,11 @@ maxdistance = 1
 <ListGamesResponse xmlns="http://tempuri.org/">
   <ListGamesResult>
     <GameSession>
-        <id>1<id>
-        <maxPlayers>6</maxPlayer>
+        <id>1</id>
+        <maxPlayers>6</maxPlayers>
         <started>false</started>
-        <name>Mario's Spiel<name>
-        <host>1<host>
+        <name>Mario's Spiel</name>
+        <host>1</host>
         <Players>
             <Player>
                 <name>Mario</name>
@@ -138,11 +138,11 @@ maxdistance = 1
         </Players>
     </GameSession>
     <GameSession>
-        <id>2<id>
-        <maxPlayers>6</maxPlayer>
+        <id>2</id>
+        <maxPlayers>6</maxPlayers>
         <started>false</started>
-        <name>Peter's Spiel<name>
-        <host>4<host>
+        <name>Peter's Spiel</name>
+        <host>4</host>
         <Players>
             <Player>
                 <name>Peter</name>
