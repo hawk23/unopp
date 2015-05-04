@@ -11,9 +11,10 @@ public class CreateGameRequest extends Request {
     private static final String SOAP_METHOD         = "CreateGame";
 
     private String gameName;
-    private String creatorName;
+    private int playerID;
     private double latitude;
     private double longitude;
+    private int maxPlayers;
 
     public CreateGameRequest() {
 
@@ -29,18 +30,23 @@ public class CreateGameRequest extends Request {
         this.requestParameters.put("gameName", gameName);
     }
 
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName;
-        this.requestParameters.put("creatorName", creatorName);
+    public void setPlayerID(int playerID) {
+        this.playerID = playerID;
+        this.requestParameters.put("playerID", playerID);
     }
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
-        this.requestParameters.put("x", Double.toString(latitude));
+        this.requestParameters.put("latitude", Double.toString(latitude));
     }
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-        this.requestParameters.put("y", Double.toString(longitude));
+        this.requestParameters.put("longitude", Double.toString(longitude));
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+        this.requestParameters.put("maxPlayers", Integer.toString(maxPlayers));
     }
 }
