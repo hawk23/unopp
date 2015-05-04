@@ -25,12 +25,16 @@ public class GameSession extends ModelObject {
         this.name = name;
         this.host = host;
         this.players = new ArrayList<Player>();
-        this.players.add(this.host);
-        this.host.setGameSession(this);
         this.currentPlayers = getCurrentPlayerCount();
         this.started = false;
-
     }
+
+    public GameSession(int ID, String name) {
+
+        this (ID, name, null);
+    }
+
+
 
     public int getCurrentPlayerCount() {
         return this.players.size();
@@ -102,5 +106,10 @@ public class GameSession extends ModelObject {
 
     public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
     }
 }

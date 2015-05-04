@@ -16,6 +16,7 @@ import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.ListGamesRequest;
 import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.model.GameSession;
 
 import java.util.ArrayList;
 
@@ -66,13 +67,19 @@ public class LobbyActivity extends ActionBarActivity {
 
     private void listGamesFinished (ListGamesResponse response) {
 
-        //HACK: hardcoded result
-        ArrayList games = new ArrayList();
+        if (response != null) {
 
-        games.add("Albert's Game");
-        games.add("Roland's Game");
+            ArrayList games = new ArrayList();
 
-        displayAvailableGameSessions(games);
+            for (GameSession gs : response.getGameSessions()) {
+                games.add(gs);
+            }
+
+            displayAvailableGameSessions(games);
+        }
+        else {
+            // TODO
+        }
     }
 
     private void displayAvailableGameSessions(ArrayList games) {

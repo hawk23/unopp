@@ -16,6 +16,9 @@ public class ModelParser {
         if (type.equals(Player.class)) {
             return (T) parsePlayerFromElement(element);
         }
+        else if (type.equals(GameSession.class)) {
+            return (T) parseGameSessionFromElement(element);
+        }
 
         return null;
     }
@@ -35,7 +38,7 @@ public class ModelParser {
         int         hostID              = Integer.parseInt(element.getElementsByTagName("host").item(0).getTextContent());
         int         maxPlayers          = Integer.parseInt(element.getElementsByTagName("maxPlayers").item(0).getTextContent());
 
-        GameSession gameSession         = new GameSession(id, name, null);
+        GameSession gameSession         = new GameSession(id, name);
         gameSession.setMaxPlayers(maxPlayers);
 
         NodeList players                = element.getElementsByTagName("Players");
