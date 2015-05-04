@@ -12,10 +12,8 @@ import android.widget.EditText;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
-import com.gamble.unopp.connection.requests.CreateGameSessionRequest;
+import com.gamble.unopp.connection.requests.CreateGameRequest;
 import com.gamble.unopp.connection.response.Response;
-
-import java.util.ArrayList;
 
 
 public class NewGameActivity extends ActionBarActivity {
@@ -75,7 +73,7 @@ public class NewGameActivity extends ActionBarActivity {
 
         if (this.txtGameName.getText().length() > 2) {
 
-            CreateGameSessionRequest    request = new CreateGameSessionRequest();
+            CreateGameRequest request = new CreateGameRequest();
             request.setLatitude(0);
             request.setLongitude(0);
             request.setCreatorName(username);

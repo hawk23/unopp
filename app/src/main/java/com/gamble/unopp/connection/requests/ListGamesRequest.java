@@ -1,9 +1,11 @@
 package com.gamble.unopp.connection.requests;
 
+import com.gamble.unopp.connection.response.ListGamesResponse;
+
 /**
  * Created by Mario on 03.05.2015.
  */
-public class GetAvailableGameSessionsRequest extends Request {
+public class ListGamesRequest extends Request {
 
     private static final String SOAP_ACTION         = "http://tempuri.org/ListGames";
     private static final String SOAP_METHOD         = "ListGames";
@@ -12,12 +14,13 @@ public class GetAvailableGameSessionsRequest extends Request {
     private double longitude;
     private double maxdistance;
 
-    public GetAvailableGameSessionsRequest() {
+    public ListGamesRequest() {
 
         super();
 
         this.soapAction = SOAP_ACTION;
         this.soapMethod = SOAP_METHOD;
+        this.response   = new ListGamesResponse();
     }
 
     public void setLatitude(double latitude) {

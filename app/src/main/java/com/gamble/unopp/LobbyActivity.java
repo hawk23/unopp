@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -14,12 +13,11 @@ import android.widget.ListView;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
-import com.gamble.unopp.connection.requests.GetAvailableGameSessionsRequest;
+import com.gamble.unopp.connection.requests.ListGamesRequest;
+import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Verena on 25.04.2015.
@@ -57,7 +55,7 @@ public class LobbyActivity extends ActionBarActivity {
 
     private void getAvailableGameSessions() {
 
-        GetAvailableGameSessionsRequest gameSessionsRequest = new GetAvailableGameSessionsRequest();
+        ListGamesRequest gameSessionsRequest = new ListGamesRequest();
         gameSessionsRequest.setLatitude(0.0);
         gameSessionsRequest.setLongitude(0.0);
         gameSessionsRequest.setMaxdistance(10);
@@ -66,16 +64,21 @@ public class LobbyActivity extends ActionBarActivity {
             @Override
             public void requestFinished(Response response) {
 
-                //HACK: hardcoded result
-                ArrayList games = new ArrayList();
-
-                games.add("Albert's Game");
-                games.add("Roland's Game");
-
-                displayAvailableGameSessions(games);
+            listGamesFinished((ListGamesResponse) response);
             }
         });
         rp.execute(gameSessionsRequest);
+    }
+
+    private void listGamesFinished (ListGamesResponse response) {
+
+        //HACK: hardcoded result
+        ArrayList games = new ArrayList();
+
+        games.add("Albert's Game");
+        games.add("Roland's Game");
+
+        displayAvailableGameSessions(games);
     }
 
     private void displayAvailableGameSessions(ArrayList games) {

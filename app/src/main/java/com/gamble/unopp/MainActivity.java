@@ -13,7 +13,8 @@ import android.widget.EditText;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
-import com.gamble.unopp.connection.requests.GetAvailableGameSessionsRequest;
+import com.gamble.unopp.connection.requests.CreatePlayerRequest;
+import com.gamble.unopp.connection.response.CreatePlayerResponse;
 import com.gamble.unopp.connection.response.Response;
 
 public class MainActivity extends ActionBarActivity {
@@ -35,6 +36,7 @@ public class MainActivity extends ActionBarActivity {
         inputName           = (EditText) findViewById(R.id.txtUsername);
         sharedPreferences   = getSharedPreferences(SharedPreferencesKeys.PREFS, MODE_PRIVATE);
 
+        // check if player has enterd a name previously
         setNameFromPrefs ();
     }
 
@@ -64,9 +66,25 @@ public class MainActivity extends ActionBarActivity {
 
         String inputName            = this.inputName.getText().toString();
 
+        // save name into shared preferences
         SharedPreferences.Editor e  = sharedPreferences.edit();
         e.putString(SharedPreferencesKeys.USERNAME, inputName);
         e.commit();
+
+        // create player on server
+        CreatePlayerRequest request = new CreatePlayerRequest();
+        request.setName(inputName);
+
+        RequestProcessor  processor = new RequestProcessor(new RequestProcessorCallback() {
+            @Override
+            public void requestFinished(Response response) {
+                createPlayerFinished((CreatePlayerResponse) response);
+            }
+        });
+        processor.execute(request);
+    }
+
+    private void createPlayerFinished (CreatePlayerResponse response) {
 
         // create an Intent to take you over to the Lobby
         Intent lobbyIntent = new Intent(this, LobbyActivity.class);

@@ -40,6 +40,7 @@ public abstract class Request
     protected String                        soapAction;
     protected String                        soapMethod;
     protected HashMap<String, Object>       requestParameters;
+    protected Response                      response;
 
     protected Request()
     {
@@ -64,26 +65,32 @@ public abstract class Request
             ht.call(this.soapAction, envelope);
 
             String                  xmlResponse     = ht.responseDump;
-            Document                dom             = getDomElement(xmlResponse);
 
-            // TODO: create proper response Object
-            response                                = new Response();
-            response.setResponse(xmlResponse);
+            // parse response and build objects
+            if (this.response != null) {
+                this.response.parseXML(xmlResponse);
+            }
+            else {
+                throw new Exception("Response must be created in constructor of request and connot be null here");
+            }
         }
         catch (SocketTimeoutException t)
         {
             t.printStackTrace();
+            this.response    = null;
         }
         catch (IOException i)
         {
             i.printStackTrace();
+            this.response    = null;
         }
         catch (Exception q)
         {
             q.printStackTrace();
+            this.response    = null;
         }
 
-        return response;
+        return this.response;
     }
 
     private final HttpTransportSE getHttpTransportSE ()
@@ -104,32 +111,5 @@ public abstract class Request
         envelope.setOutputSoapObject (request);
 
         return envelope;
-    }
-
-    public Document getDomElement(String xml){
-
-        Document doc = null;
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-
-            DocumentBuilder db = dbf.newDocumentBuilder();
-
-            InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(xml));
-            doc = db.parse(is);
-
-        } catch (ParserConfigurationException e) {
-            Log.e("Error: ", e.getMessage());
-            return null;
-        } catch (SAXException e) {
-            Log.e("Error: ", e.getMessage());
-            return null;
-        } catch (IOException e) {
-            Log.e("Error: ", e.getMessage());
-            return null;
-        }
-
-        // return DOM
-        return doc;
     }
 }

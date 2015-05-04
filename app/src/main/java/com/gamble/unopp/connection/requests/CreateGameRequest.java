@@ -1,9 +1,11 @@
 package com.gamble.unopp.connection.requests;
 
+import com.gamble.unopp.connection.response.CreateGameResponse;
+
 /**
  * Created by Mario on 03.05.2015.
  */
-public class CreateGameSessionRequest extends Request {
+public class CreateGameRequest extends Request {
 
     private static final String SOAP_ACTION         = "http://tempuri.org/CreateGame";
     private static final String SOAP_METHOD         = "CreateGame";
@@ -13,12 +15,13 @@ public class CreateGameSessionRequest extends Request {
     private double latitude;
     private double longitude;
 
-    public CreateGameSessionRequest() {
+    public CreateGameRequest() {
 
         super();
 
         this.soapAction = SOAP_ACTION;
         this.soapMethod = SOAP_METHOD;
+        this.response   = new CreateGameResponse();
     }
 
     public void setGameName(String gameName) {
