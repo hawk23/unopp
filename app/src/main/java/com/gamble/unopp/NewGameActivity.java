@@ -1,7 +1,6 @@
 package com.gamble.unopp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,11 +14,9 @@ import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreateGameRequest;
 import com.gamble.unopp.connection.response.CreateGameResponse;
-import com.gamble.unopp.connection.response.CreatePlayerResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.model.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
-import com.gamble.unopp.model.parsing.GameDetailsActivity;
 
 
 public class NewGameActivity extends ActionBarActivity {

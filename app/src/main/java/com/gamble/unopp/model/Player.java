@@ -40,4 +40,9 @@ public class Player extends ModelObject {
     public boolean leaveGameSession() {
         return this.gameSession != null && this.gameSession.removePlayer(this);
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }
