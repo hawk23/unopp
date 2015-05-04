@@ -1,6 +1,7 @@
 package com.gamble.unopp.connection.response;
 
 import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.parsing.ModelParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -35,14 +36,11 @@ public class CreatePlayerResponse extends Response {
                 "</CreatePlayerResponse>";
         // END HACK
 
-        Document    dom     = this.getDomElement(xmlResponse);
+        Document    dom                 = this.getDomElement(xmlResponse);
 
         Node        playerNode          = dom.getElementsByTagName("Player").item(0);
         Element     playerElement       = (Element) playerNode;
 
-        int         id                  = Integer.parseInt(playerElement.getElementsByTagName("id").item(0).getTextContent());
-        String      name                = playerElement.getElementsByTagName("name").item(0).getTextContent();
-
-        this.player                     = new Player(id, name);
+        this.player                     = ModelParser.<Player>parseModelFromElement(playerElement, Player.class);
     }
 }
