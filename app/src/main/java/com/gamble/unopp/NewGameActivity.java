@@ -1,5 +1,6 @@
 package com.gamble.unopp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -13,14 +14,18 @@ import android.widget.EditText;
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreateGameRequest;
+import com.gamble.unopp.connection.response.CreateGameResponse;
+import com.gamble.unopp.connection.response.CreatePlayerResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.management.UnoDatabase;
+import com.gamble.unopp.model.parsing.GameDetailsActivity;
 
 
 public class NewGameActivity extends ActionBarActivity {
 
     private EditText            txtGameName;
-    private String              username;
-    private SharedPreferences   sharedPreferences;
+    private Player              player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +39,11 @@ public class NewGameActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_new_game);
 
-        // get username
-        sharedPreferences   = getSharedPreferences(SharedPreferencesKeys.PREFS, MODE_PRIVATE);
-        username            = sharedPreferences.getString(SharedPreferencesKeys.USERNAME, "");
-
         // get views
         txtGameName         = (EditText) findViewById(R.id.txtGameName);
+
+        // get player
+        this.player         = UnoDatabase.getInstance().getLocalPlayer();
     }
 
 
@@ -72,30 +76,42 @@ public class NewGameActivity extends ActionBarActivity {
     public void createGame (View v) {
 
         if (this.txtGameName.getText().length() > 2) {
+            this.txtGameName.setError(null);
 
             CreateGameRequest request = new CreateGameRequest();
             request.setLatitude(0);
             request.setLongitude(0);
-            request.setCreatorName(username);
+            request.setPlayerID(this.player.getID());
+            request.setMaxPlayers(GameSettings.MAX_PLAYERS);
             request.setGameName(this.txtGameName.getText().toString());
 
             RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
                 @Override
                 public void requestFinished(Response response) {
-                    createGameFinished();
+                    createGameFinished((CreateGameResponse) response);
                 }
             });
             rp.execute(request);
         }
         else {
-            // TODO: show validation error.
+            this.txtGameName.setError("Der Spielname muss mind. 3 Zeichen lang sein.");
         }
     }
 
-    private void createGameFinished () {
+    private void createGameFinished (CreateGameResponse response) {
 
-        // TODO: show game details activity
+        if (response != null) {
 
+            UnoDatabase.getInstance().setCurrentGameSession(response.getGameSession());
 
+            // create an Intent to take you over to the Lobby
+            Intent intent = new Intent(this, GameDetailsActivity.class);
+
+            // pack away the name into the lobbyIntent
+            startActivity(intent);
+        }
+        else {
+            // TODO: error handling
+        }
     }
 }
