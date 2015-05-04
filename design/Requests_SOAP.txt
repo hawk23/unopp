@@ -80,12 +80,18 @@ gameId      = 1
             <name>Mario's Spiel<name>
             <host>1<host>
             <Players>
-                <!-- all joined player objects -->
                 <Player>
-                    <name>Mario</name>
-                    <id>1</id>
-                </Player>
-                ...
+                <name>Mario</name>
+                <id>1</id>
+            </Player>
+            <Player>
+                <name>Albert</name>
+                <id>2</id>
+            </Player>
+            <Player>
+                <name>Verena</name>
+                <id>3</id>
+            </Player>
             </Players>
         </GameSession>
     </GetGameResult>
@@ -117,12 +123,18 @@ maxdistance = 1
         <name>Mario's Spiel<name>
         <host>1<host>
         <Players>
-            <!-- all joined player objects -->
             <Player>
                 <name>Mario</name>
                 <id>1</id>
             </Player>
-            ...
+            <Player>
+                <name>Albert</name>
+                <id>2</id>
+            </Player>
+            <Player>
+                <name>Verena</name>
+                <id>3</id>
+            </Player>
         </Players>
     </GameSession>
     <GameSession>
@@ -132,12 +144,10 @@ maxdistance = 1
         <name>Peter's Spiel<name>
         <host>4<host>
         <Players>
-            <!-- all joined player objects -->
             <Player>
                 <name>Peter</name>
-                <id>1</id>
+                <id>4</id>
             </Player>
-            ...
         </Players>
     </GameSession>
   </ListGamesResult>
