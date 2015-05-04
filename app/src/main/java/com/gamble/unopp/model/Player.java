@@ -1,9 +1,11 @@
 package com.gamble.unopp.model;
 
+import org.w3c.dom.Element;
+
 /**
  * Created by Albert on 02.05.2015.
  */
-public class Player {
+public class Player extends ModelObject {
 
     private int ID;
     private String name;

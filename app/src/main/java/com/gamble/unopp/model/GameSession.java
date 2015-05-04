@@ -1,11 +1,13 @@
 package com.gamble.unopp.model;
 
+import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 
 /**
  * Created by Albert on 02.05.2015.
  */
-public class GameSession {
+public class GameSession extends ModelObject {
 
     private static int MAX_PLAYERS = 6;
 
