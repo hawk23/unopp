@@ -17,8 +17,9 @@ public class GameSession extends ModelObject {
     private int currentPlayers;
     private Player host;
     private ArrayList<Player> players;
+    private int maxPlayers;
 
-    public GameSession(int ID, String name, Player host ) {
+    public GameSession(int ID, String name, Player host) {
 
         this.ID = ID;
         this.name = name;
@@ -87,7 +88,19 @@ public class GameSession extends ModelObject {
         return host;
     }
 
+    public void setHost(Player host) {
+        this.host = host;
+    }
+
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 }

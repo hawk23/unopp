@@ -2,6 +2,7 @@ package com.gamble.unopp.connection.response;
 
 import com.gamble.unopp.model.GameSession;
 import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.parsing.ModelParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,29 +65,15 @@ public class ListGamesResponse extends Response {
         this.gameSessions               = new Vector<GameSession>();
 
         Document    dom                 = this.getDomElement(xmlResponse);
-        NodeList    gameSessions        = dom.getElementsByTagName("GameSession");
+        NodeList    gameSessionsList    = dom.getElementsByTagName("GameSession");
 
-        for (int i = 0; i < gameSessions.getLength(); i++) {
+        for (int i = 0; i < gameSessionsList.getLength(); i++) {
 
-            Element gameSessionElement          = (Element) gameSessions.item(i);
-            NodeList players                    = gameSessionElement.getElementsByTagName("Players");
+            Element gameSessionElement          = (Element) gameSessionsList.item(i);
+            GameSession gameSession             = ModelParser.<GameSession>parseModelFromElement(gameSessionElement, GameSession.class);
 
-            for (int j = 0; j < players.getLength(); j++) {
-
-                Element playerElement           = (Element) players.item(j);
-
-                // TODO parse!
-            }
+            this.gameSessions.add(gameSession);
         }
-
-        /*
-        Element     playerElement       = (Element) playerNode;
-
-        int         id                  = Integer.parseInt(playerElement.getElementsByTagName("id").item(0).getTextContent());
-        String      name                = playerElement.getElementsByTagName("name").item(0).getTextContent();
-
-        this.player                     = new Player(id, name);
-        */
     }
 
     public Vector<GameSession> getGameSessions() {

@@ -1,8 +1,10 @@
 package com.gamble.unopp.model.parsing;
 
+import com.gamble.unopp.model.GameSession;
 import com.gamble.unopp.model.Player;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Created by Mario on 04.05.2015.
@@ -24,5 +26,33 @@ public class ModelParser {
         String      name                = element.getElementsByTagName("name").item(0).getTextContent();
 
         return new Player(id, name);
+    }
+
+    private static GameSession parseGameSessionFromElement (Element element) {
+
+        int         id                  = Integer.parseInt(element.getElementsByTagName("id").item(0).getTextContent());
+        String      name                = element.getElementsByTagName("name").item(0).getTextContent();
+        int         hostID              = Integer.parseInt(element.getElementsByTagName("host").item(0).getTextContent());
+        int         maxPlayers          = Integer.parseInt(element.getElementsByTagName("maxPlayers").item(0).getTextContent());
+
+        GameSession gameSession         = new GameSession(id, name, null);
+        gameSession.setMaxPlayers(maxPlayers);
+
+        NodeList players                = element.getElementsByTagName("Players");
+
+        for (int j = 0; j < players.getLength(); j++) {
+
+            Element playerElement           = (Element) players.item(j);
+            Player player                   = parsePlayerFromElement(playerElement);
+            player.setGameSession(gameSession);
+
+            gameSession.addPlayer(player);
+
+            if (hostID == player.getID()) {
+                gameSession.setHost(player);
+            }
+        }
+
+        return gameSession;
     }
 }
