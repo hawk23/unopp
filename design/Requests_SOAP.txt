@@ -22,11 +22,11 @@ maxPlayers  = 6
 <CreateGameResponse xmlns="http://tempuri.org/">
     <CreateGameResult>
         <GameSession>
-            <id>1<id>
-            <maxPlayers>6</maxPlayer>
+            <id>3</id>
+            <maxPlayers>6</maxPlayers>
             <started>false</started>
-            <name>Mario's Spiel<name>
-            <host>1<host>
+            <name>New Game</name>
+            <host>1</host>
         </GameSession>
     </CreateGameResult>
 </CreateGameResponse>
