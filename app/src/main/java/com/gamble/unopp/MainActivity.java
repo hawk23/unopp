@@ -9,23 +9,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 
+import com.gamble.unopp.connection.RequestProcessor;
+import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreatePlayerRequest;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-
+import com.gamble.unopp.connection.response.CreatePlayerResponse;
+import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.model.management.UnoDatabase;
 
 public class MainActivity extends ActionBarActivity {
-
-    private static final String PREFS = "prefs";
-    private static final String PREF_NAME = "name";
 
     private EditText inputName;
     private SharedPreferences sharedPreferences;
@@ -41,10 +34,11 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
-        inputName = (EditText) findViewById(R.id.txtUsername);
+        inputName           = (EditText) findViewById(R.id.txtUsername);
+        sharedPreferences   = getSharedPreferences(SharedPreferencesKeys.PREFS, MODE_PRIVATE);
 
-        sharedPreferences = getSharedPreferences(PREFS, MODE_PRIVATE);
-        setNameFromPrefs();
+        // check if player has enterd a name previously
+        setNameFromPrefs ();
     }
 
     @Override
@@ -70,41 +64,51 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void startGame(View v) {
-        String inputName = this.inputName.getText().toString();
 
-        SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(PREF_NAME, inputName);
+        String inputName            = this.inputName.getText().toString();
+
+        // save name into shared preferences
+        SharedPreferences.Editor e  = sharedPreferences.edit();
+        e.putString(SharedPreferencesKeys.USERNAME, inputName);
         e.commit();
 
+        // create player on server
         CreatePlayerRequest request = new CreatePlayerRequest();
         request.setName(inputName);
 
-        try {
-            URL url = new URL(request.getUrl());
-            URLConnection urlConnection = url.openConnection();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            StringBuilder builder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
+        RequestProcessor  processor = new RequestProcessor(new RequestProcessorCallback() {
+            @Override
+            public void requestFinished(Response response) {
+                createPlayerFinished((CreatePlayerResponse) response);
             }
-        }
-        catch (Exception ex) {
-
-        }
-
-        // create an Intent to take you over to the Lobby
-        Intent lobbyIntent = new Intent(this, LobbyActivity.class);
-
-        // pack away the name into the lobbyIntent
-        lobbyIntent.putExtra("username", inputName);
-        startActivity(lobbyIntent);
+        });
+        processor.execute(request);
     }
 
+    private void createPlayerFinished (CreatePlayerResponse response) {
+
+        if (response != null) {
+            // save player in database
+            UnoDatabase.getInstance().setLocalPlayer(response.getPlayer());
+
+            // create an Intent to take you over to the Lobby
+            Intent lobbyIntent = new Intent(this, LobbyActivity.class);
+
+            // pack away the name into the lobbyIntent
+            startActivity(lobbyIntent);
+        }
+        else {
+
+            // TODO
+        }
+   }
+
     public void setNameFromPrefs() {
-        String name = sharedPreferences.getString(PREF_NAME, "");
+
+        String name = sharedPreferences.getString(SharedPreferencesKeys.USERNAME, "");
 
         if (name.length() > 0) {
+
             inputName.setText(name);
         }
     }

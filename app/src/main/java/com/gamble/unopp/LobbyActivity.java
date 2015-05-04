@@ -1,5 +1,7 @@
 package com.gamble.unopp;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -9,21 +11,29 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.gamble.unopp.connection.RequestProcessor;
+import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.ListGamesRequest;
+import com.gamble.unopp.connection.response.ListGamesResponse;
+import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.model.GameSession;
+
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Verena on 25.04.2015.
  */
 public class LobbyActivity extends ActionBarActivity {
 
-    private String username;
-    private ListView existingGamesListView;
-    private ArrayAdapter mArrayAdapter;
-    private String existingGames;
+    private ListView            existingGamesListView;
+    private ArrayAdapter        mArrayAdapter;
+    private String              existingGames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         super.onCreate(savedInstanceState);
 
         // remove title
@@ -31,44 +41,95 @@ public class LobbyActivity extends ActionBarActivity {
 
         setContentView(R.layout.actitvity_lobby);
 
-        username = this.getIntent().getExtras().getString("username");
-
         ArrayList existingGames = new ArrayList();
 
         existingGamesListView = (ListView) findViewById(R.id.existingGamesListView);
-        getExistingGames(existingGames);
 
-        mArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, existingGames);
+        this.getAvailableGameSessions();
+    }
+
+    private void getAvailableGameSessions() {
+
+        ListGamesRequest gameSessionsRequest = new ListGamesRequest();
+        gameSessionsRequest.setLatitude(0.0);
+        gameSessionsRequest.setLongitude(0.0);
+        gameSessionsRequest.setMaxdistance(10);
+
+        RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
+            @Override
+            public void requestFinished(Response response) {
+
+            listGamesFinished((ListGamesResponse) response);
+            }
+        });
+        rp.execute(gameSessionsRequest);
+    }
+
+    private void listGamesFinished (ListGamesResponse response) {
+
+        if (response != null) {
+
+            ArrayList games = new ArrayList();
+
+            for (GameSession gs : response.getGameSessions()) {
+                games.add(gs);
+            }
+
+            displayAvailableGameSessions(games);
+        }
+        else {
+            // TODO
+        }
+    }
+
+    private void displayAvailableGameSessions(ArrayList games) {
+
+        mArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, games);
         existingGamesListView.setAdapter(mArrayAdapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_lobby, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // Handle item selection
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_newGame:
+                this.newGame();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
-    public void getExistingGames(List existingGames) {
+    private void newGame () {
 
-        // TODO fill with games from other players
+        // create an Intent to take you over to the Lobby
+        Intent newGameIntent = new Intent(this, NewGameActivity.class);
 
-        existingGames.add("Albert's Game");
-        existingGames.add("Roland's Game");
+        // pack away the name into the lobbyIntent
+        startActivity(newGameIntent);
     }
+
+    /**
+     * Listener for Menu in action bar
+     */
+
+    /**
+     * Eventlisteners for Views
+     */
 }

@@ -1,13 +1,15 @@
 package com.gamble.unopp.model;
 
+import com.gamble.unopp.GameSettings;
+
+import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 
 /**
  * Created by Albert on 02.05.2015.
  */
-public class GameSession {
-
-    private static int MAX_PLAYERS = 6;
+public class GameSession extends ModelObject {
 
     private int ID;
     private String name;
@@ -15,19 +17,24 @@ public class GameSession {
     private int currentPlayers;
     private Player host;
     private ArrayList<Player> players;
+    private int maxPlayers;
 
-    public GameSession(int ID, String name, Player host ) {
+    public GameSession(int ID, String name, Player host) {
 
         this.ID = ID;
         this.name = name;
         this.host = host;
         this.players = new ArrayList<Player>();
-        this.players.add(this.host);
-        this.host.setGameSession(this);
         this.currentPlayers = getCurrentPlayerCount();
         this.started = false;
-
     }
+
+    public GameSession(int ID, String name) {
+
+        this (ID, name, null);
+    }
+
+
 
     public int getCurrentPlayerCount() {
         return this.players.size();
@@ -35,7 +42,7 @@ public class GameSession {
 
     public boolean addPlayer(Player player) {
 
-        if (this.players.contains(player) && getCurrentPlayerCount() < MAX_PLAYERS) {
+        if (!this.players.contains(player) && getCurrentPlayerCount() < GameSettings.MAX_PLAYERS) {
             this.players.add(player);
             player.setGameSession(this);
             return true;
@@ -55,10 +62,6 @@ public class GameSession {
         else {
             return false;
         }
-    }
-
-    public static int get_MAX_PLAYERS() {
-        return MAX_PLAYERS;
     }
 
     public int getID() {
@@ -85,7 +88,24 @@ public class GameSession {
         return host;
     }
 
+    public void setHost(Player host) {
+        this.host = host;
+    }
+
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
     }
 }

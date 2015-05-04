@@ -1,51 +1,115 @@
 package com.gamble.unopp.connection.requests;
 
+import android.util.Log;
+import android.util.Xml;
+
+import com.gamble.unopp.connection.response.Response;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlPullParser;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.Proxy;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by Albert on 02.05.2015.
  */
-public abstract class Request {
+public abstract class Request
+{
+    protected static final String           MAIN_SERVICE_URL        = "http://game.administrator.at/UnoPP.asmx";
+    protected static final String           NAMESPACE               = "http://tempuri.org/";
 
-    public static String BASE_URL       = "uno.administrator.at/";
-    public static String LOBBY_SERVICE  = "LobbyService.php";
+    protected String                        soapAction;
+    protected String                        soapMethod;
+    protected HashMap<String, Object>       requestParameters;
+    protected Response                      response;
 
-    private String cmd;
-    protected String service;
-
-    protected HashMap<String, String> parameters;
-
-    protected Request() {
-        this.parameters                 = new HashMap<String, String>();
+    protected Request()
+    {
+        this.requestParameters                                      = new HashMap<String, Object>();
     }
 
-    public String getCmd() {
-        return cmd;
-    }
+    public Response send ()
+    {
+        Response                    response        = null;
+        SoapObject                  request         = new SoapObject(NAMESPACE, this.soapMethod);
 
-    public void setCmd(String cmd) {
-        this.cmd = cmd;
-        this.parameters.put("cmd", cmd);
-    }
-
-    public String getUrl () {
-        String url      = "";
-        url             += BASE_URL;
-        url             += this.service;
-
-        boolean first   = true;
-        for (Entry<String, String> entry : this.parameters.entrySet())
+        // add properties to SOAP request.
+        for (Entry<String, Object> entry : this.requestParameters.entrySet())
         {
-            url         += first ? "?" : "&";
-            url         +=  entry.getKey() +"=";
-            url         +=  entry.getValue();
-
-            first       = false;
+            request.addProperty(entry.getKey(), entry.getValue());
         }
 
-        return url;
+        SoapSerializationEnvelope   envelope        = getSoapSerializationEnvelope(request);
+        HttpTransportSE             ht              = getHttpTransportSE();
+
+        try {
+            ht.call(this.soapAction, envelope);
+
+            String                  xmlResponse     = ht.responseDump;
+
+            // parse response and build objects
+            if (this.response != null) {
+                this.response.parseXML(xmlResponse);
+            }
+            else {
+                throw new Exception("Response must be created in constructor of request and connot be null here");
+            }
+        }
+        catch (SocketTimeoutException t)
+        {
+            t.printStackTrace();
+            this.response    = null;
+        }
+        catch (IOException i)
+        {
+            i.printStackTrace();
+            this.response    = null;
+        }
+        catch (Exception q)
+        {
+            q.printStackTrace();
+            this.response    = null;
+        }
+
+        return this.response;
+    }
+
+    private final HttpTransportSE getHttpTransportSE ()
+    {
+        HttpTransportSE ht  = new HttpTransportSE(Proxy.NO_PROXY, MAIN_SERVICE_URL, 60000);
+        ht.debug            = true;
+        ht.setXmlVersionTag("<!--?xml version=\"1.0\" encoding= \"UTF-8\" ?-->");
+
+        return ht;
+    }
+
+    private final SoapSerializationEnvelope getSoapSerializationEnvelope (SoapObject request)
+    {
+        SoapSerializationEnvelope envelope  = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet                     = true;
+        envelope.implicitTypes              = true;
+        envelope.setAddAdornments (false);
+        envelope.setOutputSoapObject (request);
+
+        return envelope;
     }
 }
