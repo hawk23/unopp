@@ -1,5 +1,6 @@
 package com.gamble.unopp.model.management;
 
+import com.gamble.unopp.model.GameSession;
 import com.gamble.unopp.model.Player;
 
 /**
@@ -9,7 +10,8 @@ public class UnoDatabase {
 
     private static UnoDatabase instance;
 
-    private Player localPlayer;
+    private Player          localPlayer;
+    private GameSession     currentGameSession;
 
     private UnoDatabase () {
 
@@ -30,5 +32,13 @@ public class UnoDatabase {
 
     public void setLocalPlayer(Player localPlayer) {
         this.localPlayer = localPlayer;
+    }
+
+    public GameSession getCurrentGameSession() {
+        return currentGameSession;
+    }
+
+    public void setCurrentGameSession(GameSession currentGameSession) {
+        this.currentGameSession = currentGameSession;
     }
 }

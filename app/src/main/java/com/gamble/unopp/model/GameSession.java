@@ -1,5 +1,7 @@
 package com.gamble.unopp.model;
 
+import com.gamble.unopp.GameSettings;
+
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -8,8 +10,6 @@ import java.util.ArrayList;
  * Created by Albert on 02.05.2015.
  */
 public class GameSession extends ModelObject {
-
-    private static int MAX_PLAYERS = 6;
 
     private int ID;
     private String name;
@@ -42,7 +42,7 @@ public class GameSession extends ModelObject {
 
     public boolean addPlayer(Player player) {
 
-        if (this.players.contains(player) && getCurrentPlayerCount() < MAX_PLAYERS) {
+        if (!this.players.contains(player) && getCurrentPlayerCount() < GameSettings.MAX_PLAYERS) {
             this.players.add(player);
             player.setGameSession(this);
             return true;
@@ -62,10 +62,6 @@ public class GameSession extends ModelObject {
         else {
             return false;
         }
-    }
-
-    public static int get_MAX_PLAYERS() {
-        return MAX_PLAYERS;
     }
 
     public int getID() {
