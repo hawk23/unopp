@@ -43,16 +43,17 @@ public class ModelParser {
 
         NodeList players                = element.getElementsByTagName("Players");
 
-        for (int j = 0; j < players.getLength(); j++) {
+        if (players != null) {
+            for (int j = 0; j < players.getLength(); j++) {
 
-            Element playerElement           = (Element) players.item(j);
-            Player player                   = parsePlayerFromElement(playerElement);
-            player.setGameSession(gameSession);
+                Element playerElement           = (Element) players.item(j);
+                Player player                   = parsePlayerFromElement(playerElement);
 
-            gameSession.addPlayer(player);
+                gameSession.addPlayer(player);
 
-            if (hostID == player.getID()) {
-                gameSession.setHost(player);
+                if (hostID == player.getID()) {
+                    gameSession.setHost(player);
+                }
             }
         }
 
