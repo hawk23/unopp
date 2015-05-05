@@ -197,6 +197,7 @@ playerId    = 1
     <started>true</started>
     <name>Mario's Spiel</name>
     <host>1</host>
+    <currentPlayer>1</currentPlayer>
     <GameRounds>
         <GameRound>
             <id>1</id>
@@ -244,3 +245,19 @@ playerId    = 1
 
 ----------------------------------------------------
 
+method      = DoTurn
+gameId      = 1
+playerId    = 1
+turnId      = 6
+turn        = "serialized turn"
+
+----------------------------------------------------
+
+method      = GetTurn
+gameId      = 1
+playerId    = 2
+lastTurn    = 5 <!-- The id of the last known turn of the player -->
+
+<Turn>
+    "serialized Turn"
+</Turn>
