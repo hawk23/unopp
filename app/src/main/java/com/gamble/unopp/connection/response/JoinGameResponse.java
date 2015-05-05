@@ -4,6 +4,7 @@ import com.gamble.unopp.model.parsing.ModelParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Created by Verena on 05.05.2015.
@@ -24,8 +25,8 @@ public class JoinGameResponse extends Response {
                 "</JoinGameResponse>";
         // END HACK
         Document dom = this.getDomElement(xmlResponse);
-        Element result = dom.getElementById("Result");
+        NodeList result = dom.getElementsByTagName("Result");
 
-        super.setResponseResult(ModelParser.<ResponseResult>parseModelFromElement(result, ResponseResult.class));
+        super.setResponseResult(ModelParser.<ResponseResult>parseModelFromElement((Element) result.item(0), ResponseResult.class));
     }
 }

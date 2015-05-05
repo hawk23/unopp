@@ -17,9 +17,12 @@ import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.JoinGameRequest;
 import com.gamble.unopp.connection.requests.ListGamesRequest;
+import com.gamble.unopp.connection.response.JoinGameResponse;
 import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.model.GameSession;
+import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.management.UnoDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +30,18 @@ import java.util.List;
 /**
  * Created by Verena on 25.04.2015.
  */
-public class LobbyActivity extends ActionBarActivity {
+public class LobbyActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
     private ListView            existingGamesListView;
     private ArrayAdapter        mArrayAdapter;
     private List<GameSession>   games;
+    private Player              player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // load from database
+        this.player = UnoDatabase.getInstance().getLocalPlayer();
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -48,6 +55,8 @@ public class LobbyActivity extends ActionBarActivity {
         ArrayList existingGames = new ArrayList();
 
         existingGamesListView = (ListView) findViewById(R.id.existingGamesListView);
+        existingGamesListView.setOnItemClickListener(this);
+
         games = new ArrayList<>();
         this.getAvailableGameSessions();
     }
@@ -134,20 +143,30 @@ public class LobbyActivity extends ActionBarActivity {
     /**
      * Eventlisteners for Views
      */
+    @Override
     public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-        GameSession game = (GameSession) adapter.getItemAtPosition(position);
+        final GameSession game = (GameSession) adapter.getItemAtPosition(position);
 
         JoinGameRequest joinGameRequest = new JoinGameRequest();
         joinGameRequest.setGameId(game.getID());
-        joinGameRequest.setPlayerId(1); // TODO
+        joinGameRequest.setPlayerId(player.getID());
 
         RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
             @Override
             public void requestFinished(Response response) {
-
-                // TODO
+                joinGameFinished((JoinGameResponse) response, game); // TODO response is null - why?
             }
         });
         rp.execute(joinGameRequest);
+    }
+
+    private void joinGameFinished(JoinGameResponse response, GameSession game) {
+        if (response != null && response.getResponseResult().isStatus()) {
+            UnoDatabase.getInstance().setCurrentGameSession(game);
+
+            // create an Intent to take you over to the GameDetailsActivity
+            Intent intent = new Intent(this, GameDetailsActivity.class);
+            startActivity(intent);
+        }
     }
 }
