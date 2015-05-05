@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:paddingTop="25dp"
     android:paddingLeft="25dp"
-    android:paddingRight="25dp" >
+    android:paddingRight="25dp"
+    android:background="@drawable/wood_repeatable">
 
     <TextView
         android:layout_width="wrap_content"
