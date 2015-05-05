@@ -5,5 +5,13 @@ package com.gamble.unopp.model.cards;
  */
 public class Action {
 
-    ActionType type;
+    ActionType actionType;
+
+    public Action (ActionType type) {
+        this.actionType = type;
+    }
+
+    public ActionType getActionType() {
+        return actionType;
+    }
 }

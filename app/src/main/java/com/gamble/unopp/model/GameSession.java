@@ -1,6 +1,7 @@
 package com.gamble.unopp.model;
 
 import com.gamble.unopp.GameSettings;
+import com.gamble.unopp.model.game.GameRound;
 
 import org.w3c.dom.Element;
 
@@ -18,6 +19,8 @@ public class GameSession extends ModelObject {
     private Player host;
     private ArrayList<Player> players;
     private int maxPlayers;
+    private ArrayList<GameRound> gameRounds;
+    private GameRound actualGameRound;
 
     public GameSession(int ID, String name, Player host) {
 
@@ -27,14 +30,15 @@ public class GameSession extends ModelObject {
         this.players = new ArrayList<Player>();
         this.currentPlayers = getCurrentPlayerCount();
         this.started = false;
+        this.gameRounds = new ArrayList<GameRound>();
+        this.actualGameRound = null;
+
     }
 
     public GameSession(int ID, String name) {
 
         this (ID, name, null);
     }
-
-
 
     public int getCurrentPlayerCount() {
         return this.players.size();
@@ -62,6 +66,10 @@ public class GameSession extends ModelObject {
         else {
             return false;
         }
+    }
+
+    public GameRound getActualGameRound() {
+        return actualGameRound;
     }
 
     public int getID() {

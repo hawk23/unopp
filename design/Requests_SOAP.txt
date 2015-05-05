@@ -1,4 +1,4 @@
-method      = createPlayer
+method      = CreatePlayer
 name        = Mario
 
 <CreatePlayerResponse xmlns="http://tempuri.org/">
@@ -26,7 +26,7 @@ maxPlayers  = 6
             <maxPlayers>6</maxPlayers>
             <started>false</started>
             <name>New Game</name>
-            <host>1</host>
+            <host>1</host> <!-- initial player id -->
         </GameSession>
     </CreateGameResult>
 </CreateGameResponse>
@@ -81,17 +81,17 @@ gameId      = 1
             <host>1<host>
             <Players>
                 <Player>
-                <name>Mario</name>
-                <id>1</id>
-            </Player>
-            <Player>
-                <name>Albert</name>
-                <id>2</id>
-            </Player>
-            <Player>
-                <name>Verena</name>
-                <id>3</id>
-            </Player>
+                    <name>Mario</name>
+                    <id>1</id>
+                </Player>
+                <Player>
+                    <name>Albert</name>
+                    <id>2</id>
+                </Player>
+                <Player>
+                    <name>Verena</name>
+                    <id>3</id>
+                </Player>
             </Players>
         </GameSession>
     </GetGameResult>
@@ -110,9 +110,9 @@ Wenn Spiel gel�scht wurde
 ----------------------------------------------------
 
 method      = ListGames
-latitude    = 100
-longitude   = 100
-maxdistance = 1
+latitude    = 0
+longitude   = 0
+maxdistance = 1 [km][float]
 
 <ListGamesResponse xmlns="http://tempuri.org/">
   <ListGamesResult>
@@ -183,3 +183,81 @@ playerId    = 1
   </StartGameResult>
 </StartGameResponse>
 
+----------------------------------------------------
+
+This  response is sent when the game has started.
+
+method      = GetGame
+gameId      = 1
+playerId    = 1
+
+<GameSession>
+    <id>1</id>
+    <maxPlayers>6</maxPlayers>
+    <started>true</started>
+    <name>Mario's Spiel</name>
+    <host>1</host>
+    <currentPlayer>1</currentPlayer>
+    <GameRounds>
+        <GameRound>
+            <id>1</id>
+            <active>true</active>
+            <GameState>
+                <topCard>6</topCard>
+                <currentPlayer>1</currentPlayer>
+                <direction>1</direction> <!-- 1: clockwise, 2: counterclocwise -->
+            </GameState>
+        </GameRound>
+    </GameRounds>
+    <HandCards>
+        <Card>
+            <owner>1</owner>
+            <id>1</id>
+        </Card>
+        <Card>
+            <owner>2</owner>
+            <id>2</id>
+        </Card>
+    </HandCards>
+    <Stack>
+        <Card>
+            <id>1</id>
+            <order>1</order>
+        </Card>
+        ...
+    </Stack>
+    <PlayedStack>
+        <Card>
+            <id>5</id>
+            <order>1</order>
+        </Card>
+        ...
+    </PlayedStack>
+    <Players>
+        <Player>
+            <name>Peter</name>
+            <id>4</id>
+            <uno>false</uno>
+        </Player>
+        <!-- all players of this game -->
+    </Players>
+</GameSession>
+
+----------------------------------------------------
+
+method      = DoTurn
+gameId      = 1
+playerId    = 1
+turnId      = 6
+turn        = "serialized turn"
+
+----------------------------------------------------
+
+method      = GetTurn
+gameId      = 1
+playerId    = 2
+lastTurn    = 5 <!-- The id of the last known turn of the player -->
+
+<Turn>
+    "serialized Turn"
+</Turn>
