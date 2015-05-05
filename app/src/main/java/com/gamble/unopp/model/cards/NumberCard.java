@@ -9,8 +9,8 @@ public class NumberCard extends Card {
 
     private int value;
 
-    public NumberCard(int ID, int value, Bitmap image) {
-        super(ID, image);
+    public NumberCard(int ID, int value, Bitmap image, UnoColor color) {
+        super(ID, image, color);
         this.value = value;
     }
 }

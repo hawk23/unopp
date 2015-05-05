@@ -9,10 +9,12 @@ public abstract class Card {
 
     protected int ID;
     protected Bitmap image;
+    protected UnoColor color;
 
-    public Card (int ID, Bitmap image) {
+    public Card (int ID, Bitmap image, UnoColor color) {
         this.ID = ID;
         this.image = image;
+        this.color = color;
     }
 
     public int getID() {
@@ -21,5 +23,9 @@ public abstract class Card {
 
     public Bitmap getImage() {
         return image;
+    }
+
+    public UnoColor getColor() {
+        return color;
     }
 }
