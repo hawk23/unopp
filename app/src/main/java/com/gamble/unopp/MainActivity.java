@@ -2,6 +2,7 @@ package com.gamble.unopp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreatePlayerRequest;
 import com.gamble.unopp.connection.response.CreatePlayerResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.model.game.CardDeck;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 public class MainActivity extends ActionBarActivity {
@@ -39,6 +41,9 @@ public class MainActivity extends ActionBarActivity {
 
         // check if player has enterd a name previously
         setNameFromPrefs ();
+
+        // init globals
+        this.initUnoApp();
     }
 
     @Override
@@ -61,6 +66,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initUnoApp () {
+
+        GameSettings.ASSET_MANAGER  = getAssets();
     }
 
     public void startGame(View v) {

@@ -9,4 +9,5 @@ public class SharedPreferencesKeys {
     public static final String PREFS        = "prefs";
 
     public static final String USERNAME     = "username";
+    public static final String GAMENAME     = "gamename";
 }

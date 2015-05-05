@@ -43,6 +43,11 @@
             android:label="@string/title_activity_game_details"
             android:screenOrientation="landscape" >
         </activity>
+        <activity
+            android:name=".GameScreenActivity"
+            android:label="@string/title_activity_game_screen"
+            android:screenOrientation="landscape" >
+        </activity>
     </application>
 
 </manifest>

@@ -30,6 +30,10 @@ public class ActionCard extends Card {
         }
     }
 
+    public ArrayList<Action> getActions() {
+        return actions;
+    }
+
     public void setActions(ArrayList<Action> actions) {
         this.actions = actions;
     }

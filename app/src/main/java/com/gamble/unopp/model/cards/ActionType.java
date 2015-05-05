@@ -13,6 +13,8 @@ public class ActionType {
 
     private int ID;
     private int type;
+
+    // needed?
     private String name;
     private String description;
 
