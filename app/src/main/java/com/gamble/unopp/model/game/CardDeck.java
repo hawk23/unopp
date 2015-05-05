@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.gamble.unopp.GameSettings;
 import com.gamble.unopp.MainActivity;
 import com.gamble.unopp.model.cards.Action;
 import com.gamble.unopp.model.cards.ActionCard;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
  */
 public class CardDeck {
 
-    private static final String DECK_SPRITESHEET_PATH = "cards/cards.png";
+    private static final String DECK_SPRITESHEET_PATH = "cards.png";
     private static final int CARD_WITDH = 192;
     private static final int CARD_HEIGHT = 288;
     private static final int HORIZONTAL_COUNT = 14;
@@ -34,15 +35,21 @@ public class CardDeck {
 
     private ArrayList<Card> deck;
 
-    public CardDeck() throws IOException {
+    public CardDeck() {
         this.deck = new ArrayList<Card>();
         initDeck();
     }
 
-    private void initDeck() throws IOException {
+    private void initDeck() {
         Bitmap deckBitmap = null;
 
-        // To Do load bitmap
+        try {
+            InputStream is  = GameSettings.ASSET_MANAGER.open (DECK_SPRITESHEET_PATH);
+            deckBitmap      = BitmapFactory.decodeStream(is);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         // init red, yellow, green and blue cards
         for (int i = 0; i < 4; i++) {
@@ -143,5 +150,9 @@ public class CardDeck {
         int id = this.id;
         this.id++;
         return id;
+    }
+
+    public ArrayList<Card> getDeck() {
+        return deck;
     }
 }

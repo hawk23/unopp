@@ -41,6 +41,9 @@ public class MainActivity extends ActionBarActivity {
 
         // check if player has enterd a name previously
         setNameFromPrefs ();
+
+        // init globals
+        this.initUnoApp();
     }
 
     @Override
@@ -63,6 +66,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initUnoApp () {
+
+        GameSettings.ASSET_MANAGER  = getAssets();
     }
 
     public void startGame(View v) {

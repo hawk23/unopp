@@ -1,5 +1,6 @@
 package com.gamble.unopp;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -77,6 +78,14 @@ public class GameDetailsActivity extends ActionBarActivity {
 
     private void startGame () {
         // TODO
+
+        // HACK
+        // create an Intent to take you over to the Lobby
+        Intent intent = new Intent(this, GameScreenActivity.class);
+
+        // pack away the name into the lobbyIntent
+        startActivity(intent);
+        // END HACK
     }
 
     @Override
