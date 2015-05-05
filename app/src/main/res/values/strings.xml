@@ -8,4 +8,5 @@
     <string name="existing_games">Vorhandene Spiele</string>
     <string name="title_activity_new_game">Neues Spiel erstellen</string>
     <string name="title_activity_game_details">Spielübersicht</string>
+    <string name="title_activity_game_screen">GameScreenActivity</string>
 </resources>
