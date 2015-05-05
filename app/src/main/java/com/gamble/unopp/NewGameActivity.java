@@ -1,6 +1,7 @@
 package com.gamble.unopp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,6 +24,7 @@ public class NewGameActivity extends ActionBarActivity {
 
     private EditText            txtGameName;
     private Player              player;
+    private SharedPreferences   sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,11 @@ public class NewGameActivity extends ActionBarActivity {
 
         // get player
         this.player         = UnoDatabase.getInstance().getLocalPlayer();
+
+        sharedPreferences   = getSharedPreferences(SharedPreferencesKeys.PREFS, MODE_PRIVATE);
+
+        // check if player has enterd a name previously
+        setNameFromPrefs ();
     }
 
 
@@ -74,6 +81,11 @@ public class NewGameActivity extends ActionBarActivity {
 
         if (this.txtGameName.getText().length() > 2) {
             this.txtGameName.setError(null);
+
+            // save name into shared preferences
+            SharedPreferences.Editor e  = sharedPreferences.edit();
+            e.putString(SharedPreferencesKeys.GAMENAME, this.txtGameName.getText().toString());
+            e.commit();
 
             CreateGameRequest request = new CreateGameRequest();
             request.setLatitude(0);
@@ -109,6 +121,16 @@ public class NewGameActivity extends ActionBarActivity {
         }
         else {
             // TODO: error handling
+        }
+    }
+
+    public void setNameFromPrefs() {
+
+        String name = sharedPreferences.getString(SharedPreferencesKeys.GAMENAME, "");
+
+        if (name.length() > 0) {
+
+            this.txtGameName.setText(name);
         }
     }
 }
