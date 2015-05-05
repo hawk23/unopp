@@ -6,19 +6,23 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.JoinGameRequest;
 import com.gamble.unopp.connection.requests.ListGamesRequest;
 import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.model.GameSession;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Verena on 25.04.2015.
@@ -27,7 +31,7 @@ public class LobbyActivity extends ActionBarActivity {
 
     private ListView            existingGamesListView;
     private ArrayAdapter        mArrayAdapter;
-    private String              existingGames;
+    private List<GameSession>   games;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +48,7 @@ public class LobbyActivity extends ActionBarActivity {
         ArrayList existingGames = new ArrayList();
 
         existingGamesListView = (ListView) findViewById(R.id.existingGamesListView);
-
+        games = new ArrayList<>();
         this.getAvailableGameSessions();
     }
 
@@ -69,8 +73,6 @@ public class LobbyActivity extends ActionBarActivity {
 
         if (response != null) {
 
-            ArrayList games = new ArrayList();
-
             for (GameSession gs : response.getGameSessions()) {
                 games.add(gs);
             }
@@ -82,7 +84,7 @@ public class LobbyActivity extends ActionBarActivity {
         }
     }
 
-    private void displayAvailableGameSessions(ArrayList games) {
+    private void displayAvailableGameSessions(List games) {
 
         mArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, games);
         existingGamesListView.setAdapter(mArrayAdapter);
@@ -132,4 +134,20 @@ public class LobbyActivity extends ActionBarActivity {
     /**
      * Eventlisteners for Views
      */
+    public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+        GameSession game = (GameSession) adapter.getItemAtPosition(position);
+
+        JoinGameRequest joinGameRequest = new JoinGameRequest();
+        joinGameRequest.setGameId(game.getID());
+        joinGameRequest.setPlayerId(1); // TODO
+
+        RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
+            @Override
+            public void requestFinished(Response response) {
+
+                // TODO
+            }
+        });
+        rp.execute(joinGameRequest);
+    }
 }
