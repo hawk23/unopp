@@ -18,7 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public abstract class Response {
 
-    private ResponseResult      result;
+    private ResponseResult responseResult;
 
     public abstract void parseXML (String xmlResponse) throws Exception;
 
@@ -47,5 +47,13 @@ public abstract class Response {
 
         // return DOM
         return doc;
+    }
+
+    public ResponseResult getResponseResult() {
+        return responseResult;
+    }
+
+    public void setResponseResult(ResponseResult responseResult) {
+        this.responseResult = responseResult;
     }
 }
