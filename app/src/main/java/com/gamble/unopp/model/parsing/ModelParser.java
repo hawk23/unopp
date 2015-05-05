@@ -1,5 +1,6 @@
 package com.gamble.unopp.model.parsing;
 
+import com.gamble.unopp.connection.response.ResponseResult;
 import com.gamble.unopp.model.GameSession;
 import com.gamble.unopp.model.Player;
 
@@ -19,8 +20,19 @@ public class ModelParser {
         else if (type.equals(GameSession.class)) {
             return (T) parseGameSessionFromElement(element);
         }
+        else if (type.equals(ResponseResult.class)) {
+            return (T) parseResponseResultFromElement(element);
+        }
 
         return null;
+    }
+
+    private static ResponseResult parseResponseResultFromElement(Element element) {
+
+        boolean status = Boolean.parseBoolean(element.getElementsByTagName("status").item(0).getTextContent());
+        String message = element.getElementsByTagName("message").item(0).getTextContent();
+
+        return new ResponseResult(status, message);
     }
 
     private static Player parsePlayerFromElement (Element element) {
