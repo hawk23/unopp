@@ -18,10 +18,18 @@ public class Player extends ModelObject {
     private GameSession gameSession;
     private ArrayList<Card> hand;
 
+    private boolean isActive;
+    private boolean hasDrawn;
+    private boolean hasToChooseColor;
+
     public Player(int ID, String name) {
         this.ID = ID;
         this.name = name;
         this.gameSession = null;
+        this.isActive = false;
+        this.hasDrawn = false;
+        this.hasToChooseColor = false;
+
     }
 
     public void setID(int ID) {
@@ -51,6 +59,36 @@ public class Player extends ModelObject {
     public void sortHand () {
 
         // TODO
+    }
+
+    public void addCardsToHand(ArrayList<Card> cards) {
+        for (Card card : cards) {
+            this.hand.add(card);
+        }
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public boolean hasDrawn() {
+        return hasDrawn;
+    }
+
+    public void setHasDrawn(boolean hasDrawn) {
+        this.hasDrawn = hasDrawn;
+    }
+
+    public boolean hasToChooseColor() {
+        return hasToChooseColor;
+    }
+
+    public void setHasToChooseColor(boolean hasToChooseColor) {
+        this.hasToChooseColor = hasToChooseColor;
     }
 
     @Override
