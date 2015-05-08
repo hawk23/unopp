@@ -24,11 +24,11 @@ import java.util.ArrayList;
 public class CardDeck {
 
     private static final String DECK_SPRITESHEET_PATH = "cards.png";
-    private static final int CARD_WITDH = 192;
+    private static final int CARD_WIDTH = 192;
     private static final int CARD_HEIGHT = 288;
     private static final int HORIZONTAL_COUNT = 14;
     private static final int VERTICAL_COUNT = 8;
-    private static final int DECK_WITDH = CARD_WITDH * HORIZONTAL_COUNT;
+    private static final int DECK_WIDTH = CARD_WIDTH * HORIZONTAL_COUNT;
     private static final int DECK_HEIGHT = CARD_HEIGHT * VERTICAL_COUNT;
 
     private int id = 0;
@@ -62,14 +62,13 @@ public class CardDeck {
             }
             else if (i == 2) {
                 color = UnoColor.GREEN;
-
             }
             else if (i == 3) {
                 color = UnoColor.BLUE;
             }
 
             for (int j = 0; j < HORIZONTAL_COUNT - 1; j++) {
-                Bitmap image = Bitmap.createBitmap(deckBitmap, j * CARD_WITDH, i * CARD_HEIGHT, CARD_WITDH, CARD_HEIGHT);
+                Bitmap image = Bitmap.createBitmap(deckBitmap, j * CARD_WIDTH, i * CARD_HEIGHT, CARD_WIDTH, CARD_HEIGHT);
 
                 if (j == 0) {
                     Card card = new NumberCard(getID(), j, image, color);
@@ -111,7 +110,7 @@ public class CardDeck {
         // init black cards
         UnoColor color = UnoColor.BLACK;
 
-        Bitmap imageColorChange = Bitmap.createBitmap(deckBitmap, 13 * CARD_WITDH, 0 * CARD_HEIGHT, CARD_WITDH, CARD_HEIGHT);
+        Bitmap imageColorChange = Bitmap.createBitmap(deckBitmap, 13 * CARD_WIDTH, 0, CARD_WIDTH, CARD_HEIGHT);
 
         Card card1 = new ActionCard(getID(), imageColorChange, color);
         ((ActionCard)card1).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
@@ -126,7 +125,7 @@ public class CardDeck {
         this.deck.add(card3);
         this.deck.add(card4);
 
-        Bitmap imageADD4 = Bitmap.createBitmap(deckBitmap, 13 * CARD_WITDH, 4 * CARD_HEIGHT, CARD_WITDH, CARD_HEIGHT);
+        Bitmap imageADD4 = Bitmap.createBitmap(deckBitmap, 13 * CARD_WIDTH, 4 * CARD_HEIGHT, CARD_WIDTH, CARD_HEIGHT);
 
         Card card5 = new ActionCard(getID(), imageADD4, color);
         ((ActionCard)card5).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
