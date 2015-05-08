@@ -21,6 +21,12 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/flStatus"
+                android:layout_weight="1"></RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/flUnplayedCards"
                 android:layout_weight="1"></RelativeLayout>
 
@@ -33,8 +39,17 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/flStatus"
-                android:layout_weight="1"></RelativeLayout>
+                android:id="@+id/flPlayers"
+                android:layout_weight="1">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lvPlayers"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="@dimen/general_item_margin"/>
+            </RelativeLayout>
 
         </LinearLayout>
 

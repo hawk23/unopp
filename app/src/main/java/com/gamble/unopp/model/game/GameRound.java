@@ -16,4 +16,20 @@ public class GameRound {
         this.gameSession = gameSession;
         this.gamestate = new GameState(this, shuffledCardIDs);
     }
+
+    public GameSession getGameSession() {
+        return gameSession;
+    }
+
+    public void setGameSession(GameSession gameSession) {
+        this.gameSession = gameSession;
+    }
+
+    public GameState getGamestate() {
+        return gamestate;
+    }
+
+    public void setGamestate(GameState gamestate) {
+        this.gamestate = gamestate;
+    }
 }

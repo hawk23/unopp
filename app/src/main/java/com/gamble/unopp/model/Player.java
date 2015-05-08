@@ -29,6 +29,7 @@ public class Player extends ModelObject {
         this.isActive = false;
         this.hasDrawn = false;
         this.hasToChooseColor = false;
+        this.hand = new ArrayList<Card>();
 
     }
 
@@ -42,6 +43,10 @@ public class Player extends ModelObject {
 
     public String getName() {
         return name;
+    }
+
+    public GameSession getGameSession() {
+        return gameSession;
     }
 
     public void setGameSession(GameSession gameSession) {
@@ -89,6 +94,14 @@ public class Player extends ModelObject {
 
     public void setHasToChooseColor(boolean hasToChooseColor) {
         this.hasToChooseColor = hasToChooseColor;
+    }
+
+    public ArrayList<Card> getHand() {
+        return hand;
+    }
+
+    public void setHand(ArrayList<Card> hand) {
+        this.hand = hand;
     }
 
     @Override

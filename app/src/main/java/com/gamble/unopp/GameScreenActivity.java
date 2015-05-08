@@ -13,15 +13,21 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
+import com.gamble.unopp.model.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.game.CardDeck;
+
+import java.util.ArrayList;
 
 
 public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener {
@@ -29,6 +35,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private LinearLayout llHand;
     private RelativeLayout flPlayedCards;
     private ChooseColorDialogFragment chooseColorDialogFragment = new ChooseColorDialogFragment();
+    private ListView lvPlayers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // get views
         this.llHand             = (LinearLayout) findViewById(R.id.llHand);
         this.flPlayedCards      = (RelativeLayout) findViewById(R.id.flPlayedCards);
+        this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
 
         CardDeck deck = new CardDeck();
 
@@ -59,6 +67,18 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         }
 
         flPlayedCards.setOnDragListener(this);
+
+        // HACK display hardcoded players
+        ArrayList<Player> players = new ArrayList<Player>();
+        players.add(new Player(1, "Peter"));
+        players.add(new Player(2, "Verena"));
+        players.add(new Player(3, "Albert"));
+        players.add(new Player(4, "Julius"));
+        players.add(new Player(5, "Roland"));
+        players.add(new Player(6, "Mario"));
+
+        ArrayAdapter arrayAdapter = new GameScreenPlayerListAdapter(this.getBaseContext(), players);
+        this.lvPlayers.setAdapter(arrayAdapter);
     }
 
     @Override
