@@ -24,32 +24,55 @@ namespace UnoPP
 
         public Player(string name)
         {
-            this.id = nextID++;
-            this.name = name;
+            this.Cards = new List<Card>();
+
+            lock (objLock)
+            {
+                this.id = nextID++;
+                this.name = SetName(name, 1);
+                Player.players.Add(this);
+            }           
         }
 
         public Player(string name, double latitude,  double longitude)
         {
-            this.name = name;
             this.Location = new Location(latitude, longitude);
+            this.Cards = new List<Card>();
 
-            lock(objLock)
-            {
-                this.id = nextID++;
-                Player.players.Add(this);
-            }
+            new Player(name);
         }
 
-        public static Player getPlayerByID(int playerID)
+        public static Player GetPlayerByID(int playerID)
         {
-            try
+            foreach(Player player in Player.players)
             {
-                return Player.players[playerID];
+                if(player.id == playerID)
+                {
+                    return player;
+                }
             }
-            catch (ArgumentOutOfRangeException ex)
+
+            return null;
+        }
+
+        private string SetName(string name, int count)
+        {
+            for (int i = 0; i < Player.players.Count; i++)
             {
-                Console.WriteLine("Error in getPlayerByID: " + ex.Message);
-                return null;
+                // name is already taken
+                if(0 == String.Compare(Player.players[i].name, name) || (0 == String.Compare(Player.players[i].name + " (" + i + ")", name)))
+                {
+                    return SetName(name, ++count);
+                }
+            }
+
+            if (count > 1)
+            {
+                return name + " (" + count + ")";
+            }
+            else
+            {
+                return name;
             }
         }
     }

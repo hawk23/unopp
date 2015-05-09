@@ -38,6 +38,7 @@ namespace UnoPP
             this.maxPlayers = maxPlayers;
             this.name = gameName;
             this.Players = new Player[maxPlayers];
+            this.GameRounds = new List<GameRound>();
         }
 
         public GameSession(string gameName, int playerID, double latitude, double longitude, int maxPlayers, int mode)

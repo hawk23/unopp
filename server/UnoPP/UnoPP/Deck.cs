@@ -7,30 +7,39 @@ namespace UnoPP
 {
     public class Deck
     {
-        public Stack<Card> drawStack;
-        public Stack<Card> playedStack;
+        public List<Card> drawStack;
+        public List<Card> playedStack;
 
-        public Deck(Stack<Card> stack)
+        public Deck()
         {
-            this.drawStack = Shuffle(stack);
-            this.playedStack = new Stack<Card>();
-            this.playedStack.Push(DrawCard(this));
+
         }
 
-        public Stack<Card> Shuffle(Stack<Card> stack)
+        public Deck(List<Card> stack)
+        {
+            this.drawStack = Shuffle(stack);
+            this.playedStack = new List<Card>();
+            this.playedStack.Insert(0, DrawCard(this));
+        }
+
+        public List<Card> Shuffle(List<Card> stack)
         {
             // TODO
             return stack;
         }
 
-        public static Card DrawCard(Deck Deck)
+        public static Card DrawCard(Deck deck)
         {
-            return Deck.drawStack.Pop();
+            Card card = deck.drawStack.Last();
+
+            deck.drawStack.RemoveAt(deck.drawStack.Count-1);
+            
+            return card;
         }
 
-        public static void PlayCard(Deck Deck, Card card)
+        public static void PlayCard(Deck deck, Card card)
         {
-            Deck.playedStack.Push(card);
+            deck.playedStack.Insert(0, card);
         }
     }
 }

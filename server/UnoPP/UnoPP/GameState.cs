@@ -24,7 +24,7 @@ namespace UnoPP
         {
             this.currentPlayer = currentPlayer;
             this.Deck = Deck;
-            this.topCard = Deck.playedStack.Peek().id;
+            this.topCard = Deck.playedStack[0].id;
             this.drawCounter = 1;
 
             this.currentColor = CheckColor(this.topCard);
@@ -39,6 +39,8 @@ namespace UnoPP
             {
                 this.nextPlayer = this.currentPlayer - 1;
             }
+
+            this.Deck = Deck;
         }
 
         /// <summary>

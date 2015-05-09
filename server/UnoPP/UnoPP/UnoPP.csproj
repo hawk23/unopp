@@ -78,7 +78,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Card.cs" />
+    <Compile Include="Deck.cs" />
+    <Compile Include="GameRound.cs" />
     <Compile Include="GameResult.cs" />
+    <Compile Include="GameState.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="GameSession.cs" />
     <Compile Include="Location.cs" />

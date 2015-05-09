@@ -11,7 +11,6 @@ namespace UnoPP
         private static readonly object objLock = new object();
 
         public int id;
-        //public bool active;
         public GameState GameState;
 
         public GameRound()
@@ -25,6 +24,8 @@ namespace UnoPP
             {
                 this.id = nextID++;
             }
+
+            this.GameState = gameState;
         }
     }
 }

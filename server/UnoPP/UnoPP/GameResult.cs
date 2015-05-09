@@ -5,20 +5,20 @@ using System.Web;
 
 namespace UnoPP
 {
-    public class GetGameResponse
+    public class GameResult
     {
-        public Result result;
-        public GameSession gameSession;
+        public Result Result;
+        public GameSession GameSession;
 
-        public GetGameResponse()
+        public GameResult()
         {
 
         }
 
-        public GetGameResponse(Result result, GameSession gameSession)
+        public GameResult(Result result, GameSession gameSession)
         {
-            this.result = result;
-            this.gameSession = gameSession;
+            this.Result = result;
+            this.GameSession = gameSession;
         }
     }
 }

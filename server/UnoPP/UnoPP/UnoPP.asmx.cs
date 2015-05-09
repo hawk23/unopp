@@ -24,15 +24,12 @@ namespace UnoPP
     {
         private static List<GameSession> gameSessions = new List<GameSession>();
 
-        private static int mode = 0;
-        private static int nrCards = 108;
-
         static readonly object objLock = new object();
         static Random rnd = new Random();
 
         private static Deck InitStackOfCards(int mode)
         {
-            Stack<Card> stackOfCards = null;
+            List<Card> stackOfCards = null;
             int nrCards;
 
             switch(mode)
@@ -40,22 +37,22 @@ namespace UnoPP
                 case 0: 
                     {
                         nrCards = 108;
-                        stackOfCards = new Stack<Card>(nrCards);
+                        stackOfCards = new List<Card>(nrCards);
                         
                         for(int i = 0; i < nrCards; i++)
                         {
-                            stackOfCards.Push(new Card(i, -1));
+                            stackOfCards.Add(new Card(i, -1));
                         }
 
                     } break;
                 case 1: // TODO: cheat mode 1
                     {   
                         nrCards = 110;
-                        stackOfCards = new Stack<Card>(nrCards);
+                        stackOfCards = new List<Card>(nrCards);
 
                         for(int i = 0; i < nrCards; i++)
                         {
-                            stackOfCards.Push(new Card(i, -1));
+                            stackOfCards.Add(new Card(i, -1));
                         }
                     } break;
                 default:
@@ -155,29 +152,44 @@ namespace UnoPP
         }
 
         [WebMethod]
-        public GameSession CreateGame(string gameName, int playerID, double latitude, double longitude, int maxPlayers)
+        public GameResult CreateGame(string gameName, int hostID, double latitude, double longitude, int maxPlayers)
         {
             // create a new game session
-            GameSession gameSession = new GameSession(gameName, playerID, latitude, longitude, maxPlayers);
-            
-            // add game session to list
-            UnoPP.gameSessions.Add(gameSession);
+            GameSession gameSession = null;
 
+            // check if player who is host exists
+            if (Player.GetPlayerByID(hostID) != null)
+            {
+                // check if value of maxPlayers in valid
+                if (maxPlayers <= 1 || maxPlayers >= 9)
+                {
+                    return new GameResult(new Result(false, "Maximale Spieleranzahl muss größer als 1 und kleiner als 9 sein!"), null);
+                }
+
+                // add game session to list
+                gameSession = new GameSession(gameName, hostID, latitude, longitude, maxPlayers);
+                UnoPP.gameSessions.Add(gameSession);
+            }
+            else
+            {
+                return new GameResult(new Result(false, "Spiel konnte nicht erstellt werden, da Host nicht gefunden wurde!"), null);
+            }
+         
             // host joins to his own game
-            JoinGame(gameSession.id, playerID);
+            Result result = JoinGame(gameSession.id, hostID);
 
-            return gameSession;
+            return new GameResult(result, gameSession);
         }
 
         [WebMethod]
-        public Result JoinGame(int gameSessionID, int playerID)
+        public Result JoinGame(int gameID, int playerID)
         {
-            GameSession gameSession = GetGameSession(gameSessionID);
+            GameSession gameSession = GetGameSession(gameID);
             
             // there was no game found
             if (gameSession == null)
             {
-                return GameSessionNotFoundResult(gameSessionID);
+                return GameSessionNotFoundResult(gameID);
             }
 
             lock(objLock)
@@ -185,18 +197,27 @@ namespace UnoPP
                 // try to find a free seat in the current game session
                 for (int i = 0; i < gameSession.maxPlayers; i++)
                 {
+                    // check if player is already in game session
+                    if (gameSession.Players[i] != null)
+                    {
+                        if (gameSession.Players[i].id == playerID)
+                        {
+                            return new Result(false, "Spieler mit ID: " + playerID + " bereits im Spiel!");
+                        }
+                    }
                     // free seat found
                     if (gameSession.Players[i] == null)
                     {
                         // successfully joined game session
-                        if((gameSession.Players[i] = Player.getPlayerByID(playerID)) != null)
+                        if(Player.GetPlayerByID(playerID) != null)
                         {
+                            gameSession.Players[i] = Player.GetPlayerByID(playerID);
                             return new Result(true, "Erfolgreich beigetreten!");
                         }
                         // player was not found
                         else
                         {
-                            return new Result(false, "Spieler mit ID: " + playerID + "nicht gefunden!");
+                            return new Result(false, "Spieler mit ID: " + playerID + " nicht gefunden!");
                         }
                     }
                 }
@@ -207,21 +228,21 @@ namespace UnoPP
         } 
         
         [WebMethod]
-        public GetGameResponse GetGame(int gameSessionID)
+        public GameResult GetGame(int gameID)
         {
-            GameSession gameSession = GetGameSession(gameSessionID);
-            Result result = null;
+            GameSession gameSession = GetGameSession(gameID);
+            Result Result = null;
 
             // no game session with given id found
             if(gameSession == null)
             {
-                result = GameSessionNotFoundResult(gameSessionID);
+                Result = GameSessionNotFoundResult(gameID);
             }
                 
-            return new GetGameResponse(result, gameSession);
+            return new GameResult(Result, gameSession);
         }
         
-        [WebMethod]
+        //[WebMethod]
         public GameSession GetGameSession(int gameSessionID)
         {
             foreach (GameSession session in UnoPP.gameSessions)
@@ -233,11 +254,10 @@ namespace UnoPP
             }
                 
             return null;
-        }   
-           
+        }             
         
         [WebMethod]
-        public Result StartGame(int gameID, int playerID)
+        public Result StartGame(int gameID, int hostID)
         {      
             GameSession gameSession = GetGameSession(gameID);
             int nrStartCards = 7;
@@ -249,48 +269,62 @@ namespace UnoPP
             }
             
             // missing permission
-            if (gameSession.host != playerID)
+            if (gameSession.host != hostID)
             {
-                return new Result(false, "Spieler mit ID: " + playerID + " hat keine Berechtigungen um Spiel zu starten!");
+                return new Result(false, "Nur Host (ID: " + gameSession.host + ") kann Spiel starten!");
             }
 
-            // find number of players in session
-            int nrPlayers;
+            // find number of active players in session
+            int nrActivePlayers;
 
-            for (nrPlayers = 0; nrPlayers < gameSession.maxPlayers; nrPlayers++)
+            for (nrActivePlayers = 0; nrActivePlayers < gameSession.maxPlayers; nrActivePlayers++)
             {
-                if (gameSession.Players[nrPlayers] == null)
+                if (gameSession.Players[nrActivePlayers] == null)
                 {
                     break;
                 }
             }
 
+            if (nrActivePlayers <= 1)
+            {
+               return new Result(false, "Nicht genügend Spieler vorhanden!");
+            }
+
             // create new game round
-            GameState gameState = new GameState(playerID, nrPlayers, InitStackOfCards(gameSession.mode));
+            GameState gameState = new GameState(hostID, nrActivePlayers, InitStackOfCards(gameSession.mode));
             GameRound gameRound = new GameRound(gameState);
             gameSession.GameRounds.Add(gameRound);
             
             // assign 7 cards to each active player
-            for(int j = 0; j < nrStartCards; j++)
+            for (int j = 0; j < nrStartCards; j++)
             {
-                for(int i = 0; i < nrPlayers; i++)
+                for (int i = 0; i < nrActivePlayers; i++)
                 {
-                    gameSession.Players[i].Cards.Add(Deck.DrawCard(gameState.Deck));
+                    Card card = Deck.DrawCard(gameState.Deck);
+                    card.owner = gameSession.Players[i].id;
+                    gameSession.Players[i].Cards.Add(card);
                 }
             }
             
-            return new Result(true, "Spiel erfolgreich gestartet");
+            return new Result(true, "Spiel erfolgreich gestartet!");
         }
 
         [WebMethod]
-        public Result DestroyGame(int gameID)
+        public Result DestroyGame(int gameID, int hostID)
         {
             for(int i = 0; i < UnoPP.gameSessions.Count; i++)
             {
                 if (UnoPP.gameSessions[i].id == gameID)
                 {
-                    UnoPP.gameSessions.RemoveAt(i);
-                    return new Result(true, "Spiel mit ID: " + gameID + " erfolgreich entfernt!");
+                    if (UnoPP.gameSessions[i].host == hostID)
+                    {
+                        UnoPP.gameSessions.RemoveAt(i);
+                        return new Result(true, "Spiel mit ID: " + gameID + " erfolgreich entfernt!");
+                    }
+                    else
+                    {
+                        return new Result(false, "Spieler mit ID: " + hostID + " hat keine Berechtigungen um Spiel zu starten!");
+                    }
                 }
             }
 
@@ -337,7 +371,7 @@ namespace UnoPP
         }
         */
 
-        [WebMethod]
+        // [WebMethod]
         public Card[] GetCardFromDeck(int gameID, int playerID, int nrCards)
         {
             // TODO: what if gameID or playerID is invalid

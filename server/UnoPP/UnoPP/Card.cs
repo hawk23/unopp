@@ -10,7 +10,7 @@ namespace UnoPP
         private static int nextID = 0;
 
         public int id;
-        public int order;
+        // public int order;
         public int owner;   // -1: on stack there is no owner
 
         public Card()
@@ -21,7 +21,7 @@ namespace UnoPP
         public Card(int order, int owner)
         {
             this.id = nextID++;
-            this.order = order;
+            // this.order = order;
             this.owner = owner;
         }
     }
