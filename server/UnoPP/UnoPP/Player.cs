@@ -29,7 +29,7 @@ namespace UnoPP
             lock (objLock)
             {
                 this.id = nextID++;
-                this.name = SetName(name, 1);
+                this.name = SetName(name, 0);
                 Player.players.Add(this);
             }           
         }
@@ -57,16 +57,24 @@ namespace UnoPP
 
         private string SetName(string name, int count)
         {
+            bool changeName = false;
+
             for (int i = 0; i < Player.players.Count; i++)
             {
                 // name is already taken
-                if(0 == String.Compare(Player.players[i].name, name) || (0 == String.Compare(Player.players[i].name + " (" + i + ")", name)))
+                if((0 == String.Compare(Player.players[i].name, name) && count == 0) || (0 == String.Compare(Player.players[i].name + " (" + count + ")", name)))
                 {
-                    return SetName(name, ++count);
+                    count++;
+                    changeName = true;
+                    break;
                 }
+            }   
+            
+            if (changeName)
+            {
+                return SetName(name, count);
             }
-
-            if (count > 1)
+            if (count >= 1)
             {
                 return name + " (" + count + ")";
             }
