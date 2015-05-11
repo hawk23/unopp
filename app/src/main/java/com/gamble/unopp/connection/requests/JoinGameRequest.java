@@ -1,7 +1,6 @@
 package com.gamble.unopp.connection.requests;
 
 import com.gamble.unopp.connection.response.JoinGameResponse;
-import com.gamble.unopp.connection.response.LeaveGameResponse;
 
 /**
  * Created by Verena on 05.05.2015.
