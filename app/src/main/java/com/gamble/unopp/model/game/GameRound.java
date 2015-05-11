@@ -1,6 +1,9 @@
 package com.gamble.unopp.model.game;
 
 import com.gamble.unopp.model.GameSession;
+import com.gamble.unopp.model.Player;
+
+import java.util.ArrayList;
 
 /**
  * Created by Albert on 05.05.2015.
@@ -11,10 +14,10 @@ public class GameRound {
     private GameSession gameSession;
     private GameState gamestate;
 
-    public GameRound (int ID, GameSession gameSession, int[] shuffledCardIDs) {
+    public GameRound (int ID, GameSession gameSession, int[] shuffledCardIDs, int[] playerOrder) {
         this.ID = ID;
         this.gameSession = gameSession;
-        this.gamestate = new GameState(this, shuffledCardIDs);
+        this.gamestate = new GameState(this, shuffledCardIDs, playerOrder);
     }
 
     public GameSession getGameSession() {
@@ -31,5 +34,9 @@ public class GameRound {
 
     public void setGamestate(GameState gamestate) {
         this.gamestate = gamestate;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return this.gameSession.getPlayers();
     }
 }

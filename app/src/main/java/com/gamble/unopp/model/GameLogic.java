@@ -8,6 +8,7 @@ import com.gamble.unopp.model.cards.NumberCard;
 import com.gamble.unopp.model.game.CardDeck;
 import com.gamble.unopp.model.game.GameState;
 import com.gamble.unopp.model.game.Turn;
+import com.gamble.unopp.model.game.UnoDirection;
 
 import java.util.ArrayList;
 
@@ -40,15 +41,45 @@ public class GameLogic {
 
         Card card = popFromStack(1).get(0);
         pushToPlayedStack(card);
-        initInitialState();
     }
 
-    private void initInitialState() {
+    public void setInitialState() {
         // ToDo: check card, direction etc to init the beginning
+        Card topCard = this.getTopCard();
+        this.state.setTopCard(topCard);
+        this.state.setDirection(UnoDirection.CLOCKWISE);
+
+        if (topCard instanceof NumberCard) {
+            this.state.setActualColor(topCard.getColor());
+        }
+        else {
+            // topCard is ActionCard
+            ArrayList<Action> actions = ((ActionCard) topCard).getActions();
+
+            if (actions.size() == 2) {
+                // card is ADD4
+            }
+            else {
+                int actionType = actions.get(0).getActionType().getType();
+
+                if (actionType == ActionType.CHANGE_COLOR) {
+
+                }
+                else if(actionType == ActionType.ADD2) {
+
+                }
+                else if (actionType == ActionType.CHANGE_DIRECTION) {
+
+                }
+                else if (actionType == ActionType.SKIP_TURN) {
+
+                }
+            }
+        }
     }
 
     public ArrayList<Card> popFromStack(int amount) {
-        // ToDo: check sizeofstack and if not enough cards available - generate new deck
+        // ToDo: check sizeofstack and if not enough cards available - generate new deck or take playedStack - shuffle and push to stack;
 
         ArrayList<Card> drawnCards = new ArrayList<Card>();
 
@@ -114,6 +145,7 @@ public class GameLogic {
                     doTurn(turn);
                 }
                 break;
+            case Turn.CALL_UNO: break;
         }
 
 
@@ -124,10 +156,23 @@ public class GameLogic {
         // ToDo: update GameState and Player State
 
         switch (turn.getType()) {
-            case Turn.DRAW: break;
-            case Turn.PLAY_CARD: break;
-            case Turn.NEXT: break;
+            case Turn.DRAW:
+                if (this.state.getDrawCounter() == 0) {
+                    turn.getPlayer().addCardsToHand(popFromStack(1));
+                }
+                else {
+                    turn.getPlayer().addCardsToHand(popFromStack(this.state.getDrawCounter()));
+                }
+                turn.getPlayer().setHasDrawn(true);
+                break;
+            case Turn.PLAY_CARD:
+
+                break;
+            case Turn.NEXT:
+
+                break;
             case Turn.CHOOSE_COLOR: break;
+            case Turn.CALL_UNO: break;
         }
     }
 

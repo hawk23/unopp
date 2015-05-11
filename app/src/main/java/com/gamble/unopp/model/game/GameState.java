@@ -18,12 +18,65 @@ public class GameState {
     private Card topCard;
     private int drawCounter;
     private Player actualPlayer;
-    private Player nextPlayer;
     private UnoColor actualColor;
+    private ArrayList<Player> playerOrder;
 
-    public GameState(GameRound gameRound, int[] shuffledCardIDs) {
+    public GameState(GameRound gameRound, int[] shuffledCardIDs, int[] playerOrder) {
         this.gameRound = gameRound;
+        this.playerOrder = new ArrayList<Player>();
+        initPlayerOrder(playerOrder);
         this.logic = new GameLogic(this, shuffledCardIDs);
+        this.logic.setInitialState();
+    }
+
+    private void initPlayerOrder(int[] playerOrder) {
+        int n = 0;
+        while (n < playerOrder.length) {
+            for (Player p : this.gameRound.getPlayers()) {
+                if (playerOrder[n] == p.getID()) {
+                    this.playerOrder.add(p);
+                    n++;
+                    break;
+                }
+            }
+        }
+        actualPlayer = this.playerOrder.get(0);
+    }
+
+    public void nextPlayer() {
+
+        if (this.direction == UnoDirection.CLOCKWISE) {
+
+            if (this.playerOrder.indexOf(this.actualPlayer) + 1 < this.playerOrder.size()) {
+                actualPlayer = this.playerOrder.get(this.playerOrder.indexOf(this.actualPlayer) + 1);
+            }
+            else {
+                actualPlayer = this.playerOrder.get(0);
+            }
+        }
+        else {
+
+            if (this.playerOrder.indexOf(this.actualPlayer) - 1 >= 0) {
+                actualPlayer = this.playerOrder.get(this.playerOrder.indexOf(this.actualPlayer) - 1);
+            }
+            else {
+                actualPlayer = this.playerOrder.get(this.playerOrder.size() - 1);
+            }
+        }
+    }
+
+    public void skipPlayer() {
+        this.nextPlayer();
+        this.nextPlayer();
+    }
+
+    public void changeDirection() {
+        if (this.direction == UnoDirection.CLOCKWISE) {
+            this.direction = UnoDirection.COUNTERCLOCKWISE;
+        }
+        else {
+            this.direction = UnoDirection.CLOCKWISE;
+        }
     }
 
     public UnoDirection getDirection() {
@@ -56,14 +109,6 @@ public class GameState {
 
     public void setActualPlayer(Player actualPlayer) {
         this.actualPlayer = actualPlayer;
-    }
-
-    public Player getNextPlayer() {
-        return nextPlayer;
-    }
-
-    public void setNextPlayer(Player nextPlayer) {
-        this.nextPlayer = nextPlayer;
     }
 
     public UnoColor getActualColor() {

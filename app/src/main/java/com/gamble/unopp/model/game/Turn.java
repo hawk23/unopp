@@ -16,6 +16,7 @@ public class Turn {
     public static final int PLAY_CARD = 1;
     public static final int NEXT = 2;
     public static final int CHOOSE_COLOR = 3;
+    public static final int CALL_UNO = 4;
 
     private int ID;
 
@@ -26,7 +27,7 @@ public class Turn {
 
     /**
      * constructor
-     * @param type DRAW = 0, PLAY_CARD = 1, NEXT = 2, CHOOSE_COLOR = 3
+     * @param type
      * @param player
      */
     public Turn (int type, Player player) {
@@ -38,7 +39,7 @@ public class Turn {
 
     /**
      *
-     * @param type DRAW = 0, PLAY_CARD = 1, NEXT = 2, CHOOSE_COLOR = 3
+     * @param type
      * @param player
      * @param card if type is PLAY_CARD
      */
@@ -51,7 +52,7 @@ public class Turn {
 
     /**
      *
-     * @param type DRAW = 0, PLAY_CARD = 1, NEXT = 2, CHOOSE_COLOR = 3
+     * @param type
      * @param player
      * @param color if type is CHOOSE_COLOR
      */
