@@ -13,4 +13,8 @@ public class NumberCard extends Card {
         super(ID, image, color);
         this.value = value;
     }
+
+    public int getValue() {
+        return value;
+    }
 }

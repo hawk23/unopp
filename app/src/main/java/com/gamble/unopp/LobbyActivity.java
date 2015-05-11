@@ -1,7 +1,6 @@
 package com.gamble.unopp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -20,8 +19,8 @@ import com.gamble.unopp.connection.requests.ListGamesRequest;
 import com.gamble.unopp.connection.response.JoinGameResponse;
 import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
-import com.gamble.unopp.model.GameSession;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.game.GameSession;
+import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 import java.util.ArrayList;

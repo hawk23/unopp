@@ -1,9 +1,7 @@
-package com.gamble.unopp.model;
+package com.gamble.unopp.model.game;
 
 import com.gamble.unopp.GameSettings;
-import com.gamble.unopp.model.game.GameRound;
-
-import org.w3c.dom.Element;
+import com.gamble.unopp.model.ModelObject;
 
 import java.util.ArrayList;
 
