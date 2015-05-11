@@ -19,48 +19,7 @@ public class ListGamesResponse extends Response {
     @Override
     public void parseXML(String xmlResponse) throws Exception {
 
-        // HACK hardcoded response
-        xmlResponse = "<ListGamesResponse xmlns=\"http://tempuri.org/\">\n" +
-                "  <ListGamesResult>\n" +
-                "    <GameSession>\n" +
-                "        <id>1</id>\n" +
-                "        <maxPlayers>6</maxPlayers>\n" +
-                "        <started>false</started>\n" +
-                "        <name>Mario's Spiel</name>\n" +
-                "        <host>1</host>\n" +
-                "        <Players>\n" +
-                "            <Player>\n" +
-                "                <name>Mario</name>\n" +
-                "                <id>1</id>\n" +
-                "            </Player>\n" +
-                "            <Player>\n" +
-                "                <name>Albert</name>\n" +
-                "                <id>2</id>\n" +
-                "            </Player>\n" +
-                "            <Player>\n" +
-                "                <name>Verena</name>\n" +
-                "                <id>3</id>\n" +
-                "            </Player>\n" +
-                "        </Players>\n" +
-                "    </GameSession>\n" +
-                "    <GameSession>\n" +
-                "        <id>2</id>\n" +
-                "        <maxPlayers>6</maxPlayers>\n" +
-                "        <started>false</started>\n" +
-                "        <name>Peter's Spiel</name>\n" +
-                "        <host>4</host>\n" +
-                "        <Players>\n" +
-                "            <Player>\n" +
-                "                <name>Peter</name>\n" +
-                "                <id>4</id>\n" +
-                "            </Player>\n" +
-                "        </Players>\n" +
-                "    </GameSession>\n" +
-                "  </ListGamesResult>\n" +
-                "</ListGamesResponse>";
-        // END HACK
-
-        this.gameSessions               = new Vector<GameSession>();
+        this.gameSessions               = new Vector<>();
 
         Document    dom                 = this.getDomElement(xmlResponse);
         NodeList    gameSessionsList    = dom.getElementsByTagName("GameSession");

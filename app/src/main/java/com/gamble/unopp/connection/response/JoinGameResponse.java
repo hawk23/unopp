@@ -14,16 +14,6 @@ public class JoinGameResponse extends Response {
     @Override
     public void parseXML(String xmlResponse) throws Exception {
 
-        // HACK hardcoded response
-        xmlResponse = "<JoinGameResponse xmlns=\"http://tempuri.org/\">\n" +
-                "      <JoinGameResult>\n" +
-                "        <Result>\n" +
-                "            <status>true</status>\n" +
-                "            <message>Erfogreich beigetreten.</message>\n" +
-                "        </Result>\n" +
-                "      </JoinGameResult>\n" +
-                "</JoinGameResponse>";
-        // END HACK
         Document dom = this.getDomElement(xmlResponse);
         NodeList result = dom.getElementsByTagName("Result");
 

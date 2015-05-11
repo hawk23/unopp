@@ -18,20 +18,6 @@ public class CreateGameResponse extends Response {
     @Override
     public void parseXML(String xmlResponse) throws Exception {
 
-        // HACK hardcoded response
-        xmlResponse = "<CreateGameResponse xmlns=\"http://tempuri.org/\">\n" +
-                "    <CreateGameResult>\n" +
-                "        <GameSession>\n" +
-                "            <id>3</id>\n" +
-                "            <maxPlayers>6</maxPlayers>\n" +
-                "            <started>false</started>\n" +
-                "            <name>New Game</name>\n" +
-                "            <host>1</host>\n" +
-                "        </GameSession>\n" +
-                "    </CreateGameResult>\n" +
-                "</CreateGameResponse>";
-        // END HACK
-
         Document dom = this.getDomElement(xmlResponse);
 
         Node gameSessionNode = dom.getElementsByTagName("GameSession").item(0);
@@ -39,8 +25,7 @@ public class CreateGameResponse extends Response {
 
         this.gameSession = ModelParser.<GameSession>parseModelFromElement(gameSessionElement, GameSession.class);
 
-        this.gameSession.addPlayer(UnoDatabase.getInstance().getLocalPlayer());
-        this.gameSession.setHost(UnoDatabase.getInstance().getLocalPlayer());
+        this.gameSession.setHost(UnoDatabase.getInstance().getLocalPlayer()); //TODO change to host id from response when it works
     }
 
     public GameSession getGameSession() {
