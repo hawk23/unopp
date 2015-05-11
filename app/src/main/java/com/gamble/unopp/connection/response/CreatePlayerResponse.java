@@ -1,6 +1,6 @@
 package com.gamble.unopp.connection.response;
 
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.parsing.ModelParser;
 
 import org.w3c.dom.Document;

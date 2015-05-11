@@ -1,6 +1,5 @@
 package com.gamble.unopp;
 
-import android.app.ActionBar;
 import android.content.ClipData;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
@@ -9,12 +8,9 @@ import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -22,7 +18,7 @@ import android.widget.RelativeLayout;
 
 import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.game.CardDeck;

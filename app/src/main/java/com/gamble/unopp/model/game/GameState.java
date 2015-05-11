@@ -1,7 +1,6 @@
 package com.gamble.unopp.model.game;
 
-import com.gamble.unopp.model.GameLogic;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.logic.GameLogic;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
 

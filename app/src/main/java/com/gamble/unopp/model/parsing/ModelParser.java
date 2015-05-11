@@ -1,8 +1,8 @@
 package com.gamble.unopp.model.parsing;
 
 import com.gamble.unopp.connection.response.ResponseResult;
-import com.gamble.unopp.model.GameSession;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.game.GameSession;
+import com.gamble.unopp.model.game.Player;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

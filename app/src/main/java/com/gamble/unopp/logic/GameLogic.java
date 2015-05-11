@@ -1,4 +1,4 @@
-package com.gamble.unopp.model;
+package com.gamble.unopp.logic;
 
 import com.gamble.unopp.model.cards.Action;
 import com.gamble.unopp.model.cards.ActionCard;

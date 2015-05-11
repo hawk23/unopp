@@ -16,7 +16,8 @@ import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreateGameRequest;
 import com.gamble.unopp.connection.response.CreateGameResponse;
 import com.gamble.unopp.connection.response.Response;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.helper.SharedPreferencesKeys;
+import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 

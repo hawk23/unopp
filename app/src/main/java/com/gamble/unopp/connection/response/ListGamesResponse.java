@@ -1,12 +1,10 @@
 package com.gamble.unopp.connection.response;
 
-import com.gamble.unopp.model.GameSession;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.parsing.ModelParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.Vector;

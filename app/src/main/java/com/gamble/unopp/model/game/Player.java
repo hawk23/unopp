@@ -1,12 +1,10 @@
-package com.gamble.unopp.model;
+package com.gamble.unopp.model.game;
 
+import com.gamble.unopp.model.ModelObject;
 import com.gamble.unopp.model.cards.Card;
-
-import org.w3c.dom.Element;
+import com.gamble.unopp.model.game.GameSession;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by Albert on 02.05.2015.
