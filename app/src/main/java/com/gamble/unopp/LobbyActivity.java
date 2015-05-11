@@ -154,7 +154,7 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
             @Override
             public void requestFinished(Response response) {
-                joinGameFinished((JoinGameResponse) response, game); // TODO response is null - why?
+                joinGameFinished((JoinGameResponse) response, game);
             }
         });
         rp.execute(joinGameRequest);
