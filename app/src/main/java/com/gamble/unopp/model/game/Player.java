@@ -16,14 +16,16 @@ public class Player extends ModelObject {
     private GameSession gameSession;
     private ArrayList<Card> hand;
 
+    private boolean uno;
     private boolean isActive;
     private boolean hasDrawn;
     private boolean hasToChooseColor;
 
     public Player(int ID, String name) {
         this.ID = ID;
-        this.name = name;
         this.gameSession = null;
+        this.name = name;
+        this.uno = false;
         this.isActive = false;
         this.hasDrawn = false;
         this.hasToChooseColor = false;
@@ -100,6 +102,14 @@ public class Player extends ModelObject {
 
     public void setHand(ArrayList<Card> hand) {
         this.hand = hand;
+    }
+
+    public boolean isUno() {
+        return uno;
+    }
+
+    public void setUno(boolean uno) {
+        this.uno = uno;
     }
 
     @Override

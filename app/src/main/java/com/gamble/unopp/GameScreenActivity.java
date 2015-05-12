@@ -1,9 +1,9 @@
 package com.gamble.unopp;
 
 import android.content.ClipData;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Path;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.DragEvent;
@@ -24,6 +24,7 @@ import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.game.CardDeck;
+import com.gamble.unopp.model.management.UnoDatabase;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private ChooseColorDialogFragment chooseColorDialogFragment = new ChooseColorDialogFragment();
     private ImageView ivDirection;
     private ListView lvPlayers;
+    private GestureDetectorCompat gestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,5 +179,18 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void callUno(View view) {
+        Player self = UnoDatabase.getInstance().getLocalPlayer();
+        self.setUno(true);
+
+        // TODO: notify server from uno call
+
+        renderPlayerCalledUno(self);
+    }
+
+    private void renderPlayerCalledUno(Player player) {
+        
     }
 }

@@ -19,10 +19,20 @@
             android:layout_weight="0.5">
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:id="@+id/flStatus"
-                android:layout_weight="1"></RelativeLayout>
+                android:background="@android:color/transparent">
+
+                <ImageButton
+                    android:background="@android:color/transparent"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:id="@+id/ibUnoButton"
+                    android:src="@drawable/uno_button"
+                    android:onClick="callUno"
+                    android:scaleType="fitXY"/>
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
