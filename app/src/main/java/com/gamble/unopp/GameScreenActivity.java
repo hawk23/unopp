@@ -1,7 +1,9 @@
 package com.gamble.unopp;
 
 import android.content.ClipData;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.DragEvent;
@@ -31,6 +33,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private LinearLayout llHand;
     private RelativeLayout flPlayedCards;
     private ChooseColorDialogFragment chooseColorDialogFragment = new ChooseColorDialogFragment();
+    private ImageView ivDirection;
     private ListView lvPlayers;
 
     @Override
@@ -49,6 +52,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.llHand             = (LinearLayout) findViewById(R.id.llHand);
         this.flPlayedCards      = (RelativeLayout) findViewById(R.id.flPlayedCards);
         this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
+        this.ivDirection        = (ImageView) findViewById(R.id.ivDirection);
+
+        // initialize direction
+        setDirection(Path.Direction.CW);
 
         CardDeck deck = new CardDeck();
 
@@ -75,6 +82,15 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         ArrayAdapter arrayAdapter = new GameScreenPlayerListAdapter(this.getBaseContext(), players);
         this.lvPlayers.setAdapter(arrayAdapter);
+
+    }
+
+    private void setDirection(Path.Direction direction) {
+        if (direction.equals(Path.Direction.CW)) {
+            ivDirection.setImageResource(R.mipmap.direction_down);
+        } else if (direction.equals(Path.Direction.CCW)) {
+            ivDirection.setImageResource(R.mipmap.direction_up);
+        }
     }
 
     @Override
@@ -92,12 +108,20 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     public boolean onDrag(View v, DragEvent event) {
         int action = event.getAction();
         View view = (View) event.getLocalState();
+
+        // HACK : implement check if card can be played here
+        boolean cardPlayable = true;
+
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
                 // do nothing
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
-                v.setBackgroundColor(getResources().getColor(R.color.drag_over));
+                if (cardPlayable) {
+                    v.setBackgroundColor(getResources().getColor(R.color.green));
+                } else {
+                    v.setBackgroundColor(getResources().getColor(R.color.red));
+                }
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
                 v.setBackgroundColor(Color.TRANSPARENT);
@@ -105,21 +129,23 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
             case DragEvent.ACTION_DROP:
                 // Dropped, reassign View to ViewGroup
 
-                LinearLayout owner = (LinearLayout) view.getParent();
-                owner.removeView(view);
+                if (cardPlayable) {
+                    LinearLayout owner = (LinearLayout) view.getParent();
+                    owner.removeView(view);
 
-                RelativeLayout container = (RelativeLayout) v;
-                container.addView(view);
-                view.setVisibility(View.VISIBLE);
-                RelativeLayout.LayoutParams params =  (RelativeLayout.LayoutParams) view.getLayoutParams();
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                params.addRule(RelativeLayout.CENTER_VERTICAL);
+                    RelativeLayout container = (RelativeLayout) v;
+                    container.addView(view);
+                    view.setVisibility(View.VISIBLE);
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+                    params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                    params.addRule(RelativeLayout.CENTER_VERTICAL);
 
-                Card draggedCard = (Card) view.getTag();
-                if (draggedCard.getColor() == UnoColor.BLACK) {
-                    chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
+                    Card draggedCard = (Card) view.getTag();
+                    if (draggedCard.getColor() == UnoColor.BLACK) {
+                        chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
 
-                    //TODO: update game state
+                        //TODO: update game state
+                    }
                 }
                 break;
             case DragEvent.ACTION_DRAG_ENDED:

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="25dp"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Spielname Test"
+        android:id="@+id/startGameTextView" />
+
+        <NumberPicker
+        android:id="@+id/roundPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"  />
+
+        <NumberPicker
+            android:id="@+id/maxPlayerPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/existingGamesListView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:divider="#000000"
+        android:dividerHeight="2dp"
+        android:id="@+id/existingGamesListView"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="true" />
+</RelativeLayout>

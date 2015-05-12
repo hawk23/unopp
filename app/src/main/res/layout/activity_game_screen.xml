@@ -28,7 +28,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/flUnplayedCards"
-                android:layout_weight="1"></RelativeLayout>
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="170dp"
+                    android:src="@mipmap/uno_deck_1d"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="@dimen/general_item_margin"
+                    android:scaleType="fitXY"/>
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -42,13 +51,39 @@
                 android:id="@+id/flPlayers"
                 android:layout_weight="1">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:id="@+id/ivDirection"
+                    android:scaleType="fitXY"
+                    android:layout_marginRight="@dimen/general_item_margin"
+                    android:layout_marginEnd="@dimen/general_item_margin"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
                 <ListView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/lvPlayers"
+                    android:layout_alignRight="@id/ivDirection"
+                    android:layout_alignEnd="@id/ivDirection"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="@dimen/general_item_margin"
+                    android:layout_marginStart="@dimen/general_item_margin"
+                    android:layout_alignParentBottom="false" />
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/progressBar"
                     android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="@dimen/general_item_margin"/>
+                    android:layout_alignRight="@+id/lvPlayers"
+                    android:layout_alignEnd="@+id/lvPlayers"
+                    android:layout_marginRight="55dp"
+                    android:layout_marginEnd="55dp" />
+
             </RelativeLayout>
 
         </LinearLayout>
