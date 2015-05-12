@@ -5,10 +5,8 @@ import com.gamble.unopp.model.cards.ActionCard;
 import com.gamble.unopp.model.cards.ActionType;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.NumberCard;
-import com.gamble.unopp.model.game.CardDeck;
 import com.gamble.unopp.model.game.GameState;
 import com.gamble.unopp.model.game.Turn;
-import com.gamble.unopp.model.game.UnoDirection;
 
 import java.util.ArrayList;
 
@@ -17,94 +15,10 @@ import java.util.ArrayList;
  */
 public class GameLogic {
 
-    private CardDeck deck;
-    private ArrayList<Card> stack;
-    private ArrayList<Card> playedStack;
     private GameState state;
 
-    public GameLogic (GameState state, int[] shuffledCardIDs) {
+    public GameLogic (GameState state) {
         this.state = state;
-        this.stack = new ArrayList<Card>();
-        this.playedStack = new ArrayList<Card>();
-        this.deck = new CardDeck();
-        initDeck(shuffledCardIDs);
-    }
-
-    private void initDeck(int[] shuffledCardIDs) {
-        ArrayList<Card> cards = this.deck.getDeck();
-
-        // build stack
-        for (int i = 0; i < shuffledCardIDs.length; i++) {
-            int id = shuffledCardIDs[i];
-            this.stack.add(cards.get(id));
-        }
-
-        Card card = popFromStack(1).get(0);
-        pushToPlayedStack(card);
-    }
-
-    public void setInitialState() {
-        // ToDo: check card, direction etc to init the beginning
-        Card topCard = this.getTopCard();
-        this.state.setTopCard(topCard);
-        this.state.setDirection(UnoDirection.CLOCKWISE);
-
-        if (topCard instanceof NumberCard) {
-            this.state.setActualColor(topCard.getColor());
-        }
-        else {
-            // topCard is ActionCard
-            ArrayList<Action> actions = ((ActionCard) topCard).getActions();
-
-            if (actions.size() == 2) {
-                // card is ADD4
-            }
-            else {
-                int actionType = actions.get(0).getActionType().getType();
-
-                if (actionType == ActionType.CHANGE_COLOR) {
-
-                }
-                else if(actionType == ActionType.ADD2) {
-
-                }
-                else if (actionType == ActionType.CHANGE_DIRECTION) {
-
-                }
-                else if (actionType == ActionType.SKIP_TURN) {
-
-                }
-            }
-        }
-    }
-
-    public ArrayList<Card> popFromStack(int amount) {
-        // ToDo: check sizeofstack and if not enough cards available - generate new deck or take playedStack - shuffle and push to stack;
-
-        ArrayList<Card> drawnCards = new ArrayList<Card>();
-
-        for (int n = amount; n > 0; n--) {
-            drawnCards.add(stack.get(sizeOfStack() - 1));
-            stack.remove(sizeOfStack() - 1);
-        }
-
-        return drawnCards;
-    }
-
-    public void pushToPlayedStack(Card card) {
-        this.playedStack.add(card);
-    }
-
-    public Card getTopCard() {
-        return this.playedStack.get(sizeOfPlayedStack() - 1);
-    }
-
-    public int sizeOfStack() {
-        return this.stack.size();
-    }
-
-    public int sizeOfPlayedStack() {
-        return this.playedStack.size();
     }
 
     public boolean checkTurn(Turn turn) {
@@ -121,28 +35,24 @@ public class GameLogic {
             case Turn.DRAW:
                 if (!turn.getPlayer().hasDrawn()) {
                     valid = true;
-                    doTurn(turn);
                 }
                 break;
 
             case Turn.PLAY_CARD:
                 if (checkCard(turn.getCard())) {
                     valid = true;
-                    doTurn(turn);
                 }
                 break;
 
             case Turn.NEXT:
                 if (turn.getPlayer().hasDrawn()) {
                     valid = true;
-                    doTurn(turn);
                 }
                 break;
 
             case Turn.CHOOSE_COLOR:
                 if (turn.getPlayer().hasToChooseColor()) {
                     valid = true;
-                    doTurn(turn);
                 }
                 break;
             case Turn.CALL_UNO: break;
@@ -152,16 +62,16 @@ public class GameLogic {
         return valid;
     }
 
-    private void doTurn(Turn turn) {
+    public void doTurn(Turn turn) {
         // ToDo: update GameState and Player State
 
         switch (turn.getType()) {
             case Turn.DRAW:
                 if (this.state.getDrawCounter() == 0) {
-                    turn.getPlayer().addCardsToHand(popFromStack(1));
+                    turn.getPlayer().addCardsToHand(this.state.popFromStack(1));
                 }
                 else {
-                    turn.getPlayer().addCardsToHand(popFromStack(this.state.getDrawCounter()));
+                    turn.getPlayer().addCardsToHand(this.state.popFromStack(this.state.getDrawCounter()));
                 }
                 turn.getPlayer().setHasDrawn(true);
                 break;
@@ -184,7 +94,7 @@ public class GameLogic {
     private boolean checkCard(Card card) {
         boolean valid = false;
 
-        Card topCard = getTopCard();
+        Card topCard = state.getTopCard();
 
         // if the TopCard is a NumberCard
         if (topCard instanceof NumberCard) {

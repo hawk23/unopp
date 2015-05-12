@@ -11,10 +11,10 @@ public class GameRound {
     private GameSession gameSession;
     private GameState gamestate;
 
-    public GameRound (int ID, GameSession gameSession, int[] shuffledCardIDs, int[] playerOrder) {
+    public GameRound (int ID, GameSession gameSession) {
         this.ID = ID;
         this.gameSession = gameSession;
-        this.gamestate = new GameState(this, shuffledCardIDs, playerOrder);
+        this.gamestate = new GameState(this);
     }
 
     public GameSession getGameSession() {

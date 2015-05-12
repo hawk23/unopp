@@ -13,10 +13,9 @@ public class GameSession extends ModelObject {
     private int ID;
     private String name;
     private boolean started;
-    private int currentPlayers;
     private Player host;
-    private ArrayList<Player> players;
     private int maxPlayers;
+    private ArrayList<Player> players;
     private ArrayList<GameRound> gameRounds;
     private GameRound actualGameRound;
 
@@ -26,7 +25,6 @@ public class GameSession extends ModelObject {
         this.name = name;
         this.host = host;
         this.players = new ArrayList<Player>();
-        this.currentPlayers = getCurrentPlayerCount();
         this.started = false;
         this.gameRounds = new ArrayList<GameRound>();
         this.actualGameRound = null;
@@ -84,10 +82,6 @@ public class GameSession extends ModelObject {
 
     public void setStarted(boolean started) {
         this.started = started;
-    }
-
-    public int getCurrentPlayers() {
-        return currentPlayers;
     }
 
     public Player getHost() {
