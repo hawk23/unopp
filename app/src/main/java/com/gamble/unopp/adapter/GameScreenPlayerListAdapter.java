@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gamble.unopp.R;
@@ -39,11 +40,20 @@ public class GameScreenPlayerListAdapter extends ArrayAdapter<Player> {
         // Get rowView from inflater
         View rowView = inflater.inflate(R.layout.game_screen_player_row, parent, false);
 
-        // Get the text view from the rowView
+        // Get the text and image view from the rowView
         TextView txtPlayerName  = (TextView) rowView.findViewById(R.id.txtPlayerName);
+        ImageView imageView = (ImageView) rowView.findViewById(R.id.ivPlayerBubble);
 
         // Set the text for textView
         txtPlayerName.setText(player.getName() +" ("+ player.getHand().size() +")");
+
+        // Set image and only show if player has called uno
+        imageView.setImageResource(R.mipmap.uno_player_bubble);
+        if (player.isUno()) {
+            imageView.setVisibility(View.VISIBLE);
+        } else {
+            imageView.setVisibility(View.INVISIBLE);
+        }
 
         /*
         // highlight current player

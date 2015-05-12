@@ -36,7 +36,8 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private ChooseColorDialogFragment chooseColorDialogFragment = new ChooseColorDialogFragment();
     private ImageView ivDirection;
     private ListView lvPlayers;
-    private GestureDetectorCompat gestureDetector;
+    private ArrayList<Player> players;
+    private ArrayAdapter arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,15 +75,15 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         flPlayedCards.setOnDragListener(this);
 
         // HACK display hardcoded players
-        ArrayList<Player> players = new ArrayList<Player>();
+        players = new ArrayList<>();
         players.add(new Player(1, "Peter"));
         players.add(new Player(2, "Verena"));
         players.add(new Player(3, "Albert"));
         players.add(new Player(4, "Julius"));
         players.add(new Player(5, "Roland"));
-        players.add(new Player(6, "Mario"));
+        players.add(new Player(UnoDatabase.getInstance().getLocalPlayer().getID(), "Mario"));
 
-        ArrayAdapter arrayAdapter = new GameScreenPlayerListAdapter(this.getBaseContext(), players);
+        arrayAdapter = new GameScreenPlayerListAdapter(this.getBaseContext(), players);
         this.lvPlayers.setAdapter(arrayAdapter);
 
     }
@@ -111,7 +112,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         int action = event.getAction();
         View view = (View) event.getLocalState();
 
-        // HACK : implement check if card can be played here
+        // HACK : check if card can be played here
         boolean cardPlayable = true;
 
         switch (event.getAction()) {
@@ -183,14 +184,16 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     public void callUno(View view) {
         Player self = UnoDatabase.getInstance().getLocalPlayer();
-        self.setUno(true);
 
-        // TODO: notify server from uno call
+        for (Player player : players) {
+            if (player.equals(self)) {
+                player.setUno(true);
+            }
+        }
 
-        renderPlayerCalledUno(self);
-    }
+        // TODO: notify server that uno was called
 
-    private void renderPlayerCalledUno(Player player) {
-        
+        // notify listAdapter that players changed
+        arrayAdapter.notifyDataSetChanged();
     }
 }
