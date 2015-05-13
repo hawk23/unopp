@@ -36,8 +36,4 @@ public class ListGamesResponse extends Response {
     public Vector<GameSession> getGameSessions() {
         return gameSessions;
     }
-
-    public void setGameSessions(Vector<GameSession> gameSessions) {
-        this.gameSessions = gameSessions;
-    }
 }
