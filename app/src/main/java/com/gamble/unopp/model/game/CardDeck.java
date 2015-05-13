@@ -38,6 +38,26 @@ public class CardDeck {
     public CardDeck() {
         this.deck = new ArrayList<Card>();
         initDeck();
+
+        // console output just for testing
+        for (Card c : deck) {
+            System.out.print(c.getID() + "/");
+            if (c instanceof NumberCard) {
+                System.out.print(((NumberCard) c).getValue() + "/");
+                System.out.println(c.getColor());
+                System.out.println("---------------------");
+            }
+            else {
+                if (c instanceof ActionCard) {
+                    for (Action a : ((ActionCard) c).getActions()) {
+                        System.out.print(a.getActionType() + "/");
+                    }
+                    System.out.println(c.getColor());
+                    System.out.println("---------------------");
+                }
+
+            }
+        }
     }
 
     private void initDeck() {
@@ -117,9 +137,9 @@ public class CardDeck {
         Card card2 = new ActionCard(getID(), imageColorChange, color);
         ((ActionCard)card2).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
         Card card3 = new ActionCard(getID(), imageColorChange, color);
-        ((ActionCard)card1).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
+        ((ActionCard)card3).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
         Card card4 = new ActionCard(getID(), imageColorChange, color);
-        ((ActionCard)card2).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
+        ((ActionCard)card4).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
         this.deck.add(card1);
         this.deck.add(card2);
         this.deck.add(card3);

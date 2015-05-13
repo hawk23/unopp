@@ -32,30 +32,30 @@ public class GameLogic {
         // ...
         switch (turn.getType()) {
 
-            case Turn.DRAW:
+            case DRAW:
                 if (!turn.getPlayer().hasDrawn()) {
                     valid = true;
                 }
                 break;
 
-            case Turn.PLAY_CARD:
+            case PLAY_CARD:
                 if (checkCard(turn.getCard())) {
                     valid = true;
                 }
                 break;
 
-            case Turn.NEXT:
+            case NEXT:
                 if (turn.getPlayer().hasDrawn()) {
                     valid = true;
                 }
                 break;
 
-            case Turn.CHOOSE_COLOR:
+            case CHOOSE_COLOR:
                 if (turn.getPlayer().hasToChooseColor()) {
                     valid = true;
                 }
                 break;
-            case Turn.CALL_UNO: break;
+            case CALL_UNO: break;
         }
 
 
@@ -66,7 +66,7 @@ public class GameLogic {
         // ToDo: update GameState and Player State
 
         switch (turn.getType()) {
-            case Turn.DRAW:
+            case DRAW:
                 if (this.state.getDrawCounter() == 0) {
                     turn.getPlayer().addCardsToHand(this.state.popFromStack(1));
                 }
@@ -75,14 +75,14 @@ public class GameLogic {
                 }
                 turn.getPlayer().setHasDrawn(true);
                 break;
-            case Turn.PLAY_CARD:
+            case PLAY_CARD:
 
                 break;
-            case Turn.NEXT:
+            case NEXT:
 
                 break;
-            case Turn.CHOOSE_COLOR: break;
-            case Turn.CALL_UNO: break;
+            case CHOOSE_COLOR: break;
+            case CALL_UNO: break;
         }
     }
 

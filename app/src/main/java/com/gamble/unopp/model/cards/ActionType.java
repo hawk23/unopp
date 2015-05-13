@@ -25,4 +25,17 @@ public class ActionType {
     public int getType() {
         return type;
     }
+
+    public String toString() {
+        String s = "";
+        switch (this.type) {
+            case ADD2: s = "ADD2"; break;
+            case ADD4: s = "ADD4"; break;
+            case CHANGE_DIRECTION: s = "CHANGE_DIRECTION"; break;
+            case SKIP_TURN: s = "SKIP_TURN"; break;
+            case CHANGE_COLOR: s = "CHANGE_COLOR"; break;
+        }
+
+        return s;
+    }
 }

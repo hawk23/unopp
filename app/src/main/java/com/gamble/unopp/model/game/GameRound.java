@@ -11,10 +11,20 @@ public class GameRound {
     private GameSession gameSession;
     private GameState gamestate;
 
+    private int localUpdateID = 0;
+
     public GameRound (int ID, GameSession gameSession) {
         this.ID = ID;
         this.gameSession = gameSession;
         this.gamestate = new GameState(this);
+    }
+
+    public int getLocalUpdateID() {
+        return localUpdateID;
+    }
+
+    public void setLocalUpdateID(int localUpdateID) {
+        this.localUpdateID = localUpdateID;
     }
 
     public GameSession getGameSession() {

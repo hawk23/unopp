@@ -54,6 +54,12 @@ public class GameState {
 
     public void setPlayerHand(int PlayerID, ArrayList<Card> hand) {
 
+        for (Player p : this.getPlayers()) {
+            if (p.getID() == PlayerID) {
+                p.setHand(hand);
+                break;
+            }
+        }
     }
 
     public ArrayList<Player> getPlayers() {
