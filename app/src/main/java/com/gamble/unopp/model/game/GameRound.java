@@ -22,6 +22,10 @@ public class GameRound {
 
     }
 
+    public boolean doTurn(Turn turn) {
+        return this.gamestate.doTurn(turn);
+    }
+
     public boolean isActive() {
         return active;
     }
