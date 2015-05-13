@@ -131,9 +131,4 @@ public class Player extends ModelObject {
 
         return true;
     }
-
-    @Override
-    public int hashCode() {
-        return ID;
-    }
 }

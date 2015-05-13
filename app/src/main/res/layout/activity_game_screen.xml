@@ -83,17 +83,6 @@
                     android:layout_marginStart="@dimen/general_item_margin"
                     android:layout_alignParentBottom="false" />
 
-                <ProgressBar
-                    style="?android:attr/progressBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/progressBar"
-                    android:layout_centerVertical="true"
-                    android:layout_alignRight="@+id/lvPlayers"
-                    android:layout_alignEnd="@+id/lvPlayers"
-                    android:layout_marginRight="55dp"
-                    android:layout_marginEnd="55dp" />
-
             </RelativeLayout>
 
         </LinearLayout>

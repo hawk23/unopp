@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -20,24 +21,32 @@ import android.widget.RelativeLayout;
 
 import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
+import com.gamble.unopp.model.cards.ActionCard;
+import com.gamble.unopp.model.game.GameRound;
+import com.gamble.unopp.model.game.GameState;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.game.CardDeck;
+import com.gamble.unopp.model.game.Turn;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener {
+public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener {
 
+    private HorizontalScrollView hswHand;
     private LinearLayout llHand;
+    private RelativeLayout flUnplayedCards;
     private RelativeLayout flPlayedCards;
     private ChooseColorDialogFragment chooseColorDialogFragment = new ChooseColorDialogFragment();
     private ImageView ivDirection;
     private ListView lvPlayers;
     private ArrayList<Player> players;
     private ArrayAdapter arrayAdapter;
+    private List<Card> cards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +61,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         setContentView(R.layout.activity_game_screen);
 
         // get views
+        this.hswHand            = (HorizontalScrollView) findViewById(R.id.hswHand);
         this.llHand             = (LinearLayout) findViewById(R.id.llHand);
+        this.flUnplayedCards    = (RelativeLayout) findViewById(R.id.flUnplayedCards);
         this.flPlayedCards      = (RelativeLayout) findViewById(R.id.flPlayedCards);
         this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
         this.ivDirection        = (ImageView) findViewById(R.id.ivDirection);
@@ -60,9 +71,16 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // initialize direction
         setDirection(Path.Direction.CW);
 
+        // set on click linstener on unplayed cards for drawing cards
+        flUnplayedCards.setOnClickListener(this);
+
         CardDeck deck = new CardDeck();
 
-        for (final Card card : deck.getDeck()) {
+        // HACK: set cards of player here
+        // cards = UnoDatabase.getInstance().getLocalPlayer().getHand();
+        cards = deck.getDeck();
+
+        for (final Card card : cards) {
 
             final ImageView   imageView = new ImageView(getBaseContext());
             imageView.setImageBitmap(card.getImage());
@@ -195,5 +213,57 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         // notify listAdapter that players changed
         arrayAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(View view) {
+        Player self = UnoDatabase.getInstance().getLocalPlayer();
+
+        // HACK draw card - create Turn Object
+        List<Card> cardsDrawn = new ArrayList<>();
+        cardsDrawn.add(cards.get(0));
+        cardsDrawn.add(cards.get(1));
+        cardsDrawn.add(cards.get(2));
+        cardsDrawn.add(cards.get(3));
+        // END HACK
+        /*
+        GameRound gameRound = self.getGameSession().getActualGameRound();
+        int updateId = gameRound.getLocalUpdateID();
+        int numberCardsOld = self.getHandCount();
+
+        Turn turn = new Turn(updateId, Turn.TurnType.DRAW, self);
+        if (gameRound.doTurn() == true) {
+            cardsDrawn =
+        } else {
+            // TODO update view to show that drawing is not possible
+        }
+        int numberCardsNew = self.getHandCount();
+        int drawnCards = numberCardsNew - numberCardsOld;
+
+        for (int i = 0; i < drawnCards; i++) {
+            cardsDrawn.add(self.getHand().get(numberCardsNew - drawnCards + i));
+        }
+        */
+
+        for (Card card : cardsDrawn) {
+            addCardToHand(card);
+        }
+
+        // add listener in order to scroll the hand to last card
+        hswHand.addOnLayoutChangeListener(this);
+    }
+
+    private void addCardToHand(Card card) {
+        final ImageView   imageView = new ImageView(getBaseContext());
+        imageView.setImageBitmap(card.getImage());
+        imageView.setTag(card);
+        imageView.setOnLongClickListener(this);
+        this.llHand.addView(imageView);
+    }
+
+    @Override
+    public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        hswHand.removeOnLayoutChangeListener(this);
+        hswHand.fullScroll(View.FOCUS_RIGHT);
     }
 }
