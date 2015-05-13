@@ -10,6 +10,7 @@ public class GameRound {
     private int ID;
     private GameSession gameSession;
     private GameState gamestate;
+    private boolean active;
 
     private int localUpdateID = 0;
 
@@ -17,6 +18,24 @@ public class GameRound {
         this.ID = ID;
         this.gameSession = gameSession;
         this.gamestate = new GameState(this);
+        this.active = false;
+
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     public int getLocalUpdateID() {

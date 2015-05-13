@@ -17,7 +17,6 @@ public class Player extends ModelObject {
     private ArrayList<Card> hand;
 
     private boolean uno;
-    private boolean isActive;
     private boolean hasDrawn;
     private boolean hasToChooseColor;
 
@@ -26,7 +25,6 @@ public class Player extends ModelObject {
         this.gameSession = null;
         this.name = name;
         this.uno = false;
-        this.isActive = false;
         this.hasDrawn = false;
         this.hasToChooseColor = false;
         this.hand = new ArrayList<Card>();
@@ -72,14 +70,6 @@ public class Player extends ModelObject {
         }
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
     public boolean hasDrawn() {
         return hasDrawn;
     }
@@ -94,6 +84,19 @@ public class Player extends ModelObject {
 
     public void setHasToChooseColor(boolean hasToChooseColor) {
         this.hasToChooseColor = hasToChooseColor;
+    }
+
+    public void removeCardFromHand(Card card) {
+        for (Card c : hand) {
+            if (c.getID() == card.getID()) {
+                hand.remove(c);
+                break;
+            }
+        }
+    }
+
+    public int getHandCount() {
+        return this.hand.size();
     }
 
     public ArrayList<Card> getHand() {

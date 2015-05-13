@@ -24,12 +24,6 @@ public class GameLogic {
     public boolean checkTurn(Turn turn) {
         boolean valid = false;
 
-        // player states have to be set correctly in doTurn etc.
-        // e.g. only an active player can draw
-        // if one has drawn he/she cannot draw again
-        // one cannot 'call' next without drawing a card
-        // after playing a card next will be called automatically
-        // ...
         switch (turn.getType()) {
 
             case DRAW:
@@ -55,7 +49,11 @@ public class GameLogic {
                     valid = true;
                 }
                 break;
-            case CALL_UNO: break;
+            case CALL_UNO:
+                if (turn.getPlayer().getHandCount() == 1) {
+                    valid = true;
+                }
+                break;
         }
 
 
@@ -64,6 +62,12 @@ public class GameLogic {
 
     public void doTurn(Turn turn) {
         // ToDo: update GameState and Player State
+        // player states have to be set correctly in doTurn etc.
+        // e.g. only an active player can draw
+        // if one has drawn he/she cannot draw again
+        // one cannot 'call' next without drawing a card
+        // after playing a card next will be called automatically
+        // ...
 
         switch (turn.getType()) {
             case DRAW:
@@ -75,14 +79,56 @@ public class GameLogic {
                 }
                 turn.getPlayer().setHasDrawn(true);
                 break;
+
             case PLAY_CARD:
 
+                // push turnCard to playedStack and remove turnCard from turnPlayer's hand
+                this.state.pushToPlayedStack(turn.getCard());
+                turn.getPlayer().removeCardFromHand(turn.getCard());
+
+                if (turn.getCard() instanceof NumberCard) {
+                    NumberCard nCard = (NumberCard) turn.getCard();
+                    this.state.setActualColor(nCard.getColor());
+                }
+                else {
+
+                    ActionCard aCard = (ActionCard) turn.getCard();
+                    ArrayList<Action> actions = aCard.getActions();
+
+                    if (actions.size() == 2) {
+
+                    }
+                    else {
+                        int actionType = actions.get(0).getActionType().getType();
+
+                        if (actionType == ActionType.CHANGE_COLOR) {
+
+                        }
+                        else if (actionType == ActionType.ADD2) {
+
+                        }
+                        else if (actionType == ActionType.CHANGE_DIRECTION) {
+
+                        }
+                        else if (actionType == ActionType.SKIP_TURN) {
+
+                        }
+                    }
+                }
+
                 break;
+
             case NEXT:
 
                 break;
-            case CHOOSE_COLOR: break;
-            case CALL_UNO: break;
+
+            case CHOOSE_COLOR:
+
+                break;
+
+            case CALL_UNO:
+
+                break;
         }
     }
 
