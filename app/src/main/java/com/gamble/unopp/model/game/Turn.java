@@ -10,7 +10,7 @@ import com.gamble.unopp.model.cards.UnoColor;
 public class Turn {
 
     public static enum TurnType {
-        DRAW, PLAY_CARD, CHOOSE_COLOR, CALL_UNO, NEXT
+        DRAW, PLAY_CARD, CHOOSE_COLOR, CALL_UNO
     }
 
     private int ID;
@@ -22,7 +22,7 @@ public class Turn {
     /**
      *
      * @param ID
-     * @param type: DRAW, PLAY_CARD, CHOOSE_COLOR, CALL_UNO, NEXT
+     * @param type: DRAW, PLAY_CARD, CHOOSE_COLOR, CALL_UNO
      * @param player
      * if TurnType is CHOOSE_COLOR - Color must be set with setColor
      * if TurnType is PLAY_CARD - Card must be set with setCard

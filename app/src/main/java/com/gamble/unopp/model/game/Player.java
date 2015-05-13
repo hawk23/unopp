@@ -17,7 +17,6 @@ public class Player extends ModelObject {
     private ArrayList<Card> hand;
 
     private boolean uno;
-    private boolean hasDrawn;
     private boolean hasToChooseColor;
 
     public Player(int ID, String name) {
@@ -25,7 +24,6 @@ public class Player extends ModelObject {
         this.gameSession = null;
         this.name = name;
         this.uno = false;
-        this.hasDrawn = false;
         this.hasToChooseColor = false;
         this.hand = new ArrayList<Card>();
 
@@ -68,14 +66,6 @@ public class Player extends ModelObject {
         for (Card card : cards) {
             this.hand.add(card);
         }
-    }
-
-    public boolean hasDrawn() {
-        return hasDrawn;
-    }
-
-    public void setHasDrawn(boolean hasDrawn) {
-        this.hasDrawn = hasDrawn;
     }
 
     public boolean hasToChooseColor() {

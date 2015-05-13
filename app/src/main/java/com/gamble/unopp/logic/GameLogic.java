@@ -27,19 +27,13 @@ public class GameLogic {
         switch (turn.getType()) {
 
             case DRAW:
-                if (!turn.getPlayer().hasDrawn()) {
+                if (!turn.getPlayer().hasToChooseColor()) {
                     valid = true;
                 }
                 break;
 
             case PLAY_CARD:
                 if (checkCard(turn.getCard())) {
-                    valid = true;
-                }
-                break;
-
-            case NEXT:
-                if (turn.getPlayer().hasDrawn()) {
                     valid = true;
                 }
                 break;
@@ -77,7 +71,8 @@ public class GameLogic {
                 else {
                     turn.getPlayer().addCardsToHand(this.state.popFromStack(this.state.getDrawCounter()));
                 }
-                turn.getPlayer().setHasDrawn(true);
+                // update player and state
+                this.state.nextPlayer();
                 break;
 
             case PLAY_CARD:
@@ -89,6 +84,7 @@ public class GameLogic {
                 if (turn.getCard() instanceof NumberCard) {
                     NumberCard nCard = (NumberCard) turn.getCard();
                     this.state.setActualColor(nCard.getColor());
+                    this.state.nextPlayer();
                 }
                 else {
 
@@ -96,38 +92,42 @@ public class GameLogic {
                     ArrayList<Action> actions = aCard.getActions();
 
                     if (actions.size() == 2) {
-
+                        this.state.setDrawCounter(this.state.getDrawCounter() + 4);
+                        turn.getPlayer().hasToChooseColor();
                     }
                     else {
                         int actionType = actions.get(0).getActionType().getType();
 
                         if (actionType == ActionType.CHANGE_COLOR) {
-
+                            turn.getPlayer().hasToChooseColor();
                         }
                         else if (actionType == ActionType.ADD2) {
-
+                            this.state.setDrawCounter(this.state.getDrawCounter() + 2);
+                            this.state.setActualColor(aCard.getColor());
+                            this.state.nextPlayer();
                         }
                         else if (actionType == ActionType.CHANGE_DIRECTION) {
-
+                            this.state.changeDirection();
+                            this.state.setActualColor(aCard.getColor());
+                            this.state.nextPlayer();
                         }
                         else if (actionType == ActionType.SKIP_TURN) {
-
+                            this.state.setActualColor(aCard.getColor());
+                            this.state.skipPlayer();
                         }
                     }
                 }
 
                 break;
 
-            case NEXT:
-
-                break;
-
             case CHOOSE_COLOR:
-
+                this.state.setActualColor(turn.getColor());
+                turn.getPlayer().setHasToChooseColor(false);
+                this.state.nextPlayer();
                 break;
 
             case CALL_UNO:
-
+                turn.getPlayer().setUno(true);
                 break;
         }
     }
