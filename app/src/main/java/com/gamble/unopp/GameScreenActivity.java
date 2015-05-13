@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
@@ -39,6 +40,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private HorizontalScrollView hswHand;
     private LinearLayout llHand;
+    private TextView tvDrawCounter;
     private RelativeLayout flUnplayedCards;
     private RelativeLayout flPlayedCards;
     private ChooseColorDialogFragment chooseColorDialogFragment = new ChooseColorDialogFragment();
@@ -63,6 +65,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // get views
         this.hswHand            = (HorizontalScrollView) findViewById(R.id.hswHand);
         this.llHand             = (LinearLayout) findViewById(R.id.llHand);
+        this.tvDrawCounter      = (TextView) findViewById(R.id.tvDrawCounter);
         this.flUnplayedCards    = (RelativeLayout) findViewById(R.id.flUnplayedCards);
         this.flPlayedCards      = (RelativeLayout) findViewById(R.id.flPlayedCards);
         this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
@@ -73,6 +76,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         // set on click linstener on unplayed cards for drawing cards
         flUnplayedCards.setOnClickListener(this);
+
+        // initialize draw counter
+        tvDrawCounter.setText("");
 
         CardDeck deck = new CardDeck();
 
@@ -164,9 +170,12 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                     Card draggedCard = (Card) view.getTag();
                     if (draggedCard.getColor() == UnoColor.BLACK) {
                         chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
-
-                        //TODO: update game state
                     }
+                    //TODO: update game state
+                    //TODO: update draw counter
+
+                    //HACK
+                    setDrawCounter(4);
                 }
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
@@ -265,5 +274,13 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         hswHand.removeOnLayoutChangeListener(this);
         hswHand.fullScroll(View.FOCUS_RIGHT);
+    }
+
+    public void setDrawCounter(int drawCounter) {
+        if (drawCounter == 0 ) {
+            tvDrawCounter.setText("");
+        } else if (drawCounter > 0) {
+            tvDrawCounter.setText("+" + drawCounter);
+        }
     }
 }

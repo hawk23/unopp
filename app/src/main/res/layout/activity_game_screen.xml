@@ -46,7 +46,19 @@
                     android:src="@mipmap/uno_deck_1d"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="@dimen/general_item_margin"
-                    android:scaleType="fitXY"/>
+                    android:scaleType="fitXY"
+                    android:id="@+id/imageView2" />
+
+                <TextView
+                    android:id="@+id/tvDrawCounter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="true"
+                    android:textColor="@color/red_bad"
+                    android:autoText="false"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
             <RelativeLayout

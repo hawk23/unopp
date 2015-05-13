@@ -3,5 +3,6 @@
     <color name="drag_over">#ccffffff</color>
     <color name="selected_player_back">#ccffffff</color>
     <color name="red">#F96565</color>
+    <color name="red_bad">#FF0000</color>
     <color name="green">#50F458</color>
 </resources>
