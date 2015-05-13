@@ -11,25 +11,30 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.gamble.unopp.connection.RequestProcessor;
+import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.GetGameRequest;
+import com.gamble.unopp.connection.response.GetGameResponse;
+import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class GameDetailsActivity extends ActionBarActivity {
+public class GameDetailsActivity extends ActionBarActivity implements RequestProcessorCallback {
 
     private Player player;
     private GameSession gameSession;
     private TextView txtGameDetailsName;
     private ListView listCurrentPlayers;
+    private Timer updateTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        // load objects
-        this.player = UnoDatabase.getInstance().getLocalPlayer();
-        this.gameSession = UnoDatabase.getInstance().getCurrentGameSession();
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -45,10 +50,42 @@ public class GameDetailsActivity extends ActionBarActivity {
 
         this.displayDetails();
 
-        // TODO: update details every second!
+        this.updateTimer = new Timer();
+        this.updateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateTimerTick();
+            }
+        }, 0, 1000);
+    }
+
+    private void updateTimerTick () {
+
+        GetGameRequest getGameRequest = new GetGameRequest();
+        getGameRequest.setGameID(UnoDatabase.getInstance().getCurrentGameSession().getID());
+
+        RequestProcessor processor = new RequestProcessor(this);
+        processor.execute(getGameRequest);
+    }
+
+    @Override
+    public void requestFinished(Response response) {
+        if (response != null) {
+            if (response instanceof GetGameResponse) {
+                GetGameResponse getGameResponse = (GetGameResponse) response;
+
+                UnoDatabase.getInstance().setCurrentGameSession(getGameResponse.getGameSession());
+
+                this.displayDetails();
+            }
+        }
     }
 
     private void displayDetails () {
+
+        // load objects
+        this.player         = UnoDatabase.getInstance().getLocalPlayer();
+        this.gameSession    = UnoDatabase.getInstance().getCurrentGameSession();
 
         setTitle(getString(R.string.title_activity_game_details) +": "+ this.gameSession.getName());
 
