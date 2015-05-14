@@ -33,9 +33,11 @@ public class ChooseColorDialogFragment extends DialogFragment {
                         // of the selected item
 
                         if (which >= 0 && which < colors.length) {
+                            /*
                             Turn turn = new Turn(Turn.TurnType.CHOOSE_COLOR);
                             turn.setColor(UnoColor.valueOf(colors[which]));
                             UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
+                            */
                         } else {
                             System.out.println("Unopp: ChooseColorDialogFragment has invalid index: " + which);
                         }
