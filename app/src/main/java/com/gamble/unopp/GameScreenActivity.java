@@ -3,7 +3,6 @@ package com.gamble.unopp;
 import android.content.ClipData;
 import android.graphics.Color;
 import android.graphics.Path;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.DragEvent;
@@ -173,6 +172,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                     }
                     //TODO: update game state
                     //TODO: update draw counter
+                    //TODO: update color chosen
 
                     //HACK
                     setDrawCounter(4);
@@ -210,16 +210,16 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     }
 
     public void callUno(View view) {
-        Player self = UnoDatabase.getInstance().getLocalPlayer();
+        Turn turn = new Turn(Turn.TurnType.CALL_UNO);
+        UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
+    }
 
-        for (Player player : players) {
-            if (player.equals(self)) {
-                player.setUno(true);
-            }
-        }
+    public void showUnoCall() {
+        // notify listAdapter that players changed
+        arrayAdapter.notifyDataSetChanged();
+    }
 
-        // TODO: notify server that uno was called
-
+    public void showColorCall(UnoColor color, Player player) {
         // notify listAdapter that players changed
         arrayAdapter.notifyDataSetChanged();
     }

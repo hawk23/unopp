@@ -2,6 +2,7 @@ package com.gamble.unopp.model.game;
 
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
+import com.gamble.unopp.model.management.UnoDatabase;
 
 /**
  * Created by Albert on 08.05.2015.
@@ -18,6 +19,19 @@ public class Turn {
     private TurnType type;
     private Card card;
     private UnoColor color;
+
+    /**
+     *
+     * @param type
+     * creates a new Turn object and sets the id to localUpdateId and the player to the current local player
+     */
+    public Turn(TurnType type) {
+        this.ID = UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().getLocalUpdateID();
+        this.type = type;
+        this.player = UnoDatabase.getInstance().getLocalPlayer();
+        this.card = null;
+        this.color = null;
+    }
 
     /**
      *

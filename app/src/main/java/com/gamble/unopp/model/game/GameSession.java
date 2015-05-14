@@ -68,6 +68,10 @@ public class GameSession extends ModelObject {
         return actualGameRound;
     }
 
+    public void setActualGameRound(GameRound actualGameRound) {
+        this.actualGameRound = actualGameRound;
+    }
+
     public int getID() {
         return ID;
     }
