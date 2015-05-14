@@ -79,6 +79,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // initialize draw counter
         tvDrawCounter.setText("");
 
+        // disable the back button for the color popup
+        chooseColorDialogFragment.setCancelable(false);
+
         CardDeck deck = new CardDeck();
 
         // HACK: set cards of player here
@@ -160,6 +163,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                     owner.removeView(view);
 
                     RelativeLayout container = (RelativeLayout) v;
+                    view.setLongClickable(false);
                     container.addView(view);
                     view.setVisibility(View.VISIBLE);
                     RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
@@ -210,8 +214,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     }
 
     public void callUno(View view) {
+        /*
         Turn turn = new Turn(Turn.TurnType.CALL_UNO);
         UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
+        */
     }
 
     public void showUnoCall() {
