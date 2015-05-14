@@ -1,25 +1,25 @@
 package com.gamble.unopp.connection.requests;
 
-import com.gamble.unopp.connection.response.LeaveGameResponse;
+import com.gamble.unopp.connection.response.DestroyPlayerResponse;
 
 /**
- * Created by Verena on 05.05.2015.
+ * Created by PeterLuca on 14.05.2015.
  */
-public class LeaveGameRequest extends Request {
-
+public class DestroyPlayerRequest extends Request
+{
     private static final String SOAP_ACTION         = "http://tempuri.org/LeaveGame";
-    private static final String SOAP_METHOD         = "LeaveGame";
+    private static final String SOAP_METHOD         = "DestroyPlayer";
 
     private int gameId;
     private int playerId;
 
-    public LeaveGameRequest()
-    {
+    public DestroyPlayerRequest() {
+
         super();
 
         this.soapAction = SOAP_ACTION;
         this.soapMethod = SOAP_METHOD;
-        this.response   = new LeaveGameResponse();
+        this.response   = new DestroyPlayerResponse();
     }
 
     public void setGameId(int gameId) {
