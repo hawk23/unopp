@@ -64,6 +64,13 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
+        if (id == R.id.action_leavegame) {
+            if (UnoDatabase.getInstance().getCurrentGameSession() != null) {
+                finish();
+                System.exit(0);
+            }
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
