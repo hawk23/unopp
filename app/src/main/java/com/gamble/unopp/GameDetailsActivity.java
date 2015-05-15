@@ -14,9 +14,12 @@ import android.widget.TextView;
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.DestroyGameRequest;
+import com.gamble.unopp.connection.requests.DestroyPlayerRequest;
 import com.gamble.unopp.connection.requests.GetGameRequest;
 import com.gamble.unopp.connection.requests.LeaveGameRequest;
 import com.gamble.unopp.connection.requests.StartGameRequest;
+import com.gamble.unopp.connection.response.DestroyGameResponse;
+import com.gamble.unopp.connection.response.DestroyPlayerResponse;
 import com.gamble.unopp.connection.response.GetGameResponse;
 import com.gamble.unopp.connection.response.LeaveGameResponse;
 import com.gamble.unopp.connection.response.Response;
@@ -101,6 +104,47 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     startActivity(intent);
                 }
             }
+            else if (response instanceof DestroyGameResponse)
+            {
+                DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
+
+                if (destroyGameResponse.getResponseResult() != null && destroyGameResponse.getResponseResult().isStatus())
+                {
+                    // delete current gameSession
+                    UnoDatabase.getInstance().setCurrentGameSession(null);
+
+                    // create an Intent to take you back to the LobbyActivity
+                    Intent intent = new Intent(this, LobbyActivity.class);
+                    startActivity(intent);
+                    this.updateTimer.cancel();
+                }
+            }            else if (response instanceof DestroyGameResponse)
+            {
+                DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
+
+                if (destroyGameResponse.getResponseResult() != null && destroyGameResponse.getResponseResult().isStatus())
+                {
+                    // delete current gameSession
+                    UnoDatabase.getInstance().setCurrentGameSession(null);
+
+                    // create an Intent to take you back to the LobbyActivity
+                    Intent intent = new Intent(this, LobbyActivity.class);
+                    startActivity(intent);
+                    this.updateTimer.cancel();
+                }
+            }
+            /*TODO: EndGameRound
+            else if (response instanceof EndGameRoundResponse)
+            {
+
+            }
+            */
+            /*TODO: StartGameRound
+            else if (response instanceof StartGameRoundResponse)
+            {
+
+            }
+            */
         }
     }
 
@@ -136,7 +180,6 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         rp.execute(leaveGameRequest);
     }
 
-    //TODO: Testing!
     private void deleteGame ()
     {
         DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
@@ -186,6 +229,9 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 this.leaveGame();
                 return true;
             case R.id.action_deletegame:
+                this.deleteGame();
+                return true;
+            case R.id.action_deleteplayer:
                 this.deleteGame();
                 return true;
             default:

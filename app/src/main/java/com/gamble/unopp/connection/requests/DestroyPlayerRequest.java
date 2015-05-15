@@ -7,7 +7,7 @@ import com.gamble.unopp.connection.response.DestroyPlayerResponse;
  */
 public class DestroyPlayerRequest extends Request
 {
-    private static final String SOAP_ACTION         = "http://tempuri.org/LeaveGame";
+    private static final String SOAP_ACTION         = "http://tempuri.org/DestroyPlayer";
     private static final String SOAP_METHOD         = "DestroyPlayer";
 
     private int gameId;
