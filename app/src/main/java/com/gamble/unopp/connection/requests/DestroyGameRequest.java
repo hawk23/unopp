@@ -28,7 +28,7 @@ public class DestroyGameRequest extends Request
         this.requestParameters.put("gameID", String.valueOf(gameId));
     }
 
-    public void setPlayerId(int hostId)
+    public void setHostId(int hostId)
     {
         this.hostId = hostId;
         this.requestParameters.put("hostID", String.valueOf(hostId));
