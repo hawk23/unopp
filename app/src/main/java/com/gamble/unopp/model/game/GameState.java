@@ -13,9 +13,7 @@ public class GameState {
 
     private GameLogic logic;
     private GameRound gameRound;
-    private ArrayList<Card> stack;
-    private ArrayList<Card> playedStack;
-    private Card topCard;
+    private Deck deck;
     private UnoDirection direction;
     private int drawCounter;
     private Player actualPlayer;
@@ -23,6 +21,7 @@ public class GameState {
 
     public GameState(GameRound gameRound) {
         this.gameRound      = gameRound;
+        this.deck           = new Deck();
         this.logic          = new GameLogic(this);
     }
 
@@ -37,19 +36,19 @@ public class GameState {
     }
 
     public ArrayList<Card> getStack() {
-        return stack;
+        return this.deck.getStack();
     }
 
     public void setStack(ArrayList<Card> stack) {
-        this.stack = stack;
+        this.deck.setStack(stack);
     }
 
     public ArrayList<Card> getPlayedStack() {
-        return playedStack;
+        return this.deck.getPlayedStack();
     }
 
     public void setPlayedStack(ArrayList<Card> playedStack) {
-        this.playedStack = playedStack;
+        this.deck.setPlayedStack(playedStack);
     }
 
     public void setPlayerHand(int PlayerID, ArrayList<Card> hand) {
@@ -103,28 +102,19 @@ public class GameState {
     }
 
     public ArrayList<Card> popFromStack(int amount) {
-        // ToDo: check sizeofstack and if not enough cards available - generate new deck or take playedStack - shuffle and push to stack;
-
-        ArrayList<Card> drawnCards = new ArrayList<Card>();
-
-        for (int n = amount; n > 0; n--) {
-            drawnCards.add(stack.get(sizeOfStack() - 1));
-            stack.remove(sizeOfStack() - 1);
-        }
-
-        return drawnCards;
+       return this.deck.popFromStack(amount);
     }
 
     public void pushToPlayedStack(Card card) {
-        this.playedStack.add(card);
+        this.deck.pushToPlayedStack(card);
     }
 
     public int sizeOfStack() {
-        return this.stack.size();
+        return this.deck.sizeOfStack();
     }
 
     public int sizeOfPlayedStack() {
-        return this.playedStack.size();
+        return this.deck.sizeOfPlayedStack();
     }
 
     public UnoDirection getDirection() {
@@ -136,11 +126,7 @@ public class GameState {
     }
 
     public Card getTopCard() {
-        return this.playedStack.get(sizeOfPlayedStack() - 1);
-    }
-
-    public void setTopCard(Card topCard) {
-        this.topCard = topCard;
+        return this.deck.getTopCard();
     }
 
     public int getDrawCounter() {

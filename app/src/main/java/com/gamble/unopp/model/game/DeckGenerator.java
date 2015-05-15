@@ -1,12 +1,9 @@
 package com.gamble.unopp.model.game;
 
-import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.gamble.unopp.GameSettings;
-import com.gamble.unopp.MainActivity;
 import com.gamble.unopp.model.cards.Action;
 import com.gamble.unopp.model.cards.ActionCard;
 import com.gamble.unopp.model.cards.ActionType;
@@ -14,14 +11,13 @@ import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.NumberCard;
 import com.gamble.unopp.model.cards.UnoColor;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
- * Created by Albert on 05.05.2015.
+ * Created by Albert on 15.05.2015.
  */
-public class CardDeck {
+public class DeckGenerator {
 
     private static final String DECK_SPRITESHEET_PATH = "cards.png";
     private static final int CARD_WIDTH = 192;
@@ -31,36 +27,14 @@ public class CardDeck {
     private static final int DECK_WIDTH = CARD_WIDTH * HORIZONTAL_COUNT;
     private static final int DECK_HEIGHT = CARD_HEIGHT * VERTICAL_COUNT;
 
-    private int id = 0;
+    private static int id;
 
-    private ArrayList<Card> deck;
+    public static synchronized ArrayList<Card> createDeck() {
 
-    public CardDeck() {
-        this.deck = new ArrayList<Card>();
-        initDeck();
+        // start ID = 0
+        id = 0;
 
-        // console output just for testing
-        for (Card c : deck) {
-            System.out.print(c.getID() + "/");
-            if (c instanceof NumberCard) {
-                System.out.print(((NumberCard) c).getValue() + "/");
-                System.out.println(c.getColor());
-                System.out.println("---------------------");
-            }
-            else {
-                if (c instanceof ActionCard) {
-                    for (Action a : ((ActionCard) c).getActions()) {
-                        System.out.print(a.getActionType() + "/");
-                    }
-                    System.out.println(c.getColor());
-                    System.out.println("---------------------");
-                }
-
-            }
-        }
-    }
-
-    private void initDeck() {
+        ArrayList<Card> deck = new ArrayList<Card>();
         Bitmap deckBitmap = null;
 
         try {
@@ -92,37 +66,37 @@ public class CardDeck {
 
                 if (j == 0) {
                     Card card = new NumberCard(getID(), j, image, color);
-                    this.deck.add(card);
+                    deck.add(card);
                 }
                 else if (j == 10) {
                     Card card1 = new ActionCard(getID(), image, color);
                     ((ActionCard)card1).addAction(new Action(new ActionType(ActionType.SKIP_TURN)));
                     Card card2 = new ActionCard(getID(), image, color);
                     ((ActionCard)card2).addAction(new Action(new ActionType(ActionType.SKIP_TURN)));
-                    this.deck.add(card1);
-                    this.deck.add(card2);
+                    deck.add(card1);
+                    deck.add(card2);
                 }
                 else if (j == 11) {
                     Card card1 = new ActionCard(getID(), image, color);
                     ((ActionCard)card1).addAction(new Action(new ActionType(ActionType.CHANGE_DIRECTION)));
                     Card card2 = new ActionCard(getID(), image, color);
                     ((ActionCard)card2).addAction(new Action(new ActionType(ActionType.CHANGE_DIRECTION)));
-                    this.deck.add(card1);
-                    this.deck.add(card2);
+                    deck.add(card1);
+                    deck.add(card2);
                 }
                 else if (j == 12) {
                     Card card1 = new ActionCard(getID(), image, color);
                     ((ActionCard)card1).addAction(new Action(new ActionType(ActionType.ADD2)));
                     Card card2 = new ActionCard(getID(), image, color);
                     ((ActionCard)card2).addAction(new Action(new ActionType(ActionType.ADD2)));
-                    this.deck.add(card1);
-                    this.deck.add(card2);
+                    deck.add(card1);
+                    deck.add(card2);
                 }
                 else {
                     Card card1 = new NumberCard(getID(), j, image, color);
                     Card card2 = new NumberCard(getID(), j, image, color);
-                    this.deck.add(card1);
-                    this.deck.add(card2);
+                    deck.add(card1);
+                    deck.add(card2);
                 }
             }
         }
@@ -140,10 +114,10 @@ public class CardDeck {
         ((ActionCard)card3).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
         Card card4 = new ActionCard(getID(), imageColorChange, color);
         ((ActionCard)card4).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
-        this.deck.add(card1);
-        this.deck.add(card2);
-        this.deck.add(card3);
-        this.deck.add(card4);
+        deck.add(card1);
+        deck.add(card2);
+        deck.add(card3);
+        deck.add(card4);
 
         Bitmap imageADD4 = Bitmap.createBitmap(deckBitmap, 13 * CARD_WIDTH, 4 * CARD_HEIGHT, CARD_WIDTH, CARD_HEIGHT);
 
@@ -159,19 +133,18 @@ public class CardDeck {
         Card card8 = new ActionCard(getID(), imageADD4, color);
         ((ActionCard)card8).addAction(new Action(new ActionType(ActionType.CHANGE_COLOR)));
         ((ActionCard)card8).addAction(new Action(new ActionType(ActionType.ADD4)));
-        this.deck.add(card5);
-        this.deck.add(card6);
-        this.deck.add(card7);
-        this.deck.add(card8);
-    }
+        deck.add(card5);
+        deck.add(card6);
+        deck.add(card7);
+        deck.add(card8);
 
-    private int getID() {
-        int id = this.id;
-        this.id++;
-        return id;
-    }
-
-    public ArrayList<Card> getDeck() {
         return deck;
     }
+
+    private static int getID() {
+        int cardId = id;
+        id++;
+        return cardId;
+    }
+
 }
