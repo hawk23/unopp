@@ -217,9 +217,6 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             case R.id.action_deletegame:
                 this.deleteGame();
                 return true;
-            case R.id.action_deleteplayer:
-                this.deleteGame();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
