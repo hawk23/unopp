@@ -21,6 +21,7 @@ import com.gamble.unopp.connection.response.GetGameResponse;
 import com.gamble.unopp.connection.response.LeaveGameResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.connection.response.StartGameResponse;
+import com.gamble.unopp.fragments.ErrorDialogFragment;
 import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
@@ -65,11 +66,15 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
     private void updateTimerTick () {
 
-        GetGameRequest getGameRequest = new GetGameRequest();
-        getGameRequest.setGameID(UnoDatabase.getInstance().getCurrentGameSession().getID());
+        GameSession currentGameSession = UnoDatabase.getInstance().getCurrentGameSession();
 
-        RequestProcessor processor = new RequestProcessor(this);
-        processor.execute(getGameRequest);
+        if (currentGameSession != null) {
+            GetGameRequest getGameRequest = new GetGameRequest();
+            getGameRequest.setGameID(UnoDatabase.getInstance().getCurrentGameSession().getID());
+
+            RequestProcessor processor = new RequestProcessor(this);
+            processor.execute(getGameRequest);
+        }
     }
 
     @Override
@@ -82,9 +87,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             } else if (response instanceof StartGameResponse) {
                 StartGameResponse startGameResponse = (StartGameResponse) response;
 
-                if (startGameResponse.getResponseResult() != null) {
-                    // TODO implement error handling if ResponseResult.isStatus is false
-
+                if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
                     // create an Intent to take you over to the GameScreenActivity
                     Intent intent = new Intent(this, GameScreenActivity.class);
                     startActivity(intent);
@@ -99,7 +102,17 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     // create an Intent to take you back to the LobbyActivity
                     Intent intent = new Intent(this, LobbyActivity.class);
                     startActivity(intent);
+                    this.updateTimer.cancel();
                 }
+            }
+
+            if (response.getResponseResult() != null && !response.getResponseResult().isStatus()) {
+                // display error message
+                ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
+                Bundle args = new Bundle();
+                args.putString("errorMessage", response.getResponseResult().getMessage());
+                errorDialogFragment.setArguments(args);
+                errorDialogFragment.show(getFragmentManager(), "error");
             }
         }
     }

@@ -16,6 +16,7 @@ import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreatePlayerRequest;
 import com.gamble.unopp.connection.response.CreatePlayerResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.fragments.ErrorDialogFragment;
 import com.gamble.unopp.helper.SharedPreferencesKeys;
 import com.gamble.unopp.model.management.UnoDatabase;
 
@@ -114,7 +115,14 @@ public class MainActivity extends ActionBarActivity {
             startActivity(lobbyIntent);
         }
         else {
-            // TODO
+
+            // display error message
+            ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
+            Bundle args = new Bundle();
+            args.putString("errorMessage", "Not connected!");
+            errorDialogFragment.setArguments(args);
+            errorDialogFragment.show(getFragmentManager(), "error");
+
         }
    }
 
