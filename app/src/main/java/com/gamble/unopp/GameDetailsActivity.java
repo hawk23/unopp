@@ -118,20 +118,6 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     startActivity(intent);
                     this.updateTimer.cancel();
                 }
-            }            else if (response instanceof DestroyGameResponse)
-            {
-                DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
-
-                if (destroyGameResponse.getResponseResult() != null && destroyGameResponse.getResponseResult().isStatus())
-                {
-                    // delete current gameSession
-                    UnoDatabase.getInstance().setCurrentGameSession(null);
-
-                    // create an Intent to take you back to the LobbyActivity
-                    Intent intent = new Intent(this, LobbyActivity.class);
-                    startActivity(intent);
-                    this.updateTimer.cancel();
-                }
             }
             /*TODO: EndGameRound
             else if (response instanceof EndGameRoundResponse)

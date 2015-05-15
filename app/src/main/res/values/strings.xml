@@ -14,7 +14,6 @@
     <string name="action_credits">Credits</string>
     <string name="action_startgame">Spiel starten</string>
     <string name="action_deletegame">Spiel löschen</string>
-    <string name="action_deleteplayer">Lobby verlassen</string>
     <string name="action_newGame">Neues Spiel</string>
     <string name="error">Error</string>
 </resources>
