@@ -82,7 +82,9 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             } else if (response instanceof StartGameResponse) {
                 StartGameResponse startGameResponse = (StartGameResponse) response;
 
-                if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
+                if (startGameResponse.getResponseResult() != null) {
+                    // TODO implement error handling if ResponseResult.isStatus is false
+                    
                     // create an Intent to take you over to the GameScreenActivity
                     Intent intent = new Intent(this, GameScreenActivity.class);
                     startActivity(intent);
