@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.DestroyGameRequest;
 import com.gamble.unopp.connection.requests.GetGameRequest;
 import com.gamble.unopp.connection.requests.LeaveGameRequest;
 import com.gamble.unopp.connection.requests.StartGameRequest;
@@ -135,8 +136,15 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         rp.execute(leaveGameRequest);
     }
 
-    private void deleteGame () {
-        // TODO
+    //TODO: Testing!
+    private void deleteGame ()
+    {
+        DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
+        destroyGameRequest.setGameId(this.gameSession.getID());
+        destroyGameRequest.setHostId(this.player.getID());
+
+        RequestProcessor rp = new RequestProcessor(this);
+        rp.execute(destroyGameRequest);
     }
 
     private void startGame () {
@@ -189,8 +197,8 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
      * called when the back button of the phone is pressed
      */
     @Override
-    public void onBackPressed() {
-        // TODO uncommented because leaveGame does not work on server yet
-        // leaveGame();
+    public void onBackPressed()
+    {
+        leaveGame();
     }
 }
