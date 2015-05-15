@@ -80,7 +80,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         // HACK: set cards of player here
         // cards = UnoDatabase.getInstance().getLocalPlayer().getHand();
-        cards = DeckGenerator.createDeck();
+        cards = DeckGenerator.createDeck(0);
 
         for (final Card card : cards) {
 

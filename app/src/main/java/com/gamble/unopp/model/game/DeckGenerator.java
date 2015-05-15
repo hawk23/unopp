@@ -29,10 +29,9 @@ public class DeckGenerator {
 
     private static int id;
 
-    public static synchronized ArrayList<Card> createDeck() {
+    public static synchronized ArrayList<Card> createDeck(int startingID) {
 
-        // start ID = 0
-        id = 0;
+        id = startingID;
 
         ArrayList<Card> deck = new ArrayList<Card>();
         Bitmap deckBitmap = null;
