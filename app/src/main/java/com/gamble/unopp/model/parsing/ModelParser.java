@@ -47,7 +47,7 @@ public class ModelParser {
 
         int         id                  = Integer.parseInt(element.getElementsByTagName("id").item(0).getTextContent());
         String      name                = element.getElementsByTagName("name").item(0).getTextContent();
-        int         hostID              = Integer.parseInt(element.getElementsByTagName("host").item(0).getTextContent());
+        int         hostID              = Integer.parseInt(element.getElementsByTagName("hostID").item(0).getTextContent());
         int         maxPlayers          = Integer.parseInt(element.getElementsByTagName("maxPlayers").item(0).getTextContent());
 
         GameSession gameSession         = new GameSession(id, name);
