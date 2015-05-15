@@ -114,7 +114,6 @@ public class MainActivity extends ActionBarActivity {
             startActivity(lobbyIntent);
         }
         else {
-
             // TODO
         }
    }

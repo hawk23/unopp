@@ -19,6 +19,7 @@ import com.gamble.unopp.connection.requests.ListGamesRequest;
 import com.gamble.unopp.connection.response.JoinGameResponse;
 import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.fragments.ErrorDialogFragment;
 import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
@@ -35,6 +36,7 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
     private ArrayAdapter        mArrayAdapter;
     private List<GameSession>   games;
     private Player              player;
+    private ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +90,10 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
             displayAvailableGameSessions(games);
         }
         else {
-            // TODO
+            Bundle args = new Bundle();
+            args.putString("errorMessage", "Keine Spiele gefunden!");
+            errorDialogFragment.setArguments(args);
+            errorDialogFragment.show(getFragmentManager(), "error");
         }
     }
 

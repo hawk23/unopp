@@ -59,7 +59,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             public void run() {
                 updateTimerTick();
             }
-        }, 0, 1000);
+        }, 0, 20000);
     }
 
     private void updateTimerTick () {
@@ -76,15 +76,14 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         if (response != null) {
             if (response instanceof GetGameResponse) {
                 GetGameResponse getGameResponse = (GetGameResponse) response;
-                gameSession = getGameResponse.getGameSession();
-
+                UnoDatabase.getInstance().setCurrentGameSession(getGameResponse.getGameSession());
                 this.displayDetails();
             } else if (response instanceof StartGameResponse) {
                 StartGameResponse startGameResponse = (StartGameResponse) response;
 
                 if (startGameResponse.getResponseResult() != null) {
                     // TODO implement error handling if ResponseResult.isStatus is false
-                    
+
                     // create an Intent to take you over to the GameScreenActivity
                     Intent intent = new Intent(this, GameScreenActivity.class);
                     startActivity(intent);
@@ -112,9 +111,9 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
         setTitle(getString(R.string.title_activity_game_details) +": "+ this.gameSession.getName());
 
-        this.txtGameDetailsName.setText("Beigetretene Spieler: " +
+        this.txtGameDetailsName.setText("Beigetretene Spieler: (" +
                 Integer.toString(this.gameSession.getCurrentPlayerCount()) + "/"+
-                Integer.toString(this.gameSession.getMaxPlayers()));
+                Integer.toString(this.gameSession.getMaxPlayers()) + ")");
 
         ArrayList players = new ArrayList();
 
@@ -124,6 +123,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, players);
         this.listCurrentPlayers.setAdapter(arrayAdapter);
+        arrayAdapter.notifyDataSetChanged();
     }
 
     private void leaveGame () {

@@ -15,4 +15,5 @@
     <string name="action_startgame">Spiel starten</string>
     <string name="action_deletegame">Spiel löschen</string>
     <string name="action_newGame">Neues Spiel</string>
+    <string name="error">Error</string>
 </resources>
