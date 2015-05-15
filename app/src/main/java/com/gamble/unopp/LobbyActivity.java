@@ -39,7 +39,6 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
     private ArrayAdapter        mArrayAdapter;
     private List<GameSession>   games;
     private Player              player;
-    private ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +92,7 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
             displayAvailableGameSessions(games);
         }
         else {
+            ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
             Bundle args = new Bundle();
             args.putString("errorMessage", "Keine Spiele gefunden!");
             errorDialogFragment.setArguments(args);

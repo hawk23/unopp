@@ -28,10 +28,16 @@ public class GetGameResponse extends Response {
         this.responseResult                 = ModelParser.<ResponseResult>parseModelFromElement(resultElement, ResponseResult.class);
         */
 
-        Node        gameNode                = dom.getElementsByTagName("GameSession").item(0);
-        Element     gameElement             = (Element) gameNode;
+        Node        gameSessionNode                = dom.getElementsByTagName("GameSession").item(0);
+        Node        resultNode                     = dom.getElementsByTagName("Result").item(0);
 
-        this.gameSession                    = ModelParser.<GameSession>parseModelFromElement(gameElement, GameSession.class);
+        if (gameSessionNode != null) {
+            Element gameSessionElement = (Element) gameSessionNode;
+
+            this.gameSession = ModelParser.<GameSession>parseModelFromElement(gameSessionElement, GameSession.class);
+        } else if (resultNode != null) {
+            this.responseResult = ModelParser.<ResponseResult>parseModelFromElement((Element) resultNode, ResponseResult.class);
+        }
     }
 
     @Override
