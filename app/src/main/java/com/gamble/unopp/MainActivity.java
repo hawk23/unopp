@@ -119,7 +119,7 @@ public class MainActivity extends ActionBarActivity {
             // display error message
             ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
             Bundle args = new Bundle();
-            args.putString("errorMessage", "Not connected!");
+            args.putString("errorMessage", "Es konnte keine Verbindung zum Server aufgebaut werden!");
             errorDialogFragment.setArguments(args);
             errorDialogFragment.show(getFragmentManager(), "error");
 

@@ -123,21 +123,23 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         this.player         = UnoDatabase.getInstance().getLocalPlayer();
         this.gameSession    = UnoDatabase.getInstance().getCurrentGameSession();
 
-        setTitle(getString(R.string.title_activity_game_details) +": "+ this.gameSession.getName());
+        if (this.gameSession != null) {
+            setTitle(getString(R.string.title_activity_game_details) + ": " + this.gameSession.getName());
 
-        this.txtGameDetailsName.setText("Beigetretene Spieler: (" +
-                Integer.toString(this.gameSession.getCurrentPlayerCount()) + "/"+
-                Integer.toString(this.gameSession.getMaxPlayers()) + ")");
+            this.txtGameDetailsName.setText("Beigetretene Spieler: (" +
+                    Integer.toString(this.gameSession.getCurrentPlayerCount()) + "/" +
+                    Integer.toString(this.gameSession.getMaxPlayers()) + ")");
 
-        ArrayList players = new ArrayList();
+            ArrayList players = new ArrayList();
 
-        for (Player player : this.gameSession.getPlayers()) {
-            players.add(player);
+            for (Player player : this.gameSession.getPlayers()) {
+                players.add(player);
+            }
+
+            ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, players);
+            this.listCurrentPlayers.setAdapter(arrayAdapter);
+            arrayAdapter.notifyDataSetChanged();
         }
-
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, players);
-        this.listCurrentPlayers.setAdapter(arrayAdapter);
-        arrayAdapter.notifyDataSetChanged();
     }
 
     private void leaveGame () {

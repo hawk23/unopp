@@ -16,6 +16,7 @@ import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreateGameRequest;
 import com.gamble.unopp.connection.response.CreateGameResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.fragments.ErrorDialogFragment;
 import com.gamble.unopp.helper.SharedPreferencesKeys;
 import com.gamble.unopp.model.game.GameRound;
 import com.gamble.unopp.model.game.GameSession;
@@ -122,7 +123,17 @@ public class NewGameActivity extends ActionBarActivity {
             startActivity(intent);
         }
         else {
-            // TODO: error handling
+            String errorMessage = "Neues Spiel konnte nicht erstellt werden.\n";
+            if (response.getResponseResult() != null && !response.getResponseResult().isStatus()) {
+                errorMessage += response.getResponseResult().getMessage();
+            }
+
+            // display error message
+            ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
+            Bundle args = new Bundle();
+            args.putString("errorMessage", errorMessage);
+            errorDialogFragment.setArguments(args);
+            errorDialogFragment.show(getFragmentManager(), "error");
         }
     }
 
