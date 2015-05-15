@@ -66,37 +66,39 @@ playerId    = 2
 
 method      = GetGame
 gameId      = 1
-
-<GetGameGameResponse xmlns="http://tempuri.org/">
-    <GetGameResult>
-        <Result>
-            <status>true</status>
-            <message></message>
-        </Result>
-        <GameSession>
-            <id>1<id>
-            <maxPlayers>6</maxPlayer>
-            <started>false</started>
-            <name>Mario's Spiel<name>
-            <host>1<host>
-            <Players>
-                <Player>
-                    <name>Mario</name>
-                    <id>1</id>
-                </Player>
-                <Player>
-                    <name>Albert</name>
-                    <id>2</id>
-                </Player>
-                <Player>
-                    <name>Verena</name>
-                    <id>3</id>
-                </Player>
-            </Players>
-        </GameSession>
-    </GetGameResult>
-</GetGameGameResponse>
-
+<soap:Body>
+    <GetGameResponse xmlns="http://tempuri.org/">
+		<GetGameResult>
+			<GameSession>
+				<id>12</id>
+				<maxPlayers>6</maxPlayers>
+				<started>false</started>
+				<name>spiel1</name>
+				<hostID>10</hostID>
+				<mode>0</mode>
+				<GameRounds/>
+				<Location>
+					<latitude>0</latitude>
+					<longitude>0</longitude>
+				</Location>
+				<Players>
+					<Player>
+						<id>10</id>
+						<name>ver</name>
+						<uno>false</uno>
+						<Cards/>
+					</Player>
+					<Player xsi:nil="true"/>
+					<Player xsi:nil="true"/>
+					<Player xsi:nil="true"/>
+					<Player xsi:nil="true"/>
+					<Player xsi:nil="true"/>
+				</Players>
+			</GameSession>
+		</GetGameResult>
+    </GetGameResponse>
+</soap:Body>
+	
 Wenn Spiel gel�scht wurde
 <GetGameGameResponse xmlns="http://tempuri.org/">
     <GetGameResult>
@@ -174,14 +176,12 @@ method      = StartGame
 gameId      = 1
 playerId    = 1
 
-<StartGameResponse xmlns="http://tempuri.org/">
-  <StartGameResult>
-    <Result>
-        <status>true</status>
-        <message>Erfogreich gestartet.</message>
-    </Result>
-  </StartGameResult>
-</StartGameResponse>
+    <StartGameResponse xmlns="http://tempuri.org/">
+      <StartGameResult>
+        <status>boolean</status>
+        <message>string</message>
+      </StartGameResult>
+    </StartGameResponse>
 
 ----------------------------------------------------
 

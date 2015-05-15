@@ -110,6 +110,6 @@ public class GameSession extends ModelObject {
 
     @Override
     public String toString() {
-        return this.getName();
+        return this.getName() + " " + (getCurrentPlayerCount() + "/" + getMaxPlayers());
     }
 }

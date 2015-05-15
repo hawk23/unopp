@@ -24,8 +24,6 @@ public class CreateGameResponse extends Response {
         Element gameSessionElement = (Element) gameSessionNode;
 
         this.gameSession = ModelParser.<GameSession>parseModelFromElement(gameSessionElement, GameSession.class);
-
-        this.gameSession.setHost(UnoDatabase.getInstance().getLocalPlayer()); //TODO change to host id from response when it works
     }
 
     public GameSession getGameSession() {

@@ -15,7 +15,7 @@ public class JoinGameResponse extends Response {
     public void parseXML(String xmlResponse) throws Exception {
 
         Document dom = this.getDomElement(xmlResponse);
-        NodeList result = dom.getElementsByTagName("Result");
+        NodeList result = dom.getElementsByTagName("JoinGameResult");
 
         super.setResponseResult(ModelParser.<ResponseResult>parseModelFromElement((Element) result.item(0), ResponseResult.class));
     }

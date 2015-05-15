@@ -114,11 +114,9 @@ public class NewGameActivity extends ActionBarActivity {
 
         if (response != null) {
             GameSession session = response.getGameSession();
-            GameRound gameRound = new GameRound(0, session);
-            session.setActualGameRound(gameRound);
             UnoDatabase.getInstance().setCurrentGameSession(session);
 
-            // create an Intent to take you over to the Lobby
+            // create an Intent to take you over to the GameDetailsActivity
             Intent intent = new Intent(this, GameDetailsActivity.class);
 
             startActivity(intent);

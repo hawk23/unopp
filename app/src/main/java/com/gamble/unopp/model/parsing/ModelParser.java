@@ -36,11 +36,13 @@ public class ModelParser {
     }
 
     private static Player parsePlayerFromElement (Element element) {
+        if (element.getElementsByTagName("id") != null && element.getElementsByTagName("id").item(0) != null ) {
+            int id = Integer.parseInt(element.getElementsByTagName("id").item(0).getTextContent());
+            String name = element.getElementsByTagName("name").item(0).getTextContent();
 
-        int         id                  = Integer.parseInt(element.getElementsByTagName("id").item(0).getTextContent());
-        String      name                = element.getElementsByTagName("name").item(0).getTextContent();
-
-        return new Player(id, name);
+            return new Player(id, name);
+        }
+        return null;
     }
 
     private static GameSession parseGameSessionFromElement (Element element) {
@@ -53,7 +55,7 @@ public class ModelParser {
         GameSession gameSession         = new GameSession(id, name);
         gameSession.setMaxPlayers(maxPlayers);
 
-        NodeList players                = element.getElementsByTagName("Players");
+        NodeList players                = element.getElementsByTagName("Player");
 
         if (players != null) {
             for (int j = 0; j < players.getLength(); j++) {
@@ -61,10 +63,12 @@ public class ModelParser {
                 Element playerElement           = (Element) players.item(j);
                 Player player                   = parsePlayerFromElement(playerElement);
 
-                gameSession.addPlayer(player);
+                if (player != null) {
+                    gameSession.addPlayer(player);
 
-                if (hostID == player.getID()) {
-                    gameSession.setHost(player);
+                    if (hostID == player.getID()) {
+                        gameSession.setHost(player);
+                    }
                 }
             }
         }

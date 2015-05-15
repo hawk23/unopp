@@ -21,10 +21,11 @@ import android.widget.TextView;
 
 import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
-import com.gamble.unopp.model.game.DeckGenerator;;
+import com.gamble.unopp.model.game.DeckGenerator;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
+import com.gamble.unopp.model.game.Turn;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 import java.util.ArrayList;
@@ -208,10 +209,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     }
 
     public void callUno(View view) {
-        /*
         Turn turn = new Turn(Turn.TurnType.CALL_UNO);
         UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
-        */
+
+        showUnoCall();
     }
 
     public void showUnoCall() {

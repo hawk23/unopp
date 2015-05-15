@@ -14,7 +14,7 @@ public class LeaveGameResponse extends Response {
     public void parseXML(String xmlResponse) throws Exception {
 
         Document dom = this.getDomElement(xmlResponse);
-        Element result = dom.getElementById("Result");
+        Element result = dom.getElementById("LeaveGameResult");
 
         super.setResponseResult(ModelParser.<ResponseResult>parseModelFromElement(result, ResponseResult.class));
     }

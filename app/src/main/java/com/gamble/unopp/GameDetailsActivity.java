@@ -14,8 +14,12 @@ import android.widget.TextView;
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.GetGameRequest;
+import com.gamble.unopp.connection.requests.LeaveGameRequest;
+import com.gamble.unopp.connection.requests.StartGameRequest;
 import com.gamble.unopp.connection.response.GetGameResponse;
+import com.gamble.unopp.connection.response.LeaveGameResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.connection.response.StartGameResponse;
 import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
@@ -72,10 +76,28 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         if (response != null) {
             if (response instanceof GetGameResponse) {
                 GetGameResponse getGameResponse = (GetGameResponse) response;
-
-                UnoDatabase.getInstance().setCurrentGameSession(getGameResponse.getGameSession());
+                gameSession = getGameResponse.getGameSession();
 
                 this.displayDetails();
+            } else if (response instanceof StartGameResponse) {
+                StartGameResponse startGameResponse = (StartGameResponse) response;
+
+                if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
+                    // create an Intent to take you over to the GameScreenActivity
+                    Intent intent = new Intent(this, GameScreenActivity.class);
+                    startActivity(intent);
+                }
+            } else if (response instanceof LeaveGameResponse) {
+                LeaveGameResponse leaveGameResponse = (LeaveGameResponse) response;
+
+                if (leaveGameResponse.getResponseResult() != null && leaveGameResponse.getResponseResult().isStatus()) {
+                    // delete current gameSession
+                    UnoDatabase.getInstance().setCurrentGameSession(null);
+
+                    // create an Intent to take you back to the LobbyActivity
+                    Intent intent = new Intent(this, LobbyActivity.class);
+                    startActivity(intent);
+                }
             }
         }
     }
@@ -103,7 +125,12 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     }
 
     private void leaveGame () {
-        // TODO
+        LeaveGameRequest leaveGameRequest = new LeaveGameRequest();
+        leaveGameRequest.setGameId(this.gameSession.getID());
+        leaveGameRequest.setPlayerId(this.player.getID());
+
+        RequestProcessor rp = new RequestProcessor(this);
+        rp.execute(leaveGameRequest);
     }
 
     private void deleteGame () {
@@ -111,22 +138,19 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     }
 
     private void startGame () {
-        // TODO
+        StartGameRequest startGameRequest = new StartGameRequest();
+        startGameRequest.setGameId(this.gameSession.getID());
+        startGameRequest.setHostId(this.player.getID());
 
-        // HACK
-        // create an Intent to take you over to the Lobby
-        Intent intent = new Intent(this, GameScreenActivity.class);
-
-        // pack away the name into the lobbyIntent
-        startActivity(intent);
-        // END HACK
+        RequestProcessor rp = new RequestProcessor(this);
+        rp.execute(startGameRequest);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Inflate the menu; this adds items to the action bar if it is present.
-        if (this.gameSession.getHost().getID() == this.player.getID()) {
+        if (this.player != null && this.gameSession.getHost().getID() == this.player.getID()) {
             getMenuInflater().inflate(R.menu.menu_game_details_host, menu);
         }
         else {
@@ -157,5 +181,14 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * called when the back button of the phone is pressed
+     */
+    @Override
+    public void onBackPressed() {
+        // TODO uncommented because leaveGame does not work on server yet
+        // leaveGame();
     }
 }
