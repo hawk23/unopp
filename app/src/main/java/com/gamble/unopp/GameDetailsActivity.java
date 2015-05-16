@@ -83,11 +83,24 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             if (response instanceof GetGameResponse) {
                 GetGameResponse getGameResponse = (GetGameResponse) response;
                 UnoDatabase.getInstance().setCurrentGameSession(getGameResponse.getGameSession());
-                this.displayDetails();
+
+                if (getGameResponse.getGameSession() != null && getGameResponse.getGameSession().isStarted()) {
+                    this.updateTimer.cancel();
+
+                    // create an Intent to take you over to the GameScreenActivity
+                    Intent intent = new Intent(this, GameScreenActivity.class);
+                    startActivity(intent);
+                } else {
+                    this.displayDetails();
+                }
             } else if (response instanceof StartGameResponse) {
                 StartGameResponse startGameResponse = (StartGameResponse) response;
 
-                if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
+                // TODO only for testing
+                if (startGameResponse.getResponseResult() != null) {
+                // if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
+                    this.updateTimer.cancel();
+
                     // create an Intent to take you over to the GameScreenActivity
                     Intent intent = new Intent(this, GameScreenActivity.class);
                     startActivity(intent);
@@ -96,13 +109,14 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 LeaveGameResponse leaveGameResponse = (LeaveGameResponse) response;
 
                 if (leaveGameResponse.getResponseResult() != null && leaveGameResponse.getResponseResult().isStatus()) {
+                    this.updateTimer.cancel();
+
                     // delete current gameSession
                     UnoDatabase.getInstance().setCurrentGameSession(null);
 
                     // create an Intent to take you back to the LobbyActivity
                     Intent intent = new Intent(this, LobbyActivity.class);
                     startActivity(intent);
-                    this.updateTimer.cancel();
                 }
             }
 

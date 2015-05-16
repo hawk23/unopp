@@ -94,7 +94,7 @@ public class NewGameActivity extends ActionBarActivity {
             CreateGameRequest request = new CreateGameRequest();
             request.setLatitude(0);
             request.setLongitude(0);
-            request.setPlayerID(this.player.getID());
+            request.setPlayerID(UnoDatabase.getInstance().getLocalPlayer().getID());
             request.setMaxPlayers(GameSettings.MAX_PLAYERS);
             request.setGameName(this.txtGameName.getText().toString());
 
