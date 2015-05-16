@@ -4,6 +4,7 @@ import com.gamble.unopp.model.parsing.ModelParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Created by PeterLuca on 14.05.2015.
@@ -14,8 +15,8 @@ public class DestroyPlayerResponse extends Response
     public void parseXML(String xmlResponse) throws Exception {
 
         Document dom = this.getDomElement(xmlResponse);
-        Element result = dom.getElementById("DestroyPlayerResult");
+        Node result = dom.getElementsByTagName("DestroyPlayerResult").item(0);
 
-        super.setResponseResult(ModelParser.<ResponseResult>parseModelFromElement(result, ResponseResult.class));
+        super.setResponseResult(ModelParser.<ResponseResult>parseModelFromElement((Element) result, ResponseResult.class));
     }
 }

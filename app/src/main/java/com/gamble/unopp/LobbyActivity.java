@@ -14,8 +14,11 @@ import android.widget.ListView;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.DestroyPlayerRequest;
 import com.gamble.unopp.connection.requests.JoinGameRequest;
 import com.gamble.unopp.connection.requests.ListGamesRequest;
+import com.gamble.unopp.connection.response.DestroyGameResponse;
+import com.gamble.unopp.connection.response.DestroyPlayerResponse;
 import com.gamble.unopp.connection.response.JoinGameResponse;
 import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
@@ -30,7 +33,7 @@ import java.util.List;
 /**
  * Created by Verena on 25.04.2015.
  */
-public class LobbyActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class LobbyActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, RequestProcessorCallback {
 
     private ListView            existingGamesListView;
     private ArrayAdapter        mArrayAdapter;
@@ -61,8 +64,8 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         this.getAvailableGameSessions();
     }
 
-    private void getAvailableGameSessions() {
-
+    private void getAvailableGameSessions()
+    {
         ListGamesRequest gameSessionsRequest = new ListGamesRequest();
         gameSessionsRequest.setLatitude(0.0);
         gameSessionsRequest.setLongitude(0.0);
@@ -120,15 +123,34 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         int id = item.getItemId();
 
         // Handle item selection
-        switch (id) {
+        switch (id)
+        {
             case R.id.action_settings:
                 return true;
             case R.id.action_newGame:
                 this.newGame();
                 return true;
+            case 16908332: // back button
+                this.deletePlayer();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void deletePlayer ()
+    {
+        /* SERVER UPDATE ohne GameID
+        DestroyPlayerRequest destroyPlayerRequest = new DestroyPlayerRequest();
+        destroyPlayerRequest.setPlayerId(this.player.getID());
+
+        RequestProcessor rp = new RequestProcessor(this);
+        rp.execute(destroyPlayerRequest);
+        */
+
+        // create an Intent to take you back to the LobbyActivity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private void newGame () {
@@ -172,5 +194,11 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
             Intent intent = new Intent(this, GameDetailsActivity.class);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void requestFinished(Response response)
+    {
+
     }
 }

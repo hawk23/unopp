@@ -17,6 +17,7 @@ import com.gamble.unopp.connection.requests.DestroyGameRequest;
 import com.gamble.unopp.connection.requests.GetGameRequest;
 import com.gamble.unopp.connection.requests.LeaveGameRequest;
 import com.gamble.unopp.connection.requests.StartGameRequest;
+import com.gamble.unopp.connection.response.DestroyGameResponse;
 import com.gamble.unopp.connection.response.GetGameResponse;
 import com.gamble.unopp.connection.response.LeaveGameResponse;
 import com.gamble.unopp.connection.response.Response;
@@ -119,6 +120,19 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     startActivity(intent);
                 }
             }
+            else if (response instanceof DestroyGameResponse) {
+                DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
+
+                if (destroyGameResponse.getResponseResult() != null && destroyGameResponse.getResponseResult().isStatus()) {
+                    // delete current gameSession
+                    UnoDatabase.getInstance().setCurrentGameSession(null);
+
+                    // create an Intent to take you back to the LobbyActivity
+                    Intent intent = new Intent(this, LobbyActivity.class);
+                    startActivity(intent);
+                    this.updateTimer.cancel();
+                }
+            }
 
             if (response.getResponseResult() != null && !response.getResponseResult().isStatus()) {
                 // display error message
@@ -137,23 +151,21 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         this.player         = UnoDatabase.getInstance().getLocalPlayer();
         this.gameSession    = UnoDatabase.getInstance().getCurrentGameSession();
 
-        if (this.gameSession != null) {
-            setTitle(getString(R.string.title_activity_game_details) + ": " + this.gameSession.getName());
+        setTitle(getString(R.string.title_activity_game_details) +": "+ this.gameSession.getName());
 
-            this.txtGameDetailsName.setText("Beigetretene Spieler: (" +
-                    Integer.toString(this.gameSession.getCurrentPlayerCount()) + "/" +
-                    Integer.toString(this.gameSession.getMaxPlayers()) + ")");
+        this.txtGameDetailsName.setText("Beigetretene Spieler: (" +
+                Integer.toString(this.gameSession.getCurrentPlayerCount()) + "/"+
+                Integer.toString(this.gameSession.getMaxPlayers()) + ")");
 
-            ArrayList players = new ArrayList();
+        ArrayList players = new ArrayList();
 
-            for (Player player : this.gameSession.getPlayers()) {
-                players.add(player);
-            }
-
-            ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, players);
-            this.listCurrentPlayers.setAdapter(arrayAdapter);
-            arrayAdapter.notifyDataSetChanged();
+        for (Player player : this.gameSession.getPlayers()) {
+            players.add(player);
         }
+
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, players);
+        this.listCurrentPlayers.setAdapter(arrayAdapter);
+        arrayAdapter.notifyDataSetChanged();
     }
 
     private void leaveGame () {
@@ -165,7 +177,6 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         rp.execute(leaveGameRequest);
     }
 
-    //TODO: Testing!
     private void deleteGame ()
     {
         DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
