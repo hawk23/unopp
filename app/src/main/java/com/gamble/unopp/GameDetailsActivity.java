@@ -25,15 +25,17 @@ import com.gamble.unopp.connection.response.LeaveGameResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.connection.response.StartGameResponse;
 import com.gamble.unopp.fragments.ErrorDialogFragment;
+import com.gamble.unopp.helper.ErrorDialogTypes;
 import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.Player;
+import com.gamble.unopp.model.management.IErrorDialogListener;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameDetailsActivity extends ActionBarActivity implements RequestProcessorCallback {
+public class GameDetailsActivity extends ActionBarActivity implements RequestProcessorCallback, IErrorDialogListener {
 
     private Player player;
     private GameSession gameSession;
@@ -81,6 +83,21 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     }
 
     @Override
+    public void onDialogClosed(ErrorDialogFragment dialog) {
+
+        switch (dialog.getType()) {
+            case ErrorDialogTypes.GET_GAME_FAILED:
+                if (this.player != null && this.gameSession.getHost().getID() == this.player.getID()) {
+                    this.deleteGame();
+                }
+                else {
+                    this.leaveGame();
+                }
+                break;
+        }
+    }
+
+    @Override
     public void requestFinished(Response response) {
         if (response != null) {
             if (response instanceof GetGameResponse) {
@@ -110,10 +127,9 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
                     Bundle args = new Bundle();
                     args.putString("errorMessage", response.getResponseResult().getMessage());
+                    args.putString(ErrorDialogFragment.TYPE_IDENTIFIER, ErrorDialogTypes.GET_GAME_FAILED);
                     errorDialogFragment.setArguments(args);
                     errorDialogFragment.show(getFragmentManager(), "error");
-
-                    // TODO: after dialog close, show LobbyActicity.
                 }
 
 
