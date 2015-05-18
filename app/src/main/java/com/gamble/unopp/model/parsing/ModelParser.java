@@ -215,6 +215,10 @@ public class ModelParser {
 
             GameRound   gameRound       = parseGameRoundFromElement((Element) gameRounds.item(i), gameSession);
             gameSession.getGameRounds().add(gameRound);
+
+            if (!gameRound.isFinished()) {
+                gameSession.setActualGameRound(gameRound);
+            }
         }
 
         return gameSession;
