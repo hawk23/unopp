@@ -121,4 +121,14 @@ public class Player extends ModelObject {
 
         return true;
     }
+
+    public boolean isHost () {
+        if (this.gameSession != null && this.gameSession.getHost() != null) {
+            if (this.gameSession.getHost().getID() == this.getID()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
