@@ -104,7 +104,6 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             } else if (response instanceof StartGameResponse) {
                 StartGameResponse startGameResponse = (StartGameResponse) response;
 
-                // TODO only for testing
                 if (startGameResponse.getResponseResult() != null) {
                     if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
                         this.updateTimer.cancel();
