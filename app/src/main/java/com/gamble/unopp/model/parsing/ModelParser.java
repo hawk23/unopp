@@ -46,6 +46,10 @@ public class ModelParser {
     }
 
     private static Player parsePlayerFromElement (Element element) {
+        return parsePlayerFromElement(element, null);
+    }
+
+    private static Player parsePlayerFromElement (Element element, GameSession gameSession) {
 
         if (element.getElementsByTagName("id") != null && element.getElementsByTagName("id").item(0) != null ) {
 
@@ -53,6 +57,7 @@ public class ModelParser {
             String name = element.getElementsByTagName("name").item(0).getTextContent();
 
             Player player = new Player(id, name);
+            player.setGameSession(gameSession);
 
             /**
              * Parse Cards
@@ -188,7 +193,7 @@ public class ModelParser {
             for (int j = 0; j < players.getLength(); j++) {
 
                 Element playerElement           = (Element) players.item(j);
-                Player player                   = parsePlayerFromElement(playerElement);
+                Player player                   = parsePlayerFromElement(playerElement, gameSession);
 
                 if (player != null) {
                     gameSession.addPlayer(player);

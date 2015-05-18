@@ -117,6 +117,9 @@ public class NewGameActivity extends ActionBarActivity {
             GameSession session = response.getGameSession();
             UnoDatabase.getInstance().setCurrentGameSession(session);
 
+            // update local player
+            this.player.setGameSession(session);
+
             // create an Intent to take you over to the GameDetailsActivity
             Intent intent = new Intent(this, GameDetailsActivity.class);
 
