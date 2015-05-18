@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
 import com.gamble.unopp.model.game.DeckGenerator;
+import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
@@ -67,6 +68,12 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
         this.ivDirection        = (ImageView) findViewById(R.id.ivDirection);
 
+        initGameView();
+
+    }
+
+    private void initGameView () {
+
         // initialize direction
         setDirection(Path.Direction.CW);
 
@@ -79,34 +86,28 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // disable the back button for the color popup
         chooseColorDialogFragment.setCancelable(false);
 
-        // HACK: set cards of player here
-        // cards = UnoDatabase.getInstance().getLocalPlayer().getHand();
-        cards = DeckGenerator.createDeck(0);
+        GameSession gameSession = UnoDatabase.getInstance().getCurrentGameSession();
 
-        for (final Card card : cards) {
-
-            final ImageView   imageView = new ImageView(getBaseContext());
-            imageView.setImageBitmap(card.getImage());
-            imageView.setTag(card);
-            imageView.setOnLongClickListener(this);
-
-            this.llHand.addView(imageView);
-        }
-
-        flPlayedCards.setOnDragListener(this);
-
-        // HACK display hardcoded players
-        players = new ArrayList<>();
-        players.add(new Player(1, "Peter"));
-        players.add(new Player(2, "Verena"));
-        players.add(new Player(3, "Albert"));
-        players.add(new Player(4, "Julius"));
-        players.add(new Player(5, "Roland"));
-        players.add(new Player(UnoDatabase.getInstance().getLocalPlayer().getID(), "Mario"));
-
+        // initialize the players list
+        this.players = gameSession.getPlayers();
         arrayAdapter = new GameScreenPlayerListAdapter(this.getBaseContext(), players);
         this.lvPlayers.setAdapter(arrayAdapter);
 
+        // initialize the cards of the player
+        // cards = UnoDatabase.getInstance().getLocalPlayer().getHand();
+
+        if (cards != null) {
+            for (final Card card : cards) {
+
+                final ImageView imageView = new ImageView(getBaseContext());
+                imageView.setImageBitmap(card.getImage());
+                imageView.setTag(card);
+                imageView.setOnLongClickListener(this);
+
+                this.llHand.addView(imageView);
+            }
+            flPlayedCards.setOnDragListener(this);
+        }
     }
 
     private void setDirection(Path.Direction direction) {

@@ -14,16 +14,15 @@ import android.widget.TextView;
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.DestroyGameRequest;
-import com.gamble.unopp.connection.requests.DestroyPlayerRequest;
 import com.gamble.unopp.connection.requests.GetGameRequest;
 import com.gamble.unopp.connection.requests.LeaveGameRequest;
 import com.gamble.unopp.connection.requests.StartGameRequest;
 import com.gamble.unopp.connection.response.DestroyGameResponse;
-import com.gamble.unopp.connection.response.DestroyPlayerResponse;
 import com.gamble.unopp.connection.response.GetGameResponse;
 import com.gamble.unopp.connection.response.LeaveGameResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.connection.response.StartGameResponse;
+import com.gamble.unopp.fragments.ErrorDialogFragment;
 import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
@@ -68,11 +67,15 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
     private void updateTimerTick () {
 
-        GetGameRequest getGameRequest = new GetGameRequest();
-        getGameRequest.setGameID(UnoDatabase.getInstance().getCurrentGameSession().getID());
+        GameSession currentGameSession = UnoDatabase.getInstance().getCurrentGameSession();
 
-        RequestProcessor processor = new RequestProcessor(this);
-        processor.execute(getGameRequest);
+        if (currentGameSession != null) {
+            GetGameRequest getGameRequest = new GetGameRequest();
+            getGameRequest.setGameID(UnoDatabase.getInstance().getCurrentGameSession().getID());
+
+            RequestProcessor processor = new RequestProcessor(this);
+            processor.execute(getGameRequest);
+        }
     }
 
     @Override
@@ -81,12 +84,23 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             if (response instanceof GetGameResponse) {
                 GetGameResponse getGameResponse = (GetGameResponse) response;
                 UnoDatabase.getInstance().setCurrentGameSession(getGameResponse.getGameSession());
-                this.displayDetails();
+
+                if (getGameResponse.getGameSession() != null && getGameResponse.getGameSession().isStarted()) {
+                    this.updateTimer.cancel();
+
+                    // create an Intent to take you over to the GameScreenActivity
+                    Intent intent = new Intent(this, GameScreenActivity.class);
+                    startActivity(intent);
+                } else {
+                    this.displayDetails();
+                }
             } else if (response instanceof StartGameResponse) {
                 StartGameResponse startGameResponse = (StartGameResponse) response;
 
+                // TODO only for testing
                 if (startGameResponse.getResponseResult() != null) {
-                    // TODO implement error handling if ResponseResult.isStatus is false
+                // if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
+                    this.updateTimer.cancel();
 
                     // create an Intent to take you over to the GameScreenActivity
                     Intent intent = new Intent(this, GameScreenActivity.class);
@@ -96,6 +110,8 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 LeaveGameResponse leaveGameResponse = (LeaveGameResponse) response;
 
                 if (leaveGameResponse.getResponseResult() != null && leaveGameResponse.getResponseResult().isStatus()) {
+                    this.updateTimer.cancel();
+
                     // delete current gameSession
                     UnoDatabase.getInstance().setCurrentGameSession(null);
 
@@ -104,12 +120,10 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     startActivity(intent);
                 }
             }
-            else if (response instanceof DestroyGameResponse)
-            {
+            else if (response instanceof DestroyGameResponse) {
                 DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
 
-                if (destroyGameResponse.getResponseResult() != null && destroyGameResponse.getResponseResult().isStatus())
-                {
+                if (destroyGameResponse.getResponseResult() != null && destroyGameResponse.getResponseResult().isStatus()) {
                     // delete current gameSession
                     UnoDatabase.getInstance().setCurrentGameSession(null);
 
@@ -119,18 +133,15 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     this.updateTimer.cancel();
                 }
             }
-            /*TODO: EndGameRound
-            else if (response instanceof EndGameRoundResponse)
-            {
 
+            if (response.getResponseResult() != null && !response.getResponseResult().isStatus()) {
+                // display error message
+                ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
+                Bundle args = new Bundle();
+                args.putString("errorMessage", response.getResponseResult().getMessage());
+                errorDialogFragment.setArguments(args);
+                errorDialogFragment.show(getFragmentManager(), "error");
             }
-            */
-            /*TODO: StartGameRound
-            else if (response instanceof StartGameRoundResponse)
-            {
-
-            }
-            */
         }
     }
 
