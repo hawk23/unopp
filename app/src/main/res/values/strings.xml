@@ -16,5 +16,6 @@
     <string name="action_deletegame">Spiel löschen</string>
     <string name="action_newGame">Neues Spiel</string>
     <string name="action_refresh">Aktualisieren</string>
+    <string name="action_deleteAllGames">Alle Spiele löschen</string>
     <string name="error">Error</string>
 </resources>

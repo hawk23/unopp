@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.DestroyGameRequest;
 import com.gamble.unopp.connection.requests.DestroyPlayerRequest;
 import com.gamble.unopp.connection.requests.JoinGameRequest;
 import com.gamble.unopp.connection.requests.ListGamesRequest;
@@ -138,11 +139,27 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
             case R.id.action_refresh:
                 this.refresh();
                 return true;
+            case R.id.action_deleteAllGames:
+                this.deleteAllGames();
+                return true;
             case 16908332: // back button
                 this.deletePlayer();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void deleteAllGames () {
+
+        for (GameSession gameSession : this.games) {
+
+            DestroyGameRequest request = new DestroyGameRequest();
+            request.setGameId(gameSession.getID());
+            request.setHostId(gameSession.getHost().getID());
+
+            RequestProcessor rp = new RequestProcessor(this);
+            rp.execute(request);
         }
     }
 
@@ -208,5 +225,8 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
     @Override
     public void requestFinished(Response response)
     {
+        if (response instanceof DestroyGameResponse) {
+            this.refresh();
+        }
     }
 }
