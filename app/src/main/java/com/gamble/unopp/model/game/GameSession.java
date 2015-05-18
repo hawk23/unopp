@@ -117,6 +117,17 @@ public class GameSession extends ModelObject {
         this.mode = mode;
     }
 
+    public Player getPlayerById (int id) {
+
+        for (Player player : this.players) {
+            if (player.getID() == id) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return this.getName() + " (" + (getCurrentPlayerCount() + "/" + getMaxPlayers() + ")");

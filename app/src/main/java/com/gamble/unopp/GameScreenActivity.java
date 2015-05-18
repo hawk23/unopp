@@ -94,7 +94,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.lvPlayers.setAdapter(arrayAdapter);
 
         // initialize the cards of the player
-        // cards = UnoDatabase.getInstance().getLocalPlayer().getHand();
+       cards = UnoDatabase.getInstance().getLocalPlayer().getHand();
 
         if (cards != null) {
             for (final Card card : cards) {
