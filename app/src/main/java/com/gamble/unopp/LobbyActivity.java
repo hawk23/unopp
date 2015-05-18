@@ -200,6 +200,5 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
     @Override
     public void requestFinished(Response response)
     {
-
     }
 }
