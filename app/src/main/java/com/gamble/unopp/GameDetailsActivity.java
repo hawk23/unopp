@@ -83,7 +83,14 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         if (response != null) {
             if (response instanceof GetGameResponse) {
                 GetGameResponse getGameResponse = (GetGameResponse) response;
+
+                // update game session
                 UnoDatabase.getInstance().setCurrentGameSession(getGameResponse.getGameSession());
+
+                // update local player
+                Player localPlayer          = UnoDatabase.getInstance().getLocalPlayer();
+                Player updatedLocalPlayer   = getGameResponse.getGameSession().getPlayerById(localPlayer.getID());
+                UnoDatabase.getInstance().setLocalPlayer(updatedLocalPlayer);
 
                 if (getGameResponse.getGameSession() != null && getGameResponse.getGameSession().isStarted()) {
                     this.updateTimer.cancel();
@@ -99,12 +106,16 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
                 // TODO only for testing
                 if (startGameResponse.getResponseResult() != null) {
-                // if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
-                    this.updateTimer.cancel();
+                    if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
+                        this.updateTimer.cancel();
 
-                    // create an Intent to take you over to the GameScreenActivity
-                    Intent intent = new Intent(this, GameScreenActivity.class);
-                    startActivity(intent);
+                        // send get game to get initial status
+                        GetGameRequest getGameRequest = new GetGameRequest();
+                        getGameRequest.setGameID(UnoDatabase.getInstance().getCurrentGameSession().getID());
+
+                        RequestProcessor processor = new RequestProcessor(this);
+                        processor.execute(getGameRequest);
+                    }
                 }
             } else if (response instanceof LeaveGameResponse) {
                 LeaveGameResponse leaveGameResponse = (LeaveGameResponse) response;

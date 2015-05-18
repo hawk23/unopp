@@ -11,6 +11,7 @@ public class GameRound {
     private GameSession gameSession;
     private GameState gamestate;
     private boolean active;
+    private boolean finished;
 
     private int localUpdateID = 0;
 
@@ -68,5 +69,13 @@ public class GameRound {
 
     public ArrayList<Player> getPlayers() {
         return this.gameSession.getPlayers();
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }
