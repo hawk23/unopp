@@ -223,6 +223,10 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     }
 
     private void leaveGame () {
+
+        this.updateTimer.cancel();
+        this.updateTimer.purge();
+
         LeaveGameRequest leaveGameRequest = new LeaveGameRequest();
         leaveGameRequest.setGameId(this.gameSession.getID());
         leaveGameRequest.setPlayerId(this.player.getID());
@@ -231,8 +235,11 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         rp.execute(leaveGameRequest);
     }
 
-    private void deleteGame ()
-    {
+    private void deleteGame () {
+
+        this.updateTimer.cancel();
+        this.updateTimer.purge();
+
         DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
         destroyGameRequest.setGameId(this.gameSession.getID());
         destroyGameRequest.setHostId(this.player.getID());
@@ -242,6 +249,9 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     }
 
     private void startGame () {
+
+        this.updateTimer.cancel();
+        this.updateTimer.purge();
 
         StartGameRequest startGameRequest = new StartGameRequest();
         startGameRequest.setGameId(this.gameSession.getID());
