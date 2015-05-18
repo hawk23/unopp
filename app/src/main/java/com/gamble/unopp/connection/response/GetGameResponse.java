@@ -23,10 +23,9 @@ public class GetGameResponse extends Response {
         Node        resultNode                     = dom.getElementsByTagName("Result").item(0);
         Node        gameSessionNode                = dom.getElementsByTagName("GameSession").item(0);
 
-        if (resultNode != null) {
-            this.responseResult = ModelParser.<ResponseResult>parseModelFromElement((Element) resultNode, ResponseResult.class);
-        }
-        if (gameSessionNode != null) {
+        this.responseResult = ModelParser.<ResponseResult>parseModelFromElement((Element) resultNode, ResponseResult.class);
+
+        if (responseResult.isStatus() && gameSessionNode != null) {
             this.gameSession = ModelParser.<GameSession>parseModelFromElement((Element) gameSessionNode, GameSession.class);
         }
     }
