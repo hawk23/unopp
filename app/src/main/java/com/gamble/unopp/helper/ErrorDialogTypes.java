@@ -5,6 +5,9 @@ package com.gamble.unopp.helper;
  */
 public class ErrorDialogTypes {
 
-    public static final String GET_GAME_FAILED  = "getGameFailed";
-    public static final String DEFAULT          = "default";
+    public static final String GET_GAME_FAILED          = "getGameFailed";
+    public static final String START_GAME_FAILED        = "startGameFailed";
+    public static final String LEAVE_GAME_FAILED        = "leaveGameFailed";
+    public static final String DESTROY_GAME_FAILED      = "destroyGameFailed";
+    public static final String DEFAULT                  = "default";
 }
