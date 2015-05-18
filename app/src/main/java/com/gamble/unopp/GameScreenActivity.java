@@ -3,8 +3,13 @@ package com.gamble.unopp;
 import android.content.ClipData;
 import android.graphics.Color;
 import android.graphics.Path;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.FloatMath;
 import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener {
+public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener, SensorEventListener {
 
     private HorizontalScrollView hswHand;
     private LinearLayout llHand;
@@ -46,6 +51,14 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private ArrayList<Player> players;
     private ArrayAdapter arrayAdapter;
     private List<Card> cards;
+
+    private SensorManager sensorMan;
+    private Sensor accelerometer;
+    private float[] mGravity;
+    private float mAccel;
+    private float mAccelCurrent;
+    private float mAccelLast;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +80,13 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.flPlayedCards      = (RelativeLayout) findViewById(R.id.flPlayedCards);
         this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
         this.ivDirection        = (ImageView) findViewById(R.id.ivDirection);
+
+        // init sensors
+        sensorMan               = (SensorManager)getSystemService(SENSOR_SERVICE);
+        accelerometer           = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mAccel                  = 0.00f;
+        mAccelCurrent           = SensorManager.GRAVITY_EARTH;
+        mAccelLast              = SensorManager.GRAVITY_EARTH;
 
         initGameView();
 
@@ -116,6 +136,18 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         } else if (direction.equals(Path.Direction.CCW)) {
             ivDirection.setImageResource(R.mipmap.direction_up);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sensorMan.registerListener(this, accelerometer,SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorMan.unregisterListener(this);
     }
 
     @Override
@@ -210,6 +242,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     }
 
     public void callUno(View view) {
+        callUno();
+    }
+
+    public void callUno () {
         Turn turn = new Turn(Turn.TurnType.CALL_UNO);
         UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
 
@@ -284,5 +320,34 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         } else if (drawCounter > 0) {
             tvDrawCounter.setText("+" + drawCounter);
         }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+
+            mGravity = event.values.clone();
+
+            // Shake detection
+            float x = mGravity[0];
+            float y = mGravity[1];
+            float z = mGravity[2];
+
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = FloatMath.sqrt(x * x + y * y + z * z);
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+
+            // Make this higher or lower according to how much
+            // motion you want to detect
+            if(mAccel > 3){
+                this.callUno();
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // required method
     }
 }
