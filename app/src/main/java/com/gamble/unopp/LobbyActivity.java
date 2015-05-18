@@ -140,13 +140,14 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
 
     private void deletePlayer ()
     {
-        /* SERVER UPDATE ohne GameID
         DestroyPlayerRequest destroyPlayerRequest = new DestroyPlayerRequest();
         destroyPlayerRequest.setPlayerId(this.player.getID());
 
+        // the player is not in a game session yet
+        destroyPlayerRequest.setGameId(-1);
+
         RequestProcessor rp = new RequestProcessor(this);
         rp.execute(destroyPlayerRequest);
-        */
 
         // create an Intent to take you back to the LobbyActivity
         Intent intent = new Intent(this, MainActivity.class);

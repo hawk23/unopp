@@ -8,13 +8,12 @@ import com.gamble.unopp.model.management.UnoDatabase;
  * Created by Albert on 08.05.2015.
  *
  */
-public class Turn {
+public class Turn extends GameUpdate {
 
     public static enum TurnType {
         DRAW, PLAY_CARD, CHOOSE_COLOR, CALL_UNO
     }
 
-    private int ID;
     private Player player;
     private TurnType type;
     private Card card;
@@ -26,7 +25,7 @@ public class Turn {
      * creates a new Turn object and sets the id to localUpdateId and the player to the current local player
      */
     public Turn(TurnType type) {
-        this.ID = UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().getLocalUpdateID();
+        super(UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().getLocalUpdateID());
         this.type = type;
         this.player = UnoDatabase.getInstance().getLocalPlayer();
         this.card = null;
@@ -42,7 +41,7 @@ public class Turn {
      * if TurnType is PLAY_CARD - Card must be set with setCard
      */
     public Turn(int ID, TurnType type, Player player) {
-        this.ID = ID;
+        super(ID);
         this.type = type;
         this.player = player;
         this.card = null;
