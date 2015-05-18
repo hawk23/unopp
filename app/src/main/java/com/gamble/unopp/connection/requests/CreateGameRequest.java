@@ -32,7 +32,7 @@ public class CreateGameRequest extends Request {
 
     public void setPlayerID(int playerID) {
         this.playerID = playerID;
-        this.requestParameters.put("playerID", playerID);
+        this.requestParameters.put("hostID", playerID);
     }
 
     public void setLatitude(double latitude) {

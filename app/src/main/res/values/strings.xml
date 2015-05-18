@@ -10,4 +10,10 @@
     <string name="title_activity_game_details">Spielübersicht</string>
     <string name="title_activity_game_screen">GameScreenActivity</string>
     <string name="pick_color">Wähle eine Farbe</string>
+    <string name="action_leavegame">Spiel verlassen</string>
+    <string name="action_credits">Credits</string>
+    <string name="action_startgame">Spiel starten</string>
+    <string name="action_deletegame">Spiel löschen</string>
+    <string name="action_newGame">Neues Spiel</string>
+    <string name="error">Error</string>
 </resources>

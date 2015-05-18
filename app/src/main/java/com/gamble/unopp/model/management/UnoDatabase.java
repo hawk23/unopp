@@ -1,7 +1,7 @@
 package com.gamble.unopp.model.management;
 
-import com.gamble.unopp.model.GameSession;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.game.GameSession;
+import com.gamble.unopp.model.game.Player;
 
 /**
  * Created by Mario on 04.05.2015.

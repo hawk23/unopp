@@ -1,10 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_leaveround"   android:title="Runde verlassen"         android:orderInCategory="1"     app:showAsAction="always"   />
-    <item android:id="@+id/action_statistic"    android:title="Statistik"               android:orderInCategory="3"     app:showAsAction="never"    />
-    <item android:id="@+id/action_dropplayer"   android:title="Spieler kicken"          android:orderInCategory="4"     app:showAsAction="never"    />
-    <item android:id="@+id/action_newround"     android:title="Neue Runde"              android:orderInCategory="5"     app:showAsAction="never"    />
+    <item android:id="@+id/action_credits"     android:title="@string/action_credits"                android:orderInCategory="99"   app:showAsAction="never"    />
     <item android:id="@+id/action_settings"     android:title="@string/action_settings"                android:orderInCategory="100"   app:showAsAction="never"    />
-    <item android:id="@+id/action_leavegame"    android:title="Spiel verlassen"         android:orderInCategory="101"   app:showAsAction="never"    />
+    <item android:id="@+id/action_leavegame"    android:title="@string/action_leavegame"         android:orderInCategory="101"   app:showAsAction="never"    />
 </menu>

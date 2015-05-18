@@ -13,8 +13,8 @@ public class LeaveGameRequest extends Request {
     private int gameId;
     private int playerId;
 
-    public LeaveGameRequest() {
-
+    public LeaveGameRequest()
+    {
         super();
 
         this.soapAction = SOAP_ACTION;
@@ -24,11 +24,11 @@ public class LeaveGameRequest extends Request {
 
     public void setGameId(int gameId) {
         this.gameId = gameId;
-        this.requestParameters.put("gameId", String.valueOf(gameId));
+        this.requestParameters.put("gameID", String.valueOf(gameId));
     }
 
     public void setPlayerId(int playerId) {
         this.playerId = playerId;
-        this.requestParameters.put("playerId", String.valueOf(playerId));
+        this.requestParameters.put("playerID", String.valueOf(playerId));
     }
 }

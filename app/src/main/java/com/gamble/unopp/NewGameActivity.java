@@ -16,7 +16,11 @@ import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.CreateGameRequest;
 import com.gamble.unopp.connection.response.CreateGameResponse;
 import com.gamble.unopp.connection.response.Response;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.fragments.ErrorDialogFragment;
+import com.gamble.unopp.helper.SharedPreferencesKeys;
+import com.gamble.unopp.model.game.GameRound;
+import com.gamble.unopp.model.game.GameSession;
+import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 
@@ -90,7 +94,7 @@ public class NewGameActivity extends ActionBarActivity {
             CreateGameRequest request = new CreateGameRequest();
             request.setLatitude(0);
             request.setLongitude(0);
-            request.setPlayerID(this.player.getID());
+            request.setPlayerID(UnoDatabase.getInstance().getLocalPlayer().getID());
             request.setMaxPlayers(GameSettings.MAX_PLAYERS);
             request.setGameName(this.txtGameName.getText().toString());
 
@@ -110,17 +114,26 @@ public class NewGameActivity extends ActionBarActivity {
     private void createGameFinished (CreateGameResponse response) {
 
         if (response != null) {
+            GameSession session = response.getGameSession();
+            UnoDatabase.getInstance().setCurrentGameSession(session);
 
-            UnoDatabase.getInstance().setCurrentGameSession(response.getGameSession());
-
-            // create an Intent to take you over to the Lobby
+            // create an Intent to take you over to the GameDetailsActivity
             Intent intent = new Intent(this, GameDetailsActivity.class);
 
-            // pack away the name into the lobbyIntent
             startActivity(intent);
         }
         else {
-            // TODO: error handling
+            String errorMessage = "Neues Spiel konnte nicht erstellt werden.\n";
+            if (response.getResponseResult() != null && !response.getResponseResult().isStatus()) {
+                errorMessage += response.getResponseResult().getMessage();
+            }
+
+            // display error message
+            ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
+            Bundle args = new Bundle();
+            args.putString("errorMessage", errorMessage);
+            errorDialogFragment.setArguments(args);
+            errorDialogFragment.show(getFragmentManager(), "error");
         }
     }
 

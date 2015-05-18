@@ -17,6 +17,7 @@ import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
@@ -28,6 +29,13 @@ import java.util.Objects;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * Created by Albert on 02.05.2015.
@@ -35,6 +43,7 @@ import javax.xml.parsers.ParserConfigurationException;
 public abstract class Request
 {
     protected static final String           MAIN_SERVICE_URL        = "http://game.administrator.at/UnoPP.asmx";
+    //protected static final String           MAIN_SERVICE_URL        = "10.0.2.2:57896/UnoPP.asmx/";
     protected static final String           NAMESPACE               = "http://tempuri.org/";
 
     protected String                        soapAction;
@@ -62,12 +71,17 @@ public abstract class Request
         HttpTransportSE             ht              = getHttpTransportSE();
 
         try {
+            ht.debug = true;
             ht.call(this.soapAction, envelope);
+
+            // prints out the xml request with new lines
+            Log.d("Unopp Request: " , prettyFormat(ht.requestDump));
 
             String                  xmlResponse     = ht.responseDump;
 
             // parse response and build objects
             if (this.response != null) {
+                Log.d("Unopp Response: " ,prettyFormat(ht.responseDump));
                 this.response.parseXML(xmlResponse);
             }
             else {
@@ -111,5 +125,20 @@ public abstract class Request
         envelope.setOutputSoapObject (request);
 
         return envelope;
+    }
+
+    public static String prettyFormat(String input) {
+        try {
+            Source xmlInput = new StreamSource(new StringReader(input));
+            StringWriter stringWriter = new StringWriter();
+            StreamResult xmlOutput = new StreamResult(stringWriter);
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(xmlInput, xmlOutput);
+            return xmlOutput.getWriter().toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Error printing xml: " + e.getMessage());
+        }
     }
 }

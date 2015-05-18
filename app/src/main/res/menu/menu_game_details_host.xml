@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".GameDetailsActivity">
-    <item android:id="@+id/action_settings"     android:title="@string/action_settings"  android:orderInCategory="100" app:showAsAction="never"  />
-    <item android:id="@+id/action_startgame"   android:title="Spiel starten"            android:orderInCategory="1"   app:showAsAction="always" />
-    <item android:id="@+id/action_deletegame"  android:title="Spiel löschen"            android:orderInCategory="2"   app:showAsAction="never"  />
+    <item android:id="@+id/action_settings"     android:title="@string/action_settings"     android:orderInCategory="100" app:showAsAction="never"  />
+    <item android:id="@+id/action_startgame"    android:title="@string/action_startgame"    android:orderInCategory="1"   app:showAsAction="always" />
+    <item android:id="@+id/action_deletegame"   android:title="@string/action_deletegame"   android:orderInCategory="2"   app:showAsAction="never"  />
 </menu>

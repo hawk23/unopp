@@ -1,6 +1,6 @@
 package com.gamble.unopp.connection.response;
 
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.parsing.ModelParser;
 
 import org.w3c.dom.Document;
@@ -25,20 +25,9 @@ public class CreatePlayerResponse extends Response {
     @Override
     public void parseXML (String xmlResponse) throws Exception {
 
-        // HACK hardcoded response
-        xmlResponse = "<CreatePlayerResponse xmlns=\"http://tempuri.org/\">\n" +
-                "    <CreatePlayerResult>\n" +
-                "        <Player>\n" +
-                "            <name>Mario</name>\n" +
-                "            <id>1</id>\n" +
-                "        </Player>\n" +
-                "    </CreatePlayerResult>\n" +
-                "</CreatePlayerResponse>";
-        // END HACK
-
         Document    dom                 = this.getDomElement(xmlResponse);
 
-        Node        playerNode          = dom.getElementsByTagName("Player").item(0);
+        Node        playerNode          = dom.getElementsByTagName("CreatePlayerResult").item(0);
         Element     playerElement       = (Element) playerNode;
 
         this.player                     = ModelParser.<Player>parseModelFromElement(playerElement, Player.class);

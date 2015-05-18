@@ -1,7 +1,6 @@
 package com.gamble.unopp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -15,13 +14,17 @@ import android.widget.ListView;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.DestroyPlayerRequest;
 import com.gamble.unopp.connection.requests.JoinGameRequest;
 import com.gamble.unopp.connection.requests.ListGamesRequest;
+import com.gamble.unopp.connection.response.DestroyGameResponse;
+import com.gamble.unopp.connection.response.DestroyPlayerResponse;
 import com.gamble.unopp.connection.response.JoinGameResponse;
 import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
-import com.gamble.unopp.model.GameSession;
-import com.gamble.unopp.model.Player;
+import com.gamble.unopp.fragments.ErrorDialogFragment;
+import com.gamble.unopp.model.game.GameSession;
+import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 import java.util.ArrayList;
@@ -30,7 +33,7 @@ import java.util.List;
 /**
  * Created by Verena on 25.04.2015.
  */
-public class LobbyActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class LobbyActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, RequestProcessorCallback {
 
     private ListView            existingGamesListView;
     private ArrayAdapter        mArrayAdapter;
@@ -61,8 +64,8 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         this.getAvailableGameSessions();
     }
 
-    private void getAvailableGameSessions() {
-
+    private void getAvailableGameSessions()
+    {
         ListGamesRequest gameSessionsRequest = new ListGamesRequest();
         gameSessionsRequest.setLatitude(0.0);
         gameSessionsRequest.setLongitude(0.0);
@@ -89,7 +92,11 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
             displayAvailableGameSessions(games);
         }
         else {
-            // TODO
+            ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
+            Bundle args = new Bundle();
+            args.putString("errorMessage", "Keine Spiele gefunden!");
+            errorDialogFragment.setArguments(args);
+            errorDialogFragment.show(getFragmentManager(), "error");
         }
     }
 
@@ -116,15 +123,34 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         int id = item.getItemId();
 
         // Handle item selection
-        switch (id) {
+        switch (id)
+        {
             case R.id.action_settings:
                 return true;
             case R.id.action_newGame:
                 this.newGame();
                 return true;
+            case 16908332: // back button
+                this.deletePlayer();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void deletePlayer ()
+    {
+        /* SERVER UPDATE ohne GameID
+        DestroyPlayerRequest destroyPlayerRequest = new DestroyPlayerRequest();
+        destroyPlayerRequest.setPlayerId(this.player.getID());
+
+        RequestProcessor rp = new RequestProcessor(this);
+        rp.execute(destroyPlayerRequest);
+        */
+
+        // create an Intent to take you back to the LobbyActivity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private void newGame () {
@@ -154,7 +180,7 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
             @Override
             public void requestFinished(Response response) {
-                joinGameFinished((JoinGameResponse) response, game); // TODO response is null - why?
+                joinGameFinished((JoinGameResponse) response, game);
             }
         });
         rp.execute(joinGameRequest);
@@ -168,5 +194,11 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
             Intent intent = new Intent(this, GameDetailsActivity.class);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void requestFinished(Response response)
+    {
+
     }
 }

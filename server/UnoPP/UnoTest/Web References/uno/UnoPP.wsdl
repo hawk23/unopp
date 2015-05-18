@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="ListGames">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="x" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="y" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="maxdistance" type="s:double" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListGamesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ListGamesResult" type="tns:ArrayOfGame" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfGame">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Game" nillable="true" type="tns:Game" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Game">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="version" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="locationX" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="locationY" type="s:double" />
+          <s:element minOccurs="0" maxOccurs="1" name="players" type="tns:ArrayOfString" />
+          <s:element minOccurs="0" maxOccurs="1" name="uno" type="tns:ArrayOfBoolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="cards" type="tns:ArrayOfString" />
+          <s:element minOccurs="1" maxOccurs="1" name="activePlayer" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="boolean" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CreatePlayer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="name" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="latitude" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="longitude" type="s:double" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreatePlayerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreatePlayerResult" type="tns:Player" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Player" />
+      <s:element name="CreateGame">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="gameName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="creatorName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="x" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="y" type="s:double" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateGameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateGameResult" type="tns:Game" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="JoinGame">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="gameId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="playerName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="JoinGameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="JoinGameResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGame">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="gameId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGameResult" type="tns:Game" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="StartGame">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="gameId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="StartGameResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="DestroyGame">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="gameId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DestroyGameResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="PlayCard">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="gameId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="playerId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="card" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="uno" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PlayCardResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="PlayCardResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetActivePlayer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="gameId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="playerId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetActivePlayerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SetActivePlayerResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCardFromDeck">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="gameId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="playerId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCardFromDeckResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetCardFromDeckResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCardFromOpenStaple">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="gameId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="playerId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCardFromOpenStapleResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetCardFromOpenStapleResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ListGamesSoapIn">
+    <wsdl:part name="parameters" element="tns:ListGames" />
+  </wsdl:message>
+  <wsdl:message name="ListGamesSoapOut">
+    <wsdl:part name="parameters" element="tns:ListGamesResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreatePlayerSoapIn">
+    <wsdl:part name="parameters" element="tns:CreatePlayer" />
+  </wsdl:message>
+  <wsdl:message name="CreatePlayerSoapOut">
+    <wsdl:part name="parameters" element="tns:CreatePlayerResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateGameSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateGame" />
+  </wsdl:message>
+  <wsdl:message name="CreateGameSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="JoinGameSoapIn">
+    <wsdl:part name="parameters" element="tns:JoinGame" />
+  </wsdl:message>
+  <wsdl:message name="JoinGameSoapOut">
+    <wsdl:part name="parameters" element="tns:JoinGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetGameSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGame" />
+  </wsdl:message>
+  <wsdl:message name="GetGameSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="StartGameSoapIn">
+    <wsdl:part name="parameters" element="tns:StartGame" />
+  </wsdl:message>
+  <wsdl:message name="StartGameSoapOut">
+    <wsdl:part name="parameters" element="tns:StartGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="DestroyGameSoapIn">
+    <wsdl:part name="parameters" element="tns:DestroyGame" />
+  </wsdl:message>
+  <wsdl:message name="DestroyGameSoapOut">
+    <wsdl:part name="parameters" element="tns:DestroyGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="PlayCardSoapIn">
+    <wsdl:part name="parameters" element="tns:PlayCard" />
+  </wsdl:message>
+  <wsdl:message name="PlayCardSoapOut">
+    <wsdl:part name="parameters" element="tns:PlayCardResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetActivePlayerSoapIn">
+    <wsdl:part name="parameters" element="tns:SetActivePlayer" />
+  </wsdl:message>
+  <wsdl:message name="SetActivePlayerSoapOut">
+    <wsdl:part name="parameters" element="tns:SetActivePlayerResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCardFromDeckSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCardFromDeck" />
+  </wsdl:message>
+  <wsdl:message name="GetCardFromDeckSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCardFromDeckResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCardFromOpenStapleSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCardFromOpenStaple" />
+  </wsdl:message>
+  <wsdl:message name="GetCardFromOpenStapleSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCardFromOpenStapleResponse" />
+  </wsdl:message>
+  <wsdl:portType name="UnoPPSoap">
+    <wsdl:operation name="ListGames">
+      <wsdl:input message="tns:ListGamesSoapIn" />
+      <wsdl:output message="tns:ListGamesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreatePlayer">
+      <wsdl:input message="tns:CreatePlayerSoapIn" />
+      <wsdl:output message="tns:CreatePlayerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateGame">
+      <wsdl:input message="tns:CreateGameSoapIn" />
+      <wsdl:output message="tns:CreateGameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="JoinGame">
+      <wsdl:input message="tns:JoinGameSoapIn" />
+      <wsdl:output message="tns:JoinGameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGame">
+      <wsdl:input message="tns:GetGameSoapIn" />
+      <wsdl:output message="tns:GetGameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="StartGame">
+      <wsdl:input message="tns:StartGameSoapIn" />
+      <wsdl:output message="tns:StartGameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DestroyGame">
+      <wsdl:input message="tns:DestroyGameSoapIn" />
+      <wsdl:output message="tns:DestroyGameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PlayCard">
+      <wsdl:input message="tns:PlayCardSoapIn" />
+      <wsdl:output message="tns:PlayCardSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetActivePlayer">
+      <wsdl:input message="tns:SetActivePlayerSoapIn" />
+      <wsdl:output message="tns:SetActivePlayerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCardFromDeck">
+      <wsdl:input message="tns:GetCardFromDeckSoapIn" />
+      <wsdl:output message="tns:GetCardFromDeckSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCardFromOpenStaple">
+      <wsdl:input message="tns:GetCardFromOpenStapleSoapIn" />
+      <wsdl:output message="tns:GetCardFromOpenStapleSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="UnoPPSoap" type="tns:UnoPPSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ListGames">
+      <soap:operation soapAction="http://tempuri.org/ListGames" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreatePlayer">
+      <soap:operation soapAction="http://tempuri.org/CreatePlayer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateGame">
+      <soap:operation soapAction="http://tempuri.org/CreateGame" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JoinGame">
+      <soap:operation soapAction="http://tempuri.org/JoinGame" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGame">
+      <soap:operation soapAction="http://tempuri.org/GetGame" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StartGame">
+      <soap:operation soapAction="http://tempuri.org/StartGame" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DestroyGame">
+      <soap:operation soapAction="http://tempuri.org/DestroyGame" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlayCard">
+      <soap:operation soapAction="http://tempuri.org/PlayCard" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetActivePlayer">
+      <soap:operation soapAction="http://tempuri.org/SetActivePlayer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCardFromDeck">
+      <soap:operation soapAction="http://tempuri.org/GetCardFromDeck" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCardFromOpenStaple">
+      <soap:operation soapAction="http://tempuri.org/GetCardFromOpenStaple" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="UnoPPSoap12" type="tns:UnoPPSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ListGames">
+      <soap12:operation soapAction="http://tempuri.org/ListGames" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreatePlayer">
+      <soap12:operation soapAction="http://tempuri.org/CreatePlayer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateGame">
+      <soap12:operation soapAction="http://tempuri.org/CreateGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JoinGame">
+      <soap12:operation soapAction="http://tempuri.org/JoinGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGame">
+      <soap12:operation soapAction="http://tempuri.org/GetGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StartGame">
+      <soap12:operation soapAction="http://tempuri.org/StartGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DestroyGame">
+      <soap12:operation soapAction="http://tempuri.org/DestroyGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlayCard">
+      <soap12:operation soapAction="http://tempuri.org/PlayCard" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetActivePlayer">
+      <soap12:operation soapAction="http://tempuri.org/SetActivePlayer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCardFromDeck">
+      <soap12:operation soapAction="http://tempuri.org/GetCardFromDeck" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCardFromOpenStaple">
+      <soap12:operation soapAction="http://tempuri.org/GetCardFromOpenStaple" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="UnoPP">
+    <wsdl:port name="UnoPPSoap" binding="tns:UnoPPSoap">
+      <soap:address location="http://localhost:57896/UnoPP.asmx" />
+    </wsdl:port>
+    <wsdl:port name="UnoPPSoap12" binding="tns:UnoPPSoap12">
+      <soap12:address location="http://localhost:57896/UnoPP.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

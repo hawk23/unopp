@@ -25,16 +25,16 @@ public class ListGamesRequest extends Request {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
-        this.requestParameters.put("x", Double.toString(latitude));
+        this.requestParameters.put("latitude", Double.toString(latitude));
     }
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-        this.requestParameters.put("y", Double.toString(longitude));
+        this.requestParameters.put("longitude", Double.toString(longitude));
     }
 
     public void setMaxdistance(double maxdistance) {
         this.maxdistance = maxdistance;
-        this.requestParameters.put("maxdistance", Double.toString(maxdistance));
+        this.requestParameters.put("maxDistance", Double.toString(maxdistance));
     }
 }

@@ -1,0 +1,5 @@
+c:\Users\peterluca\documents\visual studio 2013\Projects\UnoPP\UnoTest\bin\Debug\UnoTest.exe.config
+c:\Users\peterluca\documents\visual studio 2013\Projects\UnoPP\UnoTest\bin\Debug\UnoTest.exe
+c:\Users\peterluca\documents\visual studio 2013\Projects\UnoPP\UnoTest\bin\Debug\UnoTest.pdb
+c:\Users\peterluca\documents\visual studio 2013\Projects\UnoPP\UnoTest\obj\Debug\UnoTest.exe
+c:\Users\peterluca\documents\visual studio 2013\Projects\UnoPP\UnoTest\obj\Debug\UnoTest.pdb

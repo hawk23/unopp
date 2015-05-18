@@ -8,6 +8,6 @@ import android.content.res.AssetManager;
 public class GameSettings {
 
     public static AssetManager ASSET_MANAGER;
-
+    public static final int cardDeckAmount = 108;
     public static final int MAX_PLAYERS = 6;
 }

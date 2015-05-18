@@ -19,10 +19,47 @@
             android:layout_weight="0.5">
 
             <RelativeLayout
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:id="@+id/flStatus"
+                android:background="@android:color/transparent">
+
+                <ImageButton
+                    android:background="@android:color/transparent"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:id="@+id/ibUnoButton"
+                    android:src="@drawable/uno_button"
+                    android:onClick="callUno"
+                    android:scaleType="fitXY"/>
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/flUnplayedCards"
-                android:layout_weight="1"></RelativeLayout>
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="170dp"
+                    android:src="@mipmap/uno_deck_1d"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="@dimen/general_item_margin"
+                    android:scaleType="fitXY"
+                    android:id="@+id/imageView2" />
+
+                <TextView
+                    android:id="@+id/tvDrawCounter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="true"
+                    android:textColor="@color/red_bad"
+                    android:autoText="false"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -33,8 +70,32 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/flStatus"
-                android:layout_weight="1"></RelativeLayout>
+                android:id="@+id/flPlayers"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:id="@+id/ivDirection"
+                    android:scaleType="fitXY"
+                    android:layout_marginRight="@dimen/general_item_margin"
+                    android:layout_marginEnd="@dimen/general_item_margin"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lvPlayers"
+                    android:layout_alignRight="@id/ivDirection"
+                    android:layout_alignEnd="@id/ivDirection"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="@dimen/general_item_margin"
+                    android:layout_marginStart="@dimen/general_item_margin"
+                    android:layout_alignParentBottom="false" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
