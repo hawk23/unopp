@@ -3,6 +3,8 @@ package com.gamble.unopp;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.transition.Transition;
+import android.transition.TransitionValues;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -62,7 +64,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
             public void run() {
                 updateTimerTick();
             }
-        }, 0, 20000);
+        }, 0, 2000);
     }
 
     private void updateTimerTick () {
@@ -92,15 +94,29 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 Player updatedLocalPlayer   = getGameResponse.getGameSession().getPlayerById(localPlayer.getID());
                 UnoDatabase.getInstance().setLocalPlayer(updatedLocalPlayer);
 
-                if (getGameResponse.getGameSession() != null && getGameResponse.getGameSession().isStarted()) {
-                    this.updateTimer.cancel();
+                if (getGameResponse.getResponseResult().isStatus()) {
+                    if (getGameResponse.getGameSession() != null && getGameResponse.getGameSession().isStarted()) {
+                        this.updateTimer.cancel();
 
-                    // create an Intent to take you over to the GameScreenActivity
-                    Intent intent = new Intent(this, GameScreenActivity.class);
-                    startActivity(intent);
-                } else {
-                    this.displayDetails();
+                        // create an Intent to take you over to the GameScreenActivity
+                        Intent intent = new Intent(this, GameScreenActivity.class);
+                        startActivity(intent);
+                    } else {
+                        this.displayDetails();
+                    }
                 }
+                else {
+                    // display error message
+                    ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();
+                    Bundle args = new Bundle();
+                    args.putString("errorMessage", response.getResponseResult().getMessage());
+                    errorDialogFragment.setArguments(args);
+                    errorDialogFragment.show(getFragmentManager(), "error");
+
+                    // TODO: after dialog close, show LobbyActicity.
+                }
+
+
             } else if (response instanceof StartGameResponse) {
                 StartGameResponse startGameResponse = (StartGameResponse) response;
 
@@ -134,13 +150,14 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
 
                 if (destroyGameResponse.getResponseResult() != null && destroyGameResponse.getResponseResult().isStatus()) {
+                    this.updateTimer.cancel();
+
                     // delete current gameSession
                     UnoDatabase.getInstance().setCurrentGameSession(null);
 
                     // create an Intent to take you back to the LobbyActivity
                     Intent intent = new Intent(this, LobbyActivity.class);
                     startActivity(intent);
-                    this.updateTimer.cancel();
                 }
             }
 
@@ -249,6 +266,11 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     @Override
     public void onBackPressed()
     {
-        leaveGame();
+        if (this.player != null && this.gameSession.getHost().getID() == this.player.getID()) {
+            this.deleteGame();
+        }
+        else {
+            this.leaveGame();
+        }
     }
 }
