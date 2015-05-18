@@ -183,6 +183,9 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 }
             }
         }
+        else {
+            // TODO
+        }
     }
 
     private void displayError (String type, String message) {

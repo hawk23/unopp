@@ -1,12 +1,14 @@
 package com.gamble.unopp;
 
 import android.content.ClipData;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.FloatMath;
@@ -58,7 +60,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private float mAccel;
     private float mAccelCurrent;
     private float mAccelLast;
-
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         mAccel                  = 0.00f;
         mAccelCurrent           = SensorManager.GRAVITY_EARTH;
         mAccelLast              = SensorManager.GRAVITY_EARTH;
+
+        // init vibrator
+        this.vibrator           = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         initGameView();
 
@@ -246,10 +251,14 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     }
 
     public void callUno () {
-        Turn turn = new Turn(Turn.TurnType.CALL_UNO);
-        UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
 
-        showUnoCall();
+        if (UnoDatabase.getInstance().getCurrentGameSession() != null &&
+            UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound() != null) {
+
+            Turn turn = new Turn(Turn.TurnType.CALL_UNO);
+            UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
+            showUnoCall();
+        }
     }
 
     public void showUnoCall() {
@@ -340,8 +349,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
             // Make this higher or lower according to how much
             // motion you want to detect
-            if(mAccel > 3){
+            if(mAccel > 8){
                 this.callUno();
+                this.vibrator.vibrate(500);
             }
         }
     }
