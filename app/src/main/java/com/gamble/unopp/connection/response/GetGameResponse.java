@@ -19,30 +19,21 @@ public class GetGameResponse extends Response {
     @Override
     public void parseXML(String xmlResponse) throws Exception {
 
-        Document    dom                     = this.getDomElement(xmlResponse);
-
-        /* TODO: server does not send result
-        Node        resultNode              = dom.getElementsByTagName("Result").item(0);
-        Element     resultElement           = (Element) resultNode;
-
-        this.responseResult                 = ModelParser.<ResponseResult>parseModelFromElement(resultElement, ResponseResult.class);
-        */
-
-        Node        gameSessionNode                = dom.getElementsByTagName("GameSession").item(0);
+        Document    dom                            = this.getDomElement(xmlResponse);
         Node        resultNode                     = dom.getElementsByTagName("Result").item(0);
+        Node        gameSessionNode                = dom.getElementsByTagName("GameSession").item(0);
 
-        if (gameSessionNode != null) {
-            Element gameSessionElement = (Element) gameSessionNode;
-
-            this.gameSession = ModelParser.<GameSession>parseModelFromElement(gameSessionElement, GameSession.class);
-        } else if (resultNode != null) {
+        if (resultNode != null) {
             this.responseResult = ModelParser.<ResponseResult>parseModelFromElement((Element) resultNode, ResponseResult.class);
+        }
+        if (gameSessionNode != null) {
+            this.gameSession = ModelParser.<GameSession>parseModelFromElement((Element) gameSessionNode, GameSession.class);
         }
     }
 
     @Override
     public ResponseResult getResponseResult() {
-        return responseResult;
+            return responseResult;
     }
 
     public GameSession getGameSession() {
