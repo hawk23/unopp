@@ -10,6 +10,7 @@ import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.GameState;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.game.UnoDirection;
+import com.gamble.unopp.model.management.UnoDatabase;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -65,7 +66,7 @@ public class ModelParser {
 
             Element             handCardsElement        = (Element) element.getElementsByTagName("Cards").item(0);
             NodeList            handCardsList           = handCardsElement.getElementsByTagName("Card");
-            ArrayList<Card>     cards                   = DeckGenerator.createDeck(0);
+            ArrayList<Card>     cards                   = UnoDatabase.getInstance().getDeck();
             ArrayList<Card>     hand                    = new ArrayList<Card>();
 
             for (int i = 0; i < handCardsList.getLength(); i++) {
@@ -143,7 +144,7 @@ public class ModelParser {
 
         Deck                resultDeck              = new Deck();
 
-        ArrayList<Card>     cards                   = DeckGenerator.createDeck(0);
+        ArrayList<Card>     cards                   = UnoDatabase.getInstance().getDeck();
         Element             drawStackElement        = (Element) element.getElementsByTagName("drawStack").item(0);
         NodeList            serverCardsStack        = drawStackElement.getElementsByTagName("Card");
         Element             playedStackElement      = (Element) element.getElementsByTagName("playedStack").item(0);

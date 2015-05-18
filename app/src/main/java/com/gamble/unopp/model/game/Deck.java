@@ -49,6 +49,9 @@ public class Deck {
     public ArrayList<Card> popFromStack(int amount) {
 
         if (amount > sizeOfStack()) {
+
+            // TODO: do not create a new Deck. Use existing cards from played stack and schuffle them
+
             ArrayList<Card> newDeck = DeckGenerator.createDeck((this.deckCount * GameSettings.cardDeckAmount - 1) + 1);
             newDeck = shuffle(newDeck);
             for (Card c : this.stack) {
