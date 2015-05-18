@@ -64,6 +64,11 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         this.getAvailableGameSessions();
     }
 
+    private void refresh () {
+        games = new ArrayList<>();
+        this.getAvailableGameSessions();
+    }
+
     private void getAvailableGameSessions()
     {
         ListGamesRequest gameSessionsRequest = new ListGamesRequest();
@@ -129,6 +134,9 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
                 return true;
             case R.id.action_newGame:
                 this.newGame();
+                return true;
+            case R.id.action_refresh:
+                this.refresh();
                 return true;
             case 16908332: // back button
                 this.deletePlayer();
