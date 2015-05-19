@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.DestroyGameRequest;
-import com.gamble.unopp.connection.requests.GetGameRequest;
 import com.gamble.unopp.connection.requests.GetUpdateRequest;
 import com.gamble.unopp.connection.requests.SetUpdateRequest;
 import com.gamble.unopp.connection.response.DestroyGameResponse;
@@ -133,7 +132,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
             public void run() {
                 updateTimerTick();
             }
-        }, 0, 5000);
+        }, 5000, 5000);
     }
 
     private void updateTimerTick () {
@@ -288,11 +287,20 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
             this.getActualGameRound() != null) {
 
             Turn turn = new Turn(Turn.TurnType.CALL_UNO);
-            this.getActualGameRound().doTurn(turn);
 
-            // TODO: send to other players if call uno successful.
+            if (this.getActualGameRound().checkTurn(turn)) {
+                this.getActualGameRound().doTurn(turn);
 
-            this.viewManager.updateView();
+                // update LocalUpdateID
+                this.getActualGameRound().setLocalUpdateID(turn.getID());
+
+                this.viewManager.updateView();
+            }
+            else {
+
+                //TODO: give feedback that uno isn't allowed now
+            }
+
         }
     }
 
