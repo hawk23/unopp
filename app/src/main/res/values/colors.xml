@@ -11,4 +11,5 @@
     <color name="uno_yellow">#FFFF00</color>
     <color name="uno_blue">#0000FF</color>
     <color name="uno_green">#00FF00</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>
