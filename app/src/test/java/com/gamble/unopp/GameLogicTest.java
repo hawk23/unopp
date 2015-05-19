@@ -60,7 +60,7 @@ public class GameLogicTest {
     }
 
     @Test
-    public void testCheckTurnPlayCard() {
+    public void testCheckTurnPlayCorrectCard() {
         ArrayList<Card> playedStack = new ArrayList();
         playedStack.add(new NumberCard(1, 2, null, UnoColor.BLUE));
 
@@ -73,6 +73,22 @@ public class GameLogicTest {
         turn.setCard(card);
 
         assertTrue(gameLogic.checkTurn(turn));
+    }
+
+    @Test
+    public void testCheckTurnPlayWrongCard() {
+        ArrayList<Card> playedStack = new ArrayList();
+        playedStack.add(new NumberCard(1, 2, null, UnoColor.BLUE));
+
+        gameState.setPlayedStack(playedStack);
+
+        player = new Player(1, "Test");
+        card = new NumberCard(1, 5, null, UnoColor.RED);
+
+        turn = new Turn(1, Turn.TurnType.PLAY_CARD, player);
+        turn.setCard(card);
+
+        assertFalse(gameLogic.checkTurn(turn));
     }
 
     @Test
@@ -98,3 +114,4 @@ public class GameLogicTest {
         assertTrue(gameLogic.checkTurn(turn));
     }
 }
+
