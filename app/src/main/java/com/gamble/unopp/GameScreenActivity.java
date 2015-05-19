@@ -2,8 +2,8 @@ package com.gamble.unopp;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,26 +25,21 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.DestroyGameRequest;
+import com.gamble.unopp.connection.response.DestroyGameResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
-import com.gamble.unopp.logic.GameLogic;
-import com.gamble.unopp.model.game.DeckGenerator;
 import com.gamble.unopp.model.game.GameRound;
 import com.gamble.unopp.model.game.GameSession;
+import com.gamble.unopp.model.game.GameState;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
-import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.game.Turn;
 import com.gamble.unopp.model.management.IChooseColorDialogListener;
 import com.gamble.unopp.model.management.UnoDatabase;
 import com.gamble.unopp.model.management.ViewManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener, SensorEventListener, RequestProcessorCallback, IChooseColorDialogListener {
@@ -176,39 +170,46 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     @Override
     public boolean onDrag (View v, DragEvent event) {
-        int     action          = event.getAction();
-        View    view            = (View) event.getLocalState();
-        Card    draggedCard     = (Card) view.getTag();
 
-        Turn playCardTurn       = this.createPlayCardTurn(draggedCard);
-        boolean cardPlayable    = this.getActualGameRound().checkTurn(playCardTurn);
+        if (this.isMyTurn()) {
 
-        switch (event.getAction()) {
-            case DragEvent.ACTION_DRAG_STARTED:
-                // do nothing
-                break;
-            case DragEvent.ACTION_DRAG_ENTERED:
-                if (cardPlayable) {
-                    v.setBackgroundColor(getResources().getColor(R.color.green));
-                } else {
-                    v.setBackgroundColor(getResources().getColor(R.color.red));
-                }
-                break;
-            case DragEvent.ACTION_DRAG_EXITED:
-                v.setBackgroundColor(Color.TRANSPARENT);
-                break;
-            case DragEvent.ACTION_DROP:
-                if (cardPlayable) {
-                    this.playCard(playCardTurn);
-                }
-                break;
-            case DragEvent.ACTION_DRAG_ENDED:
-                v.setBackgroundColor(Color.TRANSPARENT);
-                view.setVisibility(View.VISIBLE);
-            default:
-                break;
+            int     action          = event.getAction();
+            View    view            = (View) event.getLocalState();
+            Card    draggedCard     = (Card) view.getTag();
+
+            Turn playCardTurn       = this.createPlayCardTurn(draggedCard);
+            boolean cardPlayable    = this.getActualGameRound().checkTurn(playCardTurn);
+
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    // do nothing
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    if (cardPlayable) {
+                        v.setBackgroundColor(getResources().getColor(R.color.green));
+                    } else {
+                        v.setBackgroundColor(getResources().getColor(R.color.red));
+                    }
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                    break;
+                case DragEvent.ACTION_DROP:
+                    if (cardPlayable) {
+                        this.playCard(playCardTurn);
+                    }
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                    view.setVisibility(View.VISIBLE);
+                default:
+                    break;
+            }
+            return true;
         }
-        return true;
+        else {
+            return false;
+        }
     }
 
     @Override
@@ -258,7 +259,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         // player wants to draw from stack
         if (view == this.flUnplayedCards) {
-            // TODO
+            if (this.isMyTurn()) {
+                // TODO
+            }
+
         }
 
         /*
@@ -350,7 +354,17 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     @Override
     public void requestFinished(Response response) {
 
-        // TODO
+        if (response instanceof DestroyGameResponse) {
+
+            DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
+
+            // delete current gameSession
+            UnoDatabase.getInstance().setCurrentGameSession(null);
+
+            // create an Intent to take you back to the LobbyActivity
+            Intent intent = new Intent(this, LobbyActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -375,6 +389,14 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private Player getLocalPlayer() {
         return UnoDatabase.getInstance().getLocalPlayer();
+    }
+
+    private GameState getGameState() {
+        return getActualGameRound().getGamestate();
+    }
+
+    private boolean isMyTurn () {
+        return this.getGameState().getActualPlayer().getID() == this.getLocalPlayer().getID();
     }
 
     private void endGameRound () {
