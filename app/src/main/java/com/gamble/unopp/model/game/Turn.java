@@ -27,7 +27,7 @@ public class Turn extends GameUpdate implements Serializable {
      * creates a new Turn object and sets the id to localUpdateId and the player to the current local player
      */
     public Turn(TurnType type) {
-        super(UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().getLocalUpdateID());
+        super(UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().getLocalUpdateID()+1);
         this.type = type;
         this.player = UnoDatabase.getInstance().getLocalPlayer();
         this.card = null;

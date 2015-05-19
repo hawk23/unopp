@@ -197,6 +197,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.getActualGameRound().doTurn(turn);
         this.viewManager.updateView();
 
+        // update LocalUpdateID
+        UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().setLocalUpdateID(turn.getID());
+
         this.broadcastTurn(turn);
 
         // check if color has to be chosen
@@ -233,6 +236,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                     break;
                 case DragEvent.ACTION_DROP:
                     if (cardPlayable) {
+                        v.setBackgroundColor(Color.TRANSPARENT);
                         this.playCard(playCardTurn);
                     }
                     break;
@@ -406,6 +410,8 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
             DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
 
+            this.stopUpdateTimer();
+
             // delete current gameSession
             UnoDatabase.getInstance().setCurrentGameSession(null);
 
@@ -430,7 +436,12 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
                 for (GameUpdate gameUpdate : getUpdateResponse.getGameUpdates()) {
                     if (gameUpdate instanceof Turn) {
-                        this.getActualGameRound().doTurn((Turn) gameUpdate);
+                        Turn turn = (Turn) gameUpdate;
+
+                        this.getActualGameRound().doTurn(turn);
+
+                        // update LocalUpdateID
+                        this.getActualGameRound().setLocalUpdateID(turn.getID());
                     }
                 }
 
@@ -506,5 +517,18 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     public RelativeLayout getColorIndicator() {
         return colorIndicator;
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        this.stopUpdateTimer();
+        super.onBackPressed();
+    }
+
+    private void stopUpdateTimer () {
+
+        this.updateTimer.cancel();
+        this.updateTimer.purge();
     }
 }
