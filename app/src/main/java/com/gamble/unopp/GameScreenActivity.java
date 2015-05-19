@@ -27,40 +27,48 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
+import com.gamble.unopp.connection.RequestProcessor;
+import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.DestroyGameRequest;
+import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
+import com.gamble.unopp.logic.GameLogic;
 import com.gamble.unopp.model.game.DeckGenerator;
+import com.gamble.unopp.model.game.GameRound;
 import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.game.Turn;
+import com.gamble.unopp.model.management.IChooseColorDialogListener;
 import com.gamble.unopp.model.management.UnoDatabase;
+import com.gamble.unopp.model.management.ViewManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener, SensorEventListener {
+public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener, SensorEventListener, RequestProcessorCallback, IChooseColorDialogListener {
 
-    private HorizontalScrollView hswHand;
-    private LinearLayout llHand;
-    private TextView tvDrawCounter;
-    private RelativeLayout flUnplayedCards;
-    private RelativeLayout flPlayedCards;
-    private ChooseColorDialogFragment chooseColorDialogFragment = new ChooseColorDialogFragment();
-    private ImageView ivDirection;
-    private ListView lvPlayers;
-    private ArrayList<Player> players;
-    private ArrayAdapter arrayAdapter;
-    private List<Card> cards;
+    private HorizontalScrollView        hswHand;
+    private LinearLayout                llHand;
+    private TextView                    tvDrawCounter;
+    private RelativeLayout              flUnplayedCards;
+    private RelativeLayout              flPlayedCards;
+    private ChooseColorDialogFragment   chooseColorDialogFragment;
+    private ImageView                   ivDirection;
+    private ListView                    lvPlayers;
+    private RelativeLayout              colorIndicator;
 
-    private SensorManager sensorMan;
-    private Sensor accelerometer;
-    private float[] mGravity;
-    private float mAccel;
-    private float mAccelCurrent;
-    private float mAccelLast;
-    private Vibrator vibrator;
+    private ViewManager                 viewManager;
+
+    private SensorManager               sensorMan;
+    private Sensor                      accelerometer;
+    private float[]                     mGravity;
+    private float                       mAccel;
+    private float                       mAccelCurrent;
+    private float                       mAccelLast;
+    private Vibrator                    vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +90,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.flPlayedCards      = (RelativeLayout) findViewById(R.id.flPlayedCards);
         this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
         this.ivDirection        = (ImageView) findViewById(R.id.ivDirection);
+        this.colorIndicator     = (RelativeLayout) findViewById(R.id.colorIndicator);
 
         // init sensors
         sensorMan               = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -93,54 +102,25 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // init vibrator
         this.vibrator           = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        initGameView();
+        // init view manager
+        this.viewManager        = new ViewManager(this);
+        this.viewManager.init();
+        this.viewManager.updateView();
 
+        this.initGameView();
     }
 
     private void initGameView () {
 
-        // initialize direction
-        setDirection(Path.Direction.CW);
-
         // set on click linstener on unplayed cards for drawing cards
         flUnplayedCards.setOnClickListener(this);
 
-        // initialize draw counter
-        tvDrawCounter.setText("");
-
         // disable the back button for the color popup
+        chooseColorDialogFragment   = new ChooseColorDialogFragment();
         chooseColorDialogFragment.setCancelable(false);
 
-        GameSession gameSession = UnoDatabase.getInstance().getCurrentGameSession();
-
-        // initialize the players list
-        this.players = gameSession.getPlayers();
-        arrayAdapter = new GameScreenPlayerListAdapter(this.getBaseContext(), players);
-        this.lvPlayers.setAdapter(arrayAdapter);
-
-        // initialize the cards of the player
-       cards = UnoDatabase.getInstance().getLocalPlayer().getHand();
-
-        if (cards != null) {
-            for (final Card card : cards) {
-
-                final ImageView imageView = new ImageView(getBaseContext());
-                imageView.setImageBitmap(card.getImage());
-                imageView.setTag(card);
-                imageView.setOnLongClickListener(this);
-
-                this.llHand.addView(imageView);
-            }
-            flPlayedCards.setOnDragListener(this);
-        }
-    }
-
-    private void setDirection(Path.Direction direction) {
-        if (direction.equals(Path.Direction.CW)) {
-            ivDirection.setImageResource(R.mipmap.direction_down);
-        } else if (direction.equals(Path.Direction.CCW)) {
-            ivDirection.setImageResource(R.mipmap.direction_up);
-        }
+        // init dragging
+        flPlayedCards.setOnDragListener(this);
     }
 
     @Override
@@ -166,13 +146,42 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         return true;
     }
 
-    @Override
-    public boolean onDrag(View v, DragEvent event) {
-        int action = event.getAction();
-        View view = (View) event.getLocalState();
+    private Turn createPlayCardTurn (Card card) {
 
-        // HACK : check if card can be played here
-        boolean cardPlayable = true;
+        Turn turn = new Turn(Turn.TurnType.PLAY_CARD);
+        turn.setCard(card);
+
+        return turn;
+    }
+
+    private void playCard (Card card) {
+
+        Turn turn = createPlayCardTurn(card);
+
+        this.playCard(turn);
+    }
+
+    private void playCard (Turn turn) {
+
+        // TODO: send Turn to other players
+
+        this.getActualGameRound().doTurn(turn);
+        this.viewManager.updateView();
+
+        // check if color has to be chosen
+        if (this.getLocalPlayer().hasToChooseColor()) {
+            chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
+        }
+    }
+
+    @Override
+    public boolean onDrag (View v, DragEvent event) {
+        int     action          = event.getAction();
+        View    view            = (View) event.getLocalState();
+        Card    draggedCard     = (Card) view.getTag();
+
+        Turn playCardTurn       = this.createPlayCardTurn(draggedCard);
+        boolean cardPlayable    = this.getActualGameRound().checkTurn(playCardTurn);
 
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
@@ -189,30 +198,8 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                 v.setBackgroundColor(Color.TRANSPARENT);
                 break;
             case DragEvent.ACTION_DROP:
-                // Dropped, reassign View to ViewGroup
-
                 if (cardPlayable) {
-                    LinearLayout owner = (LinearLayout) view.getParent();
-                    owner.removeView(view);
-
-                    RelativeLayout container = (RelativeLayout) v;
-                    view.setLongClickable(false);
-                    container.addView(view);
-                    view.setVisibility(View.VISIBLE);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
-                    params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                    params.addRule(RelativeLayout.CENTER_VERTICAL);
-
-                    Card draggedCard = (Card) view.getTag();
-                    if (draggedCard.getColor() == UnoColor.BLACK) {
-                        chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
-                    }
-                    //TODO: update game state
-                    //TODO: update draw counter
-                    //TODO: update color chosen
-
-                    //HACK
-                    setDrawCounter(4);
+                    this.playCard(playCardTurn);
                 }
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
@@ -238,12 +225,14 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // Handle item selection
+        switch (id) {
+            case R.id.action_endGameRound:
+                this.endGameRound();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void callUno(View view) {
@@ -252,27 +241,27 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     public void callUno () {
 
-        if (UnoDatabase.getInstance().getCurrentGameSession() != null &&
-            UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound() != null) {
+        if (this.getCurrentGameSession() != null &&
+            this.getActualGameRound() != null) {
 
             Turn turn = new Turn(Turn.TurnType.CALL_UNO);
-            UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
-            showUnoCall();
+            this.getActualGameRound().doTurn(turn);
+
+            // TODO: send to other players if call uno successful.
+
+            this.viewManager.updateView();
         }
-    }
-
-    public void showUnoCall() {
-        // notify listAdapter that players changed
-        arrayAdapter.notifyDataSetChanged();
-    }
-
-    public void showColorCall(UnoColor color, Player player) {
-        // notify listAdapter that players changed
-        arrayAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onClick(View view) {
+
+        // player wants to draw from stack
+        if (view == this.flUnplayedCards) {
+            // TODO
+        }
+
+        /*
         Player self = UnoDatabase.getInstance().getLocalPlayer();
 
         // HACK draw card - create Turn Object
@@ -282,6 +271,8 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         cardsDrawn.add(cards.get(2));
         cardsDrawn.add(cards.get(3));
         // END HACK
+        */
+
         /*
         GameRound gameRound = self.getGameSession().getActualGameRound();
         int updateId = gameRound.getLocalUpdateID();
@@ -301,14 +292,17 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         }
         */
 
+        /*
         for (Card card : cardsDrawn) {
             addCardToHand(card);
         }
 
         // add listener in order to scroll the hand to last card
         hswHand.addOnLayoutChangeListener(this);
+        */
     }
 
+    // TODO: obsolete? --> Viewmanager should do that.
     private void addCardToHand(Card card) {
         final ImageView   imageView = new ImageView(getBaseContext());
         imageView.setImageBitmap(card.getImage());
@@ -321,14 +315,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         hswHand.removeOnLayoutChangeListener(this);
         hswHand.fullScroll(View.FOCUS_RIGHT);
-    }
-
-    public void setDrawCounter(int drawCounter) {
-        if (drawCounter == 0 ) {
-            tvDrawCounter.setText("");
-        } else if (drawCounter > 0) {
-            tvDrawCounter.setText("+" + drawCounter);
-        }
     }
 
     @Override
@@ -359,5 +345,69 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // required method
+    }
+
+    @Override
+    public void requestFinished(Response response) {
+
+        // TODO
+    }
+
+    @Override
+    public void onDialogClosed(ChooseColorDialogFragment dialog) {
+
+        Turn turn = new Turn(Turn.TurnType.CHOOSE_COLOR);
+        turn.setColor(dialog.getColor());
+        this.getActualGameRound().doTurn(turn);
+
+        // TODO: send turn to other players
+
+        this.viewManager.updateView();
+    }
+
+    private GameRound getActualGameRound () {
+        return UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound();
+    }
+
+    private GameSession getCurrentGameSession() {
+        return UnoDatabase.getInstance().getCurrentGameSession();
+    }
+
+    private Player getLocalPlayer() {
+        return UnoDatabase.getInstance().getLocalPlayer();
+    }
+
+    private void endGameRound () {
+
+        DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
+        destroyGameRequest.setGameId(this.getCurrentGameSession().getID());
+        destroyGameRequest.setHostId(this.getCurrentGameSession().getHost().getID());
+
+        RequestProcessor rp = new RequestProcessor(this);
+        rp.execute(destroyGameRequest);
+    }
+
+    public RelativeLayout getFlPlayedCards() {
+        return flPlayedCards;
+    }
+
+    public TextView getTvDrawCounter() {
+        return tvDrawCounter;
+    }
+
+    public LinearLayout getLlHand() {
+        return llHand;
+    }
+
+    public ListView getLvPlayers() {
+        return lvPlayers;
+    }
+
+    public ImageView getIvDirection() {
+        return ivDirection;
+    }
+
+    public RelativeLayout getColorIndicator() {
+        return colorIndicator;
     }
 }
