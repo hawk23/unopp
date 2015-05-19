@@ -92,6 +92,8 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
         switch (dialog.getType()) {
             case ErrorDialogTypes.GET_GAME_FAILED:
+            case ErrorDialogTypes.LEAVE_GAME_FAILED:
+            case ErrorDialogTypes.DESTROY_GAME_FAILED:
                 // create an Intent to take you back to the LobbyActivity
                 Intent intent = new Intent(this, LobbyActivity.class);
                 startActivity(intent);
@@ -153,7 +155,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 LeaveGameResponse leaveGameResponse = (LeaveGameResponse) response;
 
                 if (leaveGameResponse.getResponseResult() != null && leaveGameResponse.getResponseResult().isStatus()) {
-                    this.stopUpdateTimer ();
+                    this.stopUpdateTimer();
 
                     // delete current gameSession
                     UnoDatabase.getInstance().setCurrentGameSession(null);
@@ -225,7 +227,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
     private void leaveGame () {
 
-        this.stopUpdateTimer ();
+        this.stopUpdateTimer();
 
         LeaveGameRequest leaveGameRequest = new LeaveGameRequest();
         leaveGameRequest.setGameId(this.gameSession.getID());
@@ -237,7 +239,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
     private void deleteGame () {
 
-        this.stopUpdateTimer ();
+        this.stopUpdateTimer();
 
         DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
         destroyGameRequest.setGameId(this.gameSession.getID());
@@ -249,7 +251,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
     private void startGame () {
 
-        this.stopUpdateTimer ();
+        this.stopUpdateTimer();
 
         StartGameRequest startGameRequest = new StartGameRequest();
         startGameRequest.setGameId(this.gameSession.getID());
