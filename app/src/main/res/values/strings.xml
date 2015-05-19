@@ -18,4 +18,5 @@
     <string name="action_refresh">Aktualisieren</string>
     <string name="action_deleteAllGames">Alle Spiele löschen</string>
     <string name="error">Error</string>
+    <string name="action_endGameRound">Runde beenden</string>
 </resources>
