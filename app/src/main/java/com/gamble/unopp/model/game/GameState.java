@@ -35,6 +35,10 @@ public class GameState {
         return valid;
     }
 
+    public boolean checkTurn (Turn turn) {
+        return this.logic.checkTurn(turn);
+    }
+
     public ArrayList<Card> getStack() {
         return this.deck.getStack();
     }
