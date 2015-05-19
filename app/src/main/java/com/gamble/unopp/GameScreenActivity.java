@@ -65,6 +65,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private ViewManager                 viewManager;
     private Timer                       updateTimer;
+    private boolean                     timerStopped;
 
     private SensorManager               sensorMan;
     private Sensor                      accelerometer;
@@ -410,8 +411,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
             DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
 
-            this.stopUpdateTimer();
-
             // delete current gameSession
             UnoDatabase.getInstance().setCurrentGameSession(null);
 
@@ -428,7 +427,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                 // TODO
             }
         }
-        else if (response instanceof GetUpdateResponse) {
+        else if (response instanceof GetUpdateResponse && !this.timerStopped) {
 
             GetUpdateResponse getUpdateResponse = (GetUpdateResponse) response;
 
@@ -487,6 +486,8 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private void endGameRound () {
 
+        this.stopUpdateTimer();
+
         DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
         destroyGameRequest.setGameId(this.getCurrentGameSession().getID());
         destroyGameRequest.setHostId(this.getCurrentGameSession().getHost().getID());
@@ -528,6 +529,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private void stopUpdateTimer () {
 
+        this.timerStopped = true;
         this.updateTimer.cancel();
         this.updateTimer.purge();
     }
