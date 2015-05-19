@@ -2,14 +2,16 @@ package com.gamble.unopp.model.cards;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * Created by Albert on 02.05.2015.
  */
-public abstract class Card {
+public abstract class Card implements Serializable {
 
     protected int ID;
-    protected Bitmap image;
-    protected UnoColor color;
+    protected transient Bitmap image;
+    protected transient UnoColor color;
 
     public Card (int ID, Bitmap image, UnoColor color) {
         this.ID = ID;

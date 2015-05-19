@@ -4,13 +4,15 @@ import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.management.UnoDatabase;
 
+import java.io.Serializable;
+
 /**
  * Created by Albert on 08.05.2015.
  *
  */
-public class Turn extends GameUpdate {
+public class Turn extends GameUpdate implements Serializable {
 
-    public static enum TurnType {
+    public static enum TurnType implements Serializable {
         DRAW, PLAY_CARD, CHOOSE_COLOR, CALL_UNO
     }
 

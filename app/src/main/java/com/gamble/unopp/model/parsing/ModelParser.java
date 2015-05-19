@@ -40,10 +40,15 @@ public class ModelParser {
 
     private static ResponseResult parseResponseResultFromElement(Element element) {
 
-        boolean status = Boolean.parseBoolean(element.getElementsByTagName("status").item(0).getTextContent());
-        String message = element.getElementsByTagName("message").item(0).getTextContent();
+        try {
+            boolean status = Boolean.parseBoolean(element.getElementsByTagName("status").item(0).getTextContent());
+            String message = element.getElementsByTagName("message").item(0).getTextContent();
 
-        return new ResponseResult(status, message);
+            return new ResponseResult(status, message);
+        }
+        catch (Exception ex) {
+            return new ResponseResult(false, "Malformed Response");
+        }
     }
 
     private static Player parsePlayerFromElement (Element element) {

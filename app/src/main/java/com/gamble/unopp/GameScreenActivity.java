@@ -28,18 +28,27 @@ import android.widget.TextView;
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
 import com.gamble.unopp.connection.requests.DestroyGameRequest;
+import com.gamble.unopp.connection.requests.GetGameRequest;
+import com.gamble.unopp.connection.requests.GetUpdateRequest;
+import com.gamble.unopp.connection.requests.SetUpdateRequest;
 import com.gamble.unopp.connection.response.DestroyGameResponse;
+import com.gamble.unopp.connection.response.GetUpdateResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.connection.response.SetUpdateResponse;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
 import com.gamble.unopp.model.game.GameRound;
 import com.gamble.unopp.model.game.GameSession;
 import com.gamble.unopp.model.game.GameState;
+import com.gamble.unopp.model.game.GameUpdate;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.game.Turn;
 import com.gamble.unopp.model.management.IChooseColorDialogListener;
 import com.gamble.unopp.model.management.UnoDatabase;
 import com.gamble.unopp.model.management.ViewManager;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener, SensorEventListener, RequestProcessorCallback, IChooseColorDialogListener {
@@ -55,6 +64,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private RelativeLayout              colorIndicator;
 
     private ViewManager                 viewManager;
+    private Timer                       updateTimer;
 
     private SensorManager               sensorMan;
     private Sensor                      accelerometer;
@@ -115,6 +125,25 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         // init dragging
         flPlayedCards.setOnDragListener(this);
+
+        this.updateTimer = new Timer();
+        this.updateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateTimerTick();
+            }
+        }, 0, 5000);
+    }
+
+    private void updateTimerTick () {
+
+        // get udates from server
+        GetUpdateRequest request = new GetUpdateRequest();
+        request.setGameID(this.getCurrentGameSession().getID());
+        request.setLastKnownUpdateID(this.getActualGameRound().getLocalUpdateID());
+
+        RequestProcessor processor = new RequestProcessor(this);
+        processor.execute(request);
     }
 
     @Override
@@ -131,13 +160,21 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     @Override
     public boolean onLongClick(View v) {
-        ImageView card = (ImageView) v;
 
-        ClipData data = ClipData.newPlainText("card", Integer.toString(((Card)card.getTag()).getID()));
-        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(card);
-        card.startDrag(data, shadowBuilder, card, 0);
-        card.setVisibility(View.INVISIBLE);
-        return true;
+        if (this.isMyTurn()) {
+
+            ImageView card = (ImageView) v;
+
+            ClipData data = ClipData.newPlainText("card", Integer.toString(((Card)card.getTag()).getID()));
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(card);
+            card.startDrag(data, shadowBuilder, card, 0);
+            card.setVisibility(View.INVISIBLE);
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 
     private Turn createPlayCardTurn (Card card) {
@@ -157,10 +194,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private void playCard (Turn turn) {
 
-        // TODO: send Turn to other players
-
         this.getActualGameRound().doTurn(turn);
         this.viewManager.updateView();
+
+        this.broadcastTurn(turn);
 
         // check if color has to be chosen
         if (this.getLocalPlayer().hasToChooseColor()) {
@@ -252,6 +289,17 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
             this.viewManager.updateView();
         }
+    }
+
+    private void broadcastTurn (Turn turn) {
+
+        SetUpdateRequest    request = new SetUpdateRequest();
+        request.setGameID(this.getCurrentGameSession().getID());
+        request.setUpdateID(turn.getID());
+        request.setUpdate(turn.serializeUpdate());
+
+        RequestProcessor processor = new RequestProcessor(this);
+        processor.execute(request);
     }
 
     @Override
@@ -365,6 +413,33 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
             Intent intent = new Intent(this, LobbyActivity.class);
             startActivity(intent);
         }
+        else if (response instanceof SetUpdateResponse) {
+
+            if (response.getResponseResult() != null && response.getResponseResult().isStatus()) {
+                // TODO
+            }
+            else {
+                // TODO
+            }
+        }
+        else if (response instanceof GetUpdateResponse) {
+
+            GetUpdateResponse getUpdateResponse = (GetUpdateResponse) response;
+
+            if (response.getResponseResult() != null && response.getResponseResult().isStatus()) {
+
+                for (GameUpdate gameUpdate : getUpdateResponse.getGameUpdates()) {
+                    if (gameUpdate instanceof Turn) {
+                        this.getActualGameRound().doTurn((Turn) gameUpdate);
+                    }
+                }
+
+                this.viewManager.updateView();
+            }
+            else {
+                // TODO
+            }
+        }
     }
 
     @Override
@@ -374,9 +449,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         turn.setColor(dialog.getColor());
         this.getActualGameRound().doTurn(turn);
 
-        // TODO: send turn to other players
-
         this.viewManager.updateView();
+
+        this.broadcastTurn(turn);
     }
 
     private GameRound getActualGameRound () {

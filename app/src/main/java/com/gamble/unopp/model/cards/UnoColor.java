@@ -1,9 +1,11 @@
 package com.gamble.unopp.model.cards;
 
+import java.io.Serializable;
+
 /**
  * Created by Albert on 05.05.2015.
  */
-public enum UnoColor {
+public enum UnoColor implements Serializable {
 
     RED     (1),
     YELLOW  (2),
