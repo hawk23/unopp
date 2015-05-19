@@ -42,6 +42,8 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     private TextView txtGameDetailsName;
     private ListView listCurrentPlayers;
     private Timer updateTimer;
+    private boolean timerStopped = false;
+    private boolean gameStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +60,11 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         this.txtGameDetailsName = (TextView) findViewById(R.id.txtGameDetailsName);
         this.listCurrentPlayers = (ListView) findViewById(R.id.listCurrentPlayers);
 
+        this.gameStarted = false;
+
         this.displayDetails();
 
+        this.timerStopped = false;
         this.updateTimer = new Timer();
         this.updateTimer.schedule(new TimerTask() {
             @Override
@@ -97,7 +102,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     @Override
     public void requestFinished(Response response) {
         if (response != null) {
-            if (response instanceof GetGameResponse) {
+            if (response instanceof GetGameResponse && !this.gameStarted) {
 
                 GetGameResponse getGameResponse = (GetGameResponse) response;
 
@@ -111,8 +116,8 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     UnoDatabase.getInstance().setLocalPlayer(updatedLocalPlayer);
 
                     if (getGameResponse.getGameSession() != null && getGameResponse.getGameSession().isStarted()) {
-                        this.updateTimer.cancel();
-                        this.updateTimer.purge();
+                        this.stopUpdateTimer ();
+                        this.gameStarted = true;
 
                         // create an Intent to take you over to the GameScreenActivity
                         Intent intent = new Intent(this, GameScreenActivity.class);
@@ -122,8 +127,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                     }
                 }
                 else {
-                    this.updateTimer.cancel();
-                    this.updateTimer.purge();
+                    this.stopUpdateTimer ();
                     this.displayError(ErrorDialogTypes.GET_GAME_FAILED, response.getResponseResult().getMessage());
                 }
 
@@ -132,8 +136,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
                 if (startGameResponse.getResponseResult() != null) {
                     if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
-                        this.updateTimer.cancel();
-                        this.updateTimer.purge();
+                        this.stopUpdateTimer ();
 
                         // send get game to get initial status
                         GetGameRequest getGameRequest = new GetGameRequest();
@@ -150,8 +153,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 LeaveGameResponse leaveGameResponse = (LeaveGameResponse) response;
 
                 if (leaveGameResponse.getResponseResult() != null && leaveGameResponse.getResponseResult().isStatus()) {
-                    this.updateTimer.cancel();
-                    this.updateTimer.purge();
+                    this.stopUpdateTimer ();
 
                     // delete current gameSession
                     UnoDatabase.getInstance().setCurrentGameSession(null);
@@ -168,8 +170,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
 
                 if (destroyGameResponse.getResponseResult() != null && destroyGameResponse.getResponseResult().isStatus()) {
-                    this.updateTimer.cancel();
-                    this.updateTimer.purge();
+                    this.stopUpdateTimer ();
 
                     // delete current gameSession
                     UnoDatabase.getInstance().setCurrentGameSession(null);
@@ -224,8 +225,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
     private void leaveGame () {
 
-        this.updateTimer.cancel();
-        this.updateTimer.purge();
+        this.stopUpdateTimer ();
 
         LeaveGameRequest leaveGameRequest = new LeaveGameRequest();
         leaveGameRequest.setGameId(this.gameSession.getID());
@@ -237,8 +237,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
     private void deleteGame () {
 
-        this.updateTimer.cancel();
-        this.updateTimer.purge();
+        this.stopUpdateTimer ();
 
         DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
         destroyGameRequest.setGameId(this.gameSession.getID());
@@ -250,8 +249,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
 
     private void startGame () {
 
-        this.updateTimer.cancel();
-        this.updateTimer.purge();
+        this.stopUpdateTimer ();
 
         StartGameRequest startGameRequest = new StartGameRequest();
         startGameRequest.setGameId(this.gameSession.getID());
@@ -310,5 +308,12 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
         else {
             this.leaveGame();
         }
+    }
+
+    private void stopUpdateTimer () {
+
+        this.timerStopped = true;
+        this.updateTimer.cancel();
+        this.updateTimer.purge();
     }
 }
