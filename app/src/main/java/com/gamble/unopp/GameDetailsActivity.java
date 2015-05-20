@@ -262,6 +262,12 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        this.stopUpdateTimer();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Inflate the menu; this adds items to the action bar if it is present.
