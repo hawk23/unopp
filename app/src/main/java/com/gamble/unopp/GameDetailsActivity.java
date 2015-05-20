@@ -264,6 +264,11 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         this.stopUpdateTimer();
     }
 

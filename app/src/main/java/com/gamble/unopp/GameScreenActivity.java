@@ -156,6 +156,11 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     protected void onPause() {
         super.onPause();
         sensorMan.unregisterListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         this.stopUpdateTimer();
     }
 
