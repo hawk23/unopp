@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.DestroyGameRequest;
 import com.gamble.unopp.connection.requests.DestroyPlayerRequest;
 import com.gamble.unopp.connection.requests.JoinGameRequest;
 import com.gamble.unopp.connection.requests.ListGamesRequest;
@@ -60,6 +61,11 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         existingGamesListView = (ListView) findViewById(R.id.existingGamesListView);
         existingGamesListView.setOnItemClickListener(this);
 
+        games = new ArrayList<>();
+        this.getAvailableGameSessions();
+    }
+
+    private void refresh () {
         games = new ArrayList<>();
         this.getAvailableGameSessions();
     }
@@ -130,6 +136,12 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
             case R.id.action_newGame:
                 this.newGame();
                 return true;
+            case R.id.action_refresh:
+                this.refresh();
+                return true;
+            case R.id.action_deleteAllGames:
+                this.deleteAllGames();
+                return true;
             case 16908332: // back button
                 this.deletePlayer();
                 return true;
@@ -138,15 +150,29 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         }
     }
 
+    private void deleteAllGames () {
+
+        for (GameSession gameSession : this.games) {
+
+            DestroyGameRequest request = new DestroyGameRequest();
+            request.setGameId(gameSession.getID());
+            request.setHostId(gameSession.getHost().getID());
+
+            RequestProcessor rp = new RequestProcessor(this);
+            rp.execute(request);
+        }
+    }
+
     private void deletePlayer ()
     {
-        /* SERVER UPDATE ohne GameID
         DestroyPlayerRequest destroyPlayerRequest = new DestroyPlayerRequest();
         destroyPlayerRequest.setPlayerId(this.player.getID());
 
+        // the player is not in a game session yet
+        destroyPlayerRequest.setGameId(-1);
+
         RequestProcessor rp = new RequestProcessor(this);
         rp.execute(destroyPlayerRequest);
-        */
 
         // create an Intent to take you back to the LobbyActivity
         Intent intent = new Intent(this, MainActivity.class);
@@ -199,6 +225,8 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
     @Override
     public void requestFinished(Response response)
     {
-
+        if (response instanceof DestroyGameResponse) {
+            this.refresh();
+        }
     }
 }

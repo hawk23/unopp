@@ -4,17 +4,18 @@ import com.gamble.unopp.model.ModelObject;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.game.GameSession;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Albert on 02.05.2015.
  */
-public class Player extends ModelObject {
+public class Player extends ModelObject implements Serializable {
 
     private int ID;
     private String name;
-    private GameSession gameSession;
-    private ArrayList<Card> hand;
+    private transient GameSession gameSession;
+    private transient ArrayList<Card> hand;
 
     private boolean uno;
     private boolean hasToChooseColor;
@@ -120,5 +121,15 @@ public class Player extends ModelObject {
         if (ID != player.ID) return false;
 
         return true;
+    }
+
+    public boolean isHost () {
+        if (this.gameSession != null && this.gameSession.getHost() != null) {
+            if (this.gameSession.getHost().getID() == this.getID()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

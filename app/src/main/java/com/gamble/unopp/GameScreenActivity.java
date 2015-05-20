@@ -1,17 +1,23 @@
 package com.gamble.unopp;
 
 import android.content.ClipData;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Path;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.FloatMath;
 import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,33 +25,54 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
+import com.gamble.unopp.connection.RequestProcessor;
+import com.gamble.unopp.connection.RequestProcessorCallback;
+import com.gamble.unopp.connection.requests.DestroyGameRequest;
+import com.gamble.unopp.connection.requests.GetUpdateRequest;
+import com.gamble.unopp.connection.requests.SetUpdateRequest;
+import com.gamble.unopp.connection.response.DestroyGameResponse;
+import com.gamble.unopp.connection.response.GetUpdateResponse;
+import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.connection.response.SetUpdateResponse;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
-import com.gamble.unopp.model.game.DeckGenerator;
+import com.gamble.unopp.model.game.GameRound;
 import com.gamble.unopp.model.game.GameSession;
+import com.gamble.unopp.model.game.GameState;
+import com.gamble.unopp.model.game.GameUpdate;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
-import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.game.Turn;
+import com.gamble.unopp.model.management.IChooseColorDialogListener;
 import com.gamble.unopp.model.management.UnoDatabase;
+import com.gamble.unopp.model.management.ViewManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
-public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener {
+public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener, SensorEventListener, RequestProcessorCallback, IChooseColorDialogListener {
 
-    private HorizontalScrollView hswHand;
-    private LinearLayout llHand;
-    private TextView tvDrawCounter;
-    private RelativeLayout flUnplayedCards;
-    private RelativeLayout flPlayedCards;
-    private ChooseColorDialogFragment chooseColorDialogFragment = new ChooseColorDialogFragment();
-    private ImageView ivDirection;
-    private ListView lvPlayers;
-    private ArrayList<Player> players;
-    private ArrayAdapter arrayAdapter;
-    private List<Card> cards;
+    private HorizontalScrollView        hswHand;
+    private LinearLayout                llHand;
+    private TextView                    tvDrawCounter;
+    private RelativeLayout              flUnplayedCards;
+    private RelativeLayout              flPlayedCards;
+    private ChooseColorDialogFragment   chooseColorDialogFragment;
+    private ImageView                   ivDirection;
+    private ListView                    lvPlayers;
+    private RelativeLayout              colorIndicator;
+
+    private ViewManager                 viewManager;
+    private Timer                       updateTimer;
+    private boolean                     timerStopped;
+
+    private SensorManager               sensorMan;
+    private Sensor                      accelerometer;
+    private float[]                     mGravity;
+    private float                       mAccel;
+    private float                       mAccelCurrent;
+    private float                       mAccelLast;
+    private Vibrator                    vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,124 +94,169 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.flPlayedCards      = (RelativeLayout) findViewById(R.id.flPlayedCards);
         this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
         this.ivDirection        = (ImageView) findViewById(R.id.ivDirection);
+        this.colorIndicator     = (RelativeLayout) findViewById(R.id.colorIndicator);
 
-        initGameView();
+        // init sensors
+        sensorMan               = (SensorManager)getSystemService(SENSOR_SERVICE);
+        accelerometer           = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mAccel                  = 0.00f;
+        mAccelCurrent           = SensorManager.GRAVITY_EARTH;
+        mAccelLast              = SensorManager.GRAVITY_EARTH;
 
+        // init vibrator
+        this.vibrator           = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        // init view manager
+        this.viewManager        = new ViewManager(this);
+        this.viewManager.init();
+        this.viewManager.updateView();
+
+        this.initGameView();
     }
 
     private void initGameView () {
 
-        // initialize direction
-        setDirection(Path.Direction.CW);
-
         // set on click linstener on unplayed cards for drawing cards
         flUnplayedCards.setOnClickListener(this);
 
-        // initialize draw counter
-        tvDrawCounter.setText("");
-
         // disable the back button for the color popup
+        chooseColorDialogFragment   = new ChooseColorDialogFragment();
         chooseColorDialogFragment.setCancelable(false);
 
-        GameSession gameSession = UnoDatabase.getInstance().getCurrentGameSession();
+        // init dragging
+        flPlayedCards.setOnDragListener(this);
 
-        // initialize the players list
-        this.players = gameSession.getPlayers();
-        arrayAdapter = new GameScreenPlayerListAdapter(this.getBaseContext(), players);
-        this.lvPlayers.setAdapter(arrayAdapter);
-
-        // initialize the cards of the player
-        // cards = UnoDatabase.getInstance().getLocalPlayer().getHand();
-
-        if (cards != null) {
-            for (final Card card : cards) {
-
-                final ImageView imageView = new ImageView(getBaseContext());
-                imageView.setImageBitmap(card.getImage());
-                imageView.setTag(card);
-                imageView.setOnLongClickListener(this);
-
-                this.llHand.addView(imageView);
+        this.updateTimer = new Timer();
+        this.updateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateTimerTick();
             }
-            flPlayedCards.setOnDragListener(this);
-        }
+        }, 5000, 5000);
     }
 
-    private void setDirection(Path.Direction direction) {
-        if (direction.equals(Path.Direction.CW)) {
-            ivDirection.setImageResource(R.mipmap.direction_down);
-        } else if (direction.equals(Path.Direction.CCW)) {
-            ivDirection.setImageResource(R.mipmap.direction_up);
-        }
+    private void updateTimerTick () {
+
+        // get udates from server
+        GetUpdateRequest request = new GetUpdateRequest();
+        request.setGameID(this.getCurrentGameSession().getID());
+        request.setLastKnownUpdateID(this.getActualGameRound().getLocalUpdateID());
+
+        RequestProcessor processor = new RequestProcessor(this);
+        processor.execute(request);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sensorMan.registerListener(this, accelerometer,SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorMan.unregisterListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.stopUpdateTimer();
     }
 
     @Override
     public boolean onLongClick(View v) {
-        ImageView card = (ImageView) v;
 
-        ClipData data = ClipData.newPlainText("card", Integer.toString(((Card)card.getTag()).getID()));
-        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(card);
-        card.startDrag(data, shadowBuilder, card, 0);
-        card.setVisibility(View.INVISIBLE);
-        return true;
+        if (this.isMyTurn()) {
+
+            ImageView card = (ImageView) v;
+
+            ClipData data = ClipData.newPlainText("card", Integer.toString(((Card)card.getTag()).getID()));
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(card);
+            card.startDrag(data, shadowBuilder, card, 0);
+            card.setVisibility(View.INVISIBLE);
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+
+    private Turn createPlayCardTurn (Card card) {
+
+        Turn turn = new Turn(Turn.TurnType.PLAY_CARD);
+        turn.setCard(card);
+
+        return turn;
+    }
+
+    private void playCard (Card card) {
+
+        Turn turn = createPlayCardTurn(card);
+
+        this.playCard(turn);
+    }
+
+    private void playCard (Turn turn) {
+
+        this.getActualGameRound().doTurn(turn);
+        this.viewManager.updateView();
+
+        // update LocalUpdateID
+        UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().setLocalUpdateID(turn.getID());
+
+        this.broadcastTurn(turn);
+
+        // check if color has to be chosen
+        if (this.getLocalPlayer().hasToChooseColor()) {
+            chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
+        }
     }
 
     @Override
-    public boolean onDrag(View v, DragEvent event) {
-        int action = event.getAction();
-        View view = (View) event.getLocalState();
+    public boolean onDrag (View v, DragEvent event) {
 
-        // HACK : check if card can be played here
-        boolean cardPlayable = true;
+        if (this.isMyTurn()) {
 
-        switch (event.getAction()) {
-            case DragEvent.ACTION_DRAG_STARTED:
-                // do nothing
-                break;
-            case DragEvent.ACTION_DRAG_ENTERED:
-                if (cardPlayable) {
-                    v.setBackgroundColor(getResources().getColor(R.color.green));
-                } else {
-                    v.setBackgroundColor(getResources().getColor(R.color.red));
-                }
-                break;
-            case DragEvent.ACTION_DRAG_EXITED:
-                v.setBackgroundColor(Color.TRANSPARENT);
-                break;
-            case DragEvent.ACTION_DROP:
-                // Dropped, reassign View to ViewGroup
+            int     action          = event.getAction();
+            View    view            = (View) event.getLocalState();
+            Card    draggedCard     = (Card) view.getTag();
 
-                if (cardPlayable) {
-                    LinearLayout owner = (LinearLayout) view.getParent();
-                    owner.removeView(view);
+            Turn playCardTurn       = this.createPlayCardTurn(draggedCard);
+            boolean cardPlayable    = this.getActualGameRound().checkTurn(playCardTurn);
 
-                    RelativeLayout container = (RelativeLayout) v;
-                    view.setLongClickable(false);
-                    container.addView(view);
-                    view.setVisibility(View.VISIBLE);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
-                    params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                    params.addRule(RelativeLayout.CENTER_VERTICAL);
-
-                    Card draggedCard = (Card) view.getTag();
-                    if (draggedCard.getColor() == UnoColor.BLACK) {
-                        chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    // do nothing
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    if (cardPlayable) {
+                        v.setBackgroundColor(getResources().getColor(R.color.green));
+                    } else {
+                        v.setBackgroundColor(getResources().getColor(R.color.red));
                     }
-                    //TODO: update game state
-                    //TODO: update draw counter
-                    //TODO: update color chosen
-
-                    //HACK
-                    setDrawCounter(4);
-                }
-                break;
-            case DragEvent.ACTION_DRAG_ENDED:
-                v.setBackgroundColor(Color.TRANSPARENT);
-                view.setVisibility(View.VISIBLE);
-            default:
-                break;
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                    break;
+                case DragEvent.ACTION_DROP:
+                    if (cardPlayable) {
+                        v.setBackgroundColor(Color.TRANSPARENT);
+                        this.playCard(playCardTurn);
+                    }
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                    view.setVisibility(View.VISIBLE);
+                default:
+                    break;
+            }
+            return true;
         }
-        return true;
+        else {
+            return false;
+        }
     }
 
     @Override
@@ -201,33 +273,66 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // Handle item selection
+        switch (id) {
+            case R.id.action_endGameRound:
+                this.endGameRound();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void callUno(View view) {
-        Turn turn = new Turn(Turn.TurnType.CALL_UNO);
-        UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().doTurn(turn);
-
-        showUnoCall();
+        callUno();
     }
 
-    public void showUnoCall() {
-        // notify listAdapter that players changed
-        arrayAdapter.notifyDataSetChanged();
+    public void callUno () {
+
+        if (this.getCurrentGameSession() != null &&
+            this.getActualGameRound() != null) {
+
+            Turn turn = new Turn(Turn.TurnType.CALL_UNO);
+
+            if (this.getActualGameRound().checkTurn(turn)) {
+                this.getActualGameRound().doTurn(turn);
+
+                // update LocalUpdateID
+                this.getActualGameRound().setLocalUpdateID(turn.getID());
+
+                this.viewManager.updateView();
+            }
+            else {
+
+                //TODO: give feedback that uno isn't allowed now
+            }
+
+        }
     }
 
-    public void showColorCall(UnoColor color, Player player) {
-        // notify listAdapter that players changed
-        arrayAdapter.notifyDataSetChanged();
+    private void broadcastTurn (Turn turn) {
+
+        SetUpdateRequest    request = new SetUpdateRequest();
+        request.setGameID(this.getCurrentGameSession().getID());
+        request.setUpdateID(turn.getID());
+        request.setUpdate(turn.serializeUpdate());
+
+        RequestProcessor processor = new RequestProcessor(this);
+        processor.execute(request);
     }
 
     @Override
     public void onClick(View view) {
+
+        // player wants to draw from stack
+        if (view == this.flUnplayedCards) {
+            if (this.isMyTurn()) {
+                // TODO
+            }
+
+        }
+
+        /*
         Player self = UnoDatabase.getInstance().getLocalPlayer();
 
         // HACK draw card - create Turn Object
@@ -237,6 +342,8 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         cardsDrawn.add(cards.get(2));
         cardsDrawn.add(cards.get(3));
         // END HACK
+        */
+
         /*
         GameRound gameRound = self.getGameSession().getActualGameRound();
         int updateId = gameRound.getLocalUpdateID();
@@ -256,14 +363,17 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         }
         */
 
+        /*
         for (Card card : cardsDrawn) {
             addCardToHand(card);
         }
 
         // add listener in order to scroll the hand to last card
         hswHand.addOnLayoutChangeListener(this);
+        */
     }
 
+    // TODO: obsolete? --> Viewmanager should do that.
     private void addCardToHand(Card card) {
         final ImageView   imageView = new ImageView(getBaseContext());
         imageView.setImageBitmap(card.getImage());
@@ -278,11 +388,163 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         hswHand.fullScroll(View.FOCUS_RIGHT);
     }
 
-    public void setDrawCounter(int drawCounter) {
-        if (drawCounter == 0 ) {
-            tvDrawCounter.setText("");
-        } else if (drawCounter > 0) {
-            tvDrawCounter.setText("+" + drawCounter);
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+
+            mGravity = event.values.clone();
+
+            // Shake detection
+            float x = mGravity[0];
+            float y = mGravity[1];
+            float z = mGravity[2];
+
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = FloatMath.sqrt(x * x + y * y + z * z);
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+
+            // Make this higher or lower according to how much
+            // motion you want to detect
+            if(mAccel > 8){
+                this.callUno();
+                this.vibrator.vibrate(500);
+            }
         }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // required method
+    }
+
+    @Override
+    public void requestFinished(Response response) {
+
+        if (response instanceof DestroyGameResponse) {
+
+            DestroyGameResponse destroyGameResponse = (DestroyGameResponse) response;
+
+            // delete current gameSession
+            UnoDatabase.getInstance().setCurrentGameSession(null);
+
+            // create an Intent to take you back to the LobbyActivity
+            Intent intent = new Intent(this, LobbyActivity.class);
+            startActivity(intent);
+        }
+        else if (response instanceof SetUpdateResponse) {
+
+            if (response.getResponseResult() != null && response.getResponseResult().isStatus()) {
+                // TODO
+            }
+            else {
+                // TODO
+            }
+        }
+        else if (response instanceof GetUpdateResponse && !this.timerStopped) {
+
+            GetUpdateResponse getUpdateResponse = (GetUpdateResponse) response;
+
+            if (response.getResponseResult() != null && response.getResponseResult().isStatus() && getUpdateResponse.getGameUpdates() != null) {
+
+                for (GameUpdate gameUpdate : getUpdateResponse.getGameUpdates()) {
+                    if (gameUpdate instanceof Turn && this.getActualGameRound().getLocalUpdateID() < ((Turn) gameUpdate).getID()) {
+                        Turn turn = (Turn) gameUpdate;
+
+                        this.getActualGameRound().doTurn(turn);
+
+                        // update LocalUpdateID
+                        this.getActualGameRound().setLocalUpdateID(turn.getID());
+                    }
+                }
+
+                this.viewManager.updateView();
+            }
+            else {
+                // TODO
+            }
+        }
+    }
+
+    @Override
+    public void onDialogClosed(ChooseColorDialogFragment dialog) {
+
+        Turn turn = new Turn(Turn.TurnType.CHOOSE_COLOR);
+        turn.setColor(dialog.getColor());
+        this.getActualGameRound().doTurn(turn);
+
+        this.viewManager.updateView();
+
+        this.broadcastTurn(turn);
+    }
+
+    private GameRound getActualGameRound () {
+        return UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound();
+    }
+
+    private GameSession getCurrentGameSession() {
+        return UnoDatabase.getInstance().getCurrentGameSession();
+    }
+
+    private Player getLocalPlayer() {
+        return UnoDatabase.getInstance().getLocalPlayer();
+    }
+
+    private GameState getGameState() {
+        return getActualGameRound().getGamestate();
+    }
+
+    private boolean isMyTurn () {
+        return this.getGameState().getActualPlayer().getID() == this.getLocalPlayer().getID();
+    }
+
+    private void endGameRound () {
+
+        this.stopUpdateTimer();
+
+        DestroyGameRequest destroyGameRequest = new DestroyGameRequest();
+        destroyGameRequest.setGameId(this.getCurrentGameSession().getID());
+        destroyGameRequest.setHostId(this.getCurrentGameSession().getHost().getID());
+
+        RequestProcessor rp = new RequestProcessor(this);
+        rp.execute(destroyGameRequest);
+    }
+
+    public RelativeLayout getFlPlayedCards() {
+        return flPlayedCards;
+    }
+
+    public TextView getTvDrawCounter() {
+        return tvDrawCounter;
+    }
+
+    public LinearLayout getLlHand() {
+        return llHand;
+    }
+
+    public ListView getLvPlayers() {
+        return lvPlayers;
+    }
+
+    public ImageView getIvDirection() {
+        return ivDirection;
+    }
+
+    public RelativeLayout getColorIndicator() {
+        return colorIndicator;
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        this.stopUpdateTimer();
+        super.onBackPressed();
+    }
+
+    private void stopUpdateTimer () {
+
+        this.timerStopped = true;
+        this.updateTimer.cancel();
+        this.updateTimer.purge();
     }
 }

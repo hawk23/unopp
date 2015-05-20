@@ -49,6 +49,9 @@ public class  RequestProcessor extends AsyncTask<Request, Void, Response> {
     @Override
     protected void onPostExecute(Response s) {
         super.onPostExecute(s);
-        callback.requestFinished(s);
+
+        if (this.callback != null) {
+            callback.requestFinished(s);
+        }
     }
 }

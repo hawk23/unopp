@@ -93,13 +93,13 @@ public class GameLogic {
 
                     if (actions.size() == 2) {
                         this.state.setDrawCounter(this.state.getDrawCounter() + 4);
-                        turn.getPlayer().hasToChooseColor();
+                        turn.getPlayer().setHasToChooseColor(true);
                     }
                     else {
                         int actionType = actions.get(0).getActionType().getType();
 
                         if (actionType == ActionType.CHANGE_COLOR) {
-                            turn.getPlayer().hasToChooseColor();
+                            turn.getPlayer().setHasToChooseColor(true);
                         }
                         else if (actionType == ActionType.ADD2) {
                             this.state.setDrawCounter(this.state.getDrawCounter() + 2);

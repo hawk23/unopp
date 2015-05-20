@@ -18,6 +18,7 @@ public class GameSession extends ModelObject {
     private ArrayList<Player> players;
     private ArrayList<GameRound> gameRounds;
     private GameRound actualGameRound;
+    private int mode;
 
     public GameSession(int ID, String name, Player host) {
 
@@ -108,8 +109,35 @@ public class GameSession extends ModelObject {
         this.maxPlayers = maxPlayers;
     }
 
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    public Player getPlayerById (int id) {
+
+        for (Player player : this.players) {
+            if (player.getID() == id) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return this.getName() + " (" + (getCurrentPlayerCount() + "/" + getMaxPlayers() + ")");
+    }
+
+    public ArrayList<GameRound> getGameRounds() {
+        return gameRounds;
+    }
+
+    public void setGameRounds(ArrayList<GameRound> gameRounds) {
+        this.gameRounds = gameRounds;
     }
 }

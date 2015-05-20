@@ -18,6 +18,7 @@ import com.gamble.unopp.connection.response.CreatePlayerResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.fragments.ErrorDialogFragment;
 import com.gamble.unopp.helper.SharedPreferencesKeys;
+import com.gamble.unopp.model.game.DeckGenerator;
 import com.gamble.unopp.model.management.UnoDatabase;
 
 public class MainActivity extends ActionBarActivity {
@@ -78,6 +79,9 @@ public class MainActivity extends ActionBarActivity {
     private void initUnoApp () {
 
         GameSettings.ASSET_MANAGER  = getAssets();
+
+        // initially create deck;
+        UnoDatabase.getInstance().setDeck(DeckGenerator.createDeck(0));
     }
 
     public void startGame(View v) {

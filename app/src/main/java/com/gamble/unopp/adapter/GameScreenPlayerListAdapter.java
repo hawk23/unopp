@@ -1,6 +1,7 @@
 package com.gamble.unopp.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,20 +56,12 @@ public class GameScreenPlayerListAdapter extends ArrayAdapter<Player> {
             imageView.setVisibility(View.INVISIBLE);
         }
 
-        /*
         // highlight current player
         Player currentPlayer = player.getGameSession().getActualGameRound().getGamestate().getActualPlayer();
 
         if (currentPlayer.getID() == player.getID()) {
             rowView.setBackgroundColor(Color.WHITE);
         }
-        */
-
-        // HACK
-        if (player.getID() == 3) {
-            rowView.setBackgroundColor(context.getResources().getColor(R.color.selected_player_back));
-        }
-        // END HACK
 
         // retrn rowView
         return rowView;
