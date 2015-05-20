@@ -1,6 +1,9 @@
 package com.gamble.unopp.connection.response;
 
 import com.gamble.unopp.model.game.GameUpdate;
+import com.gamble.unopp.model.game.Player;
+import com.gamble.unopp.model.game.Turn;
+import com.gamble.unopp.model.management.UnoDatabase;
 import com.gamble.unopp.model.parsing.ModelParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +31,8 @@ public class GetUpdateResponse extends Response {
 
         if (this.getResponseResult().isStatus()) {
 
-            NodeList updates = dom.getElementsByTagName("Update");
+            NodeList updates    = dom.getElementsByTagName("Update");
+            this.gameUpdates    = new ArrayList<GameUpdate>();
 
             for (int i = 0; i < updates.getLength(); i++) {
 
@@ -38,6 +42,28 @@ public class GetUpdateResponse extends Response {
                 String updateString = updateData.getTextContent();
 
                 GameUpdate gameUpdate = GameUpdate.deserializeUpdate(updateString);
+
+                // set references to local objects based on given id's
+                if (gameUpdate instanceof Turn) {
+
+                    Turn turn = (Turn) gameUpdate;
+
+                    // set correct card
+                    if (turn.getCard() != null) {
+                        turn.setCard(UnoDatabase.getInstance().getDeck().get(turn.getCard().getID()));
+                    }
+
+                    // set correct player
+                    if (turn.getPlayer() != null) {
+                        for (Player player : UnoDatabase.getInstance().getCurrentGameSession().getPlayers()) {
+                            if (player.getID() == turn.getPlayer().getID()) {
+                                turn.setPlayer(player);
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 gameUpdates.add(gameUpdate);
             }
         }

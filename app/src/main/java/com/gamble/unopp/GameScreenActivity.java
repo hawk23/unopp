@@ -439,10 +439,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
             GetUpdateResponse getUpdateResponse = (GetUpdateResponse) response;
 
-            if (response.getResponseResult() != null && response.getResponseResult().isStatus()) {
+            if (response.getResponseResult() != null && response.getResponseResult().isStatus() && getUpdateResponse.getGameUpdates() != null) {
 
                 for (GameUpdate gameUpdate : getUpdateResponse.getGameUpdates()) {
-                    if (gameUpdate instanceof Turn) {
+                    if (gameUpdate instanceof Turn && this.getActualGameRound().getLocalUpdateID() < ((Turn) gameUpdate).getID()) {
                         Turn turn = (Turn) gameUpdate;
 
                         this.getActualGameRound().doTurn(turn);
