@@ -38,7 +38,7 @@ public class ModelParser {
         return null;
     }
 
-    private static ResponseResult parseResponseResultFromElement(Element element) {
+    public static ResponseResult parseResponseResultFromElement(Element element) {
 
         try {
             boolean status = Boolean.parseBoolean(element.getElementsByTagName("status").item(0).getTextContent());
@@ -51,11 +51,11 @@ public class ModelParser {
         }
     }
 
-    private static Player parsePlayerFromElement (Element element) {
+    public static Player parsePlayerFromElement (Element element) {
         return parsePlayerFromElement(element, null);
     }
 
-    private static Player parsePlayerFromElement (Element element, GameSession gameSession) {
+    public static Player parsePlayerFromElement (Element element, GameSession gameSession) {
 
         if (element.getElementsByTagName("id") != null && element.getElementsByTagName("id").item(0) != null ) {
 
@@ -90,7 +90,7 @@ public class ModelParser {
         return null;
     }
 
-    private static GameRound parseGameRoundFromElement (Element element, GameSession gameSession) {
+    public static GameRound parseGameRoundFromElement (Element element, GameSession gameSession) {
 
         int         id                  = Integer.parseInt(element.getElementsByTagName("id").item(0).getTextContent());
         boolean     finished            = Boolean.parseBoolean(element.getElementsByTagName("finished").item(0).getTextContent());
@@ -106,7 +106,7 @@ public class ModelParser {
         return gameRound;
     }
 
-    private static GameState parseGameStateFromElement (Element element, GameRound gameRound, ArrayList<Player> players) {
+    public static GameState parseGameStateFromElement (Element element, GameRound gameRound, ArrayList<Player> players) {
 
         int         topCard             = Integer.parseInt(element.getElementsByTagName("topCard").item(0).getTextContent());
         int         drawCounter         = Integer.parseInt(element.getElementsByTagName("drawCounter").item(0).getTextContent());
@@ -145,7 +145,7 @@ public class ModelParser {
         return gameState;
     }
 
-    private static Deck parseDeckFromElement (Element element) {
+    public static Deck parseDeckFromElement (Element element) {
 
         Deck                resultDeck              = new Deck();
 
@@ -176,7 +176,7 @@ public class ModelParser {
         return resultDeck;
     }
 
-    private static GameSession parseGameSessionFromElement (Element element) {
+    public static GameSession parseGameSessionFromElement (Element element) {
 
         int         id                  = Integer.parseInt(element.getElementsByTagName("id").item(0).getTextContent());
         String      name                = element.getElementsByTagName("name").item(0).getTextContent();

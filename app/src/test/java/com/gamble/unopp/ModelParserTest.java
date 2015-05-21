@@ -1,16 +1,22 @@
-package com.gamble.unopp.tests;
+package com.gamble.unopp;
 
 import com.gamble.unopp.connection.response.GetGameResponse;
 import com.gamble.unopp.connection.response.Response;
+import com.gamble.unopp.connection.response.ResponseResult;
 import com.gamble.unopp.model.cards.Card;
+import com.gamble.unopp.model.game.Deck;
 import com.gamble.unopp.model.game.DeckGenerator;
+import com.gamble.unopp.model.game.GameRound;
 import com.gamble.unopp.model.game.GameSession;
+import com.gamble.unopp.model.game.GameState;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.parsing.ModelParser;
 
 import junit.framework.Assert;
 
+import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
@@ -18,9 +24,28 @@ import java.util.ArrayList;
  * Created by Verena on 18.05.2015.
  */
 public class ModelParserTest {
+
     private ModelParser modelParser = new ModelParser();
     private Response response = new GetGameResponse();
 
+    @Test
+    public void parseResponseResult() {
+        String xml ="<Result>\n" +
+                "       <status>true</status>\n" +
+                "       <message>Spiel mit ID: 0 erfolgreich entfernt!</message>\n" +
+                "   </Result>";
+
+
+        Document dom = response.getDomElement(xml);
+        ResponseResult responseResult = modelParser.parseResponseResultFromElement(dom.getDocumentElement());
+
+        Assert.assertNotNull(responseResult);
+        Assert.assertTrue(responseResult.isStatus());
+        Assert.assertEquals(responseResult.getMessage(), "Spiel mit ID: 0 erfolgreich entfernt!");
+    }
+
+
+    @Test
     public void parsePlayer() throws Exception {
         String xml = "<CreatePlayerResult>\n" +
                 "        <id>2</id>\n" +
@@ -30,14 +55,7 @@ public class ModelParserTest {
                 "          <latitude>1.0</latitude>\n" +
                 "          <longitude>1.4</longitude>\n" +
                 "        </Location>\n" +
-                "        <Cards>\n" +
-                "          <Card>\n" +
-                "            <id>5</id>\n" +
-                "          </Card>\n" +
-                "          <Card>\n" +
-                "            <id>6</id>\n" +
-                "          </Card>\n" +
-                "        </Cards>\n" +
+                "        <Cards/>\n" +
                 "     </CreatePlayerResult>";
 
 
@@ -48,16 +66,11 @@ public class ModelParserTest {
         Assert.assertEquals(player.getID(), 2);
         Assert.assertEquals(player.getName(), "Verena");
         Assert.assertEquals(player.isUno(), false);
-        Assert.assertEquals(player.getHandCount(), 2);
-        // parse PlayerPlayer host = new Player().set
-        // Assert.assertEquals(gameSession.getHost(), );
-        ArrayList<Card> deck = DeckGenerator.createDeck(0);
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.add(deck.get(5));
-        cards.add(deck.get(6));
-        Assert.assertEquals(player.getHand(), cards);
+        Assert.assertEquals(player.getHandCount(), 0);
     }
 
+
+    @Test
     public void parseGameSession() throws Exception {
         String xml = "<GameSession>\n" +
             "          <id>1</id>\n" +
@@ -65,9 +78,8 @@ public class ModelParserTest {
             "          <started>false</started>\n" +
             "          <name>Spiel1</name>\n" +
             "          <hostID>4</hostID>\n" +
-            "          <GameRounds>\n" +
-            "            <GameRound xsi:nil=\"true\" />\n" +
-            "          </GameRounds>\n" +
+            "          <mode>2</mode>\n" +
+            "          <GameRounds/>\n" +
             "          <Location>\n" +
             "            <latitude>1.0</latitude>\n" +
             "            <longitude>4.0</longitude>\n" +
@@ -91,5 +103,21 @@ public class ModelParserTest {
         Assert.assertNull(gameSession.getActualGameRound());
         Assert.assertEquals(gameSession.isStarted(), false);
         Assert.assertEquals(gameSession.getName(), "Spiel1");
+        Assert.assertEquals(gameSession.getMode(), 2);
+    }
+
+    @Test
+    private void parseGameRound() {
+        // TODO
+    }
+
+    @Test
+    private void parseDeck() {
+        // TODO
+    }
+
+    @Test
+    private void parseGameState() {
+        // TODO
     }
 }
