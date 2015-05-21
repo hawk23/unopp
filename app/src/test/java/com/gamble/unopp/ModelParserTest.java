@@ -107,17 +107,17 @@ public class ModelParserTest {
     }
 
     @Test
-    private void parseGameRound() {
+    public void parseGameRound() {
         // TODO
     }
 
     @Test
-    private void parseDeck() {
+    public void parseDeck() {
         // TODO
     }
 
     @Test
-    private void parseGameState() {
+    public void parseGameState() {
         // TODO
     }
 }
