@@ -49,6 +49,9 @@ public class GameLogic {
                         valid = true;
                     }
                     break;
+                case CALL_UNO:
+                    valid = true;
+                    break;
             }
         }
         return valid;

@@ -585,7 +585,14 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.unoTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                unoTimerExpired();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // This code will always run on the UI thread, therefore is safe to modify UI elements.
+                        unoTimerExpired();
+                    }
+                });
             }
         }, 4000);
     }
