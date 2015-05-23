@@ -65,6 +65,10 @@ public class GameLogic {
                     turn.getPlayer().addCardsToHand(this.state.popFromStack(this.state.getDrawCounter()));
                     this.state.setDrawCounter(0);
                 }
+
+                if (turn.getPlayer().isUno() && turn.getPlayer().getHand().size() > 1) {
+                    turn.getPlayer().setUno(false);
+                }
                 this.state.nextPlayer();
                 break;
 
@@ -111,6 +115,10 @@ public class GameLogic {
                             this.state.skipPlayer();
                         }
                     }
+                }
+
+                if (turn.getPlayer().getHand().size() == 0) {
+                    this.state.setWinner(turn.getPlayer());
                 }
 
                 break;

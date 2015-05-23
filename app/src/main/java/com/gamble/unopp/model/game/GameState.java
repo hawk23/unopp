@@ -160,5 +160,9 @@ public class GameState {
     public void setLocalUpdateID(int ID) {
         this.gameRound.setLocalUpdateID(ID);
     }
+
+    public void setWinner(Player winner) {
+        this.gameRound.setWinner(winner);
+    }
 }
 
