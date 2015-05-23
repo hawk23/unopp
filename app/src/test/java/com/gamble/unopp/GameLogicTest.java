@@ -70,6 +70,8 @@ public class GameLogicTest {
 
     @Test
     public void testCheckTurnDraw() {
+        gameState.setActualPlayer(player);
+
         player.setHasToChooseColor(false);
         turn = new Turn(1, Turn.TurnType.DRAW, player);
 
@@ -78,6 +80,8 @@ public class GameLogicTest {
 
     @Test
     public void testCheckTurnPlayCorrectCard() {
+        gameState.setActualPlayer(player);
+
         playedStack.add(new NumberCard(1, 2, null, UnoColor.BLUE));
         gameState.setPlayedStack(playedStack);
 
@@ -91,6 +95,8 @@ public class GameLogicTest {
 
     @Test
     public void testCheckTurnPlayWrongCard() {
+        gameState.setActualPlayer(player);
+
         playedStack.add(new NumberCard(1, 2, null, UnoColor.BLUE));
         gameState.setPlayedStack(playedStack);
 
@@ -104,19 +110,11 @@ public class GameLogicTest {
 
     @Test
     public void testCheckTurnChooseColor() {
+        gameState.setActualPlayer(player);
+
         player.setHasToChooseColor(true);
 
         turn = new Turn(1, Turn.TurnType.CHOOSE_COLOR, player);
-
-        assertTrue(gameLogic.checkTurn(turn));
-    }
-
-    @Test
-    public void testCheckTurnCallUno() {
-        hand.add(new NumberCard(1, 3, null, UnoColor.GREEN));
-        player.setHand(hand);
-
-        turn = new Turn(1, Turn.TurnType.CALL_UNO, player);
 
         assertTrue(gameLogic.checkTurn(turn));
     }
@@ -133,6 +131,7 @@ public class GameLogicTest {
         gameLogic.doTurn(turn);
 
         assertEquals(player.getHandCount(), 1);
+        assertFalse(player.isUno());
     }
 
     @Test
@@ -160,6 +159,9 @@ public class GameLogicTest {
     public void testDoTurnPlayNumberCard() {
         Card card = new NumberCard(1, 5, null, UnoColor.RED);
 
+        hand.add(card);
+        player.setHand(hand);
+
         turn = new Turn(1, Turn.TurnType.PLAY_CARD, player);
         turn.setCard(card);
 
@@ -169,6 +171,7 @@ public class GameLogicTest {
 
         assertEquals(gameState.sizeOfPlayedStack(), 1);
         assertEquals(gameState.getActualColor(), UnoColor.RED);
+        assertEquals(gameRound.getWinner().getID(), 1);
     }
 
     @Test
@@ -178,6 +181,9 @@ public class GameLogicTest {
         card.addAction(new Action(actionType1));
         card.addAction(new Action(actionType2));
 
+        hand.add(card);
+        player.setHand(hand);
+
         turn = new Turn(1, Turn.TurnType.PLAY_CARD, player);
         turn.setCard(card);
 
@@ -186,6 +192,7 @@ public class GameLogicTest {
         assertEquals(gameState.sizeOfPlayedStack(), 1);
         assertEquals(gameState.getDrawCounter(), 4);
         assertTrue(turn.getPlayer().hasToChooseColor());
+        assertEquals(gameRound.getWinner().getID(), 1);
     }
 
     @Test
@@ -193,6 +200,9 @@ public class GameLogicTest {
         ActionCard card = new ActionCard(1, null, UnoColor.RED);
 
         card.addAction(new Action(actionType1));
+
+        hand.add(card);
+        player.setHand(hand);
 
         turn = new Turn(1, Turn.TurnType.PLAY_CARD, player);
         turn.setCard(card);
@@ -203,6 +213,7 @@ public class GameLogicTest {
         assertEquals(gameState.sizeOfPlayedStack(), 1);
         assertEquals(gameState.getDrawCounter(), 2);
         assertEquals(gameState.getActualColor(), UnoColor.RED);
+        assertEquals(gameRound.getWinner().getID(), 1);
     }
 
     /*
