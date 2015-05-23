@@ -296,9 +296,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
             Turn turn = new Turn(Turn.TurnType.CALL_UNO);
 
             if (this.getActualGameRound().checkTurn(turn)) {
-                this.getActualGameRound().doTurn(turn);
 
+                this.getActualGameRound().doTurn(turn);
                 this.viewManager.updateView();
+                this.broadcastTurn(turn);
             }
             else {
 
