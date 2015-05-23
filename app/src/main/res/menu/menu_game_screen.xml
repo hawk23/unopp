@@ -5,4 +5,5 @@
     <item android:id="@+id/action_settings"     android:title="@string/action_settings"      android:orderInCategory="100" app:showAsAction="never"   />
     <item android:id="@+id/action_endGameRound" android:title="@string/action_endGameRound"  android:orderInCategory="1"   app:showAsAction="never"   />
     <item android:id="@+id/action_sortHand"     android:title="@string/action_sortHand"  android:orderInCategory="2"   app:showAsAction="never"   />
+    <item android:id="@+id/action_aau"          android:title="AAU" android:orderInCategory="3" android:icon="@drawable/aau_icon_white"  app:showAsAction="always" />
 </menu>
