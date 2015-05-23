@@ -522,7 +522,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
             Turn turn = new Turn(Turn.TurnType.CALL_UNO);
 
             this.getActualGameRound().doTurn(turn);
-            this.viewManager.updateView();
             this.broadcastTurn(turn);
 
             // update ID cause uno turn was applied before.
@@ -530,10 +529,11 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
             // apply the delayed turn
             this.getActualGameRound().doTurn(this.delayedTurn);
-            this.viewManager.updateView();
             this.broadcastTurn(this.delayedTurn);
 
             this.delayedTurn = null;
+
+            this.viewManager.updateView();
         }
         else {
 
