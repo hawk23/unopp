@@ -19,4 +19,5 @@
     <string name="action_deleteAllGames">Alle Spiele löschen</string>
     <string name="error">Error</string>
     <string name="action_endGameRound">Runde beenden</string>
+    <string name="action_sortHand">Hand sortieren</string>
 </resources>

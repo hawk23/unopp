@@ -275,6 +275,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
             case R.id.action_endGameRound:
                 this.endGameRound();
                 return true;
+            case R.id.action_sortHand:
+                this.getLocalPlayer().sortHand();
+                this.viewManager.updateView();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
