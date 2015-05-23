@@ -156,5 +156,9 @@ public class GameState {
     public void setActualColor(UnoColor actualColor) {
         this.actualColor = actualColor;
     }
+
+    public void setLocalUpdateID(int ID) {
+        this.gameRound.setLocalUpdateID(ID);
+    }
 }
 

@@ -203,9 +203,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.getActualGameRound().doTurn(turn);
         this.viewManager.updateView();
 
-        // update LocalUpdateID
-        UnoDatabase.getInstance().getCurrentGameSession().getActualGameRound().setLocalUpdateID(turn.getID());
-
         this.broadcastTurn(turn);
 
         // check if color has to be chosen
@@ -296,9 +293,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
             if (this.getActualGameRound().checkTurn(turn)) {
                 this.getActualGameRound().doTurn(turn);
-
-                // update LocalUpdateID
-                this.getActualGameRound().setLocalUpdateID(turn.getID());
 
                 this.viewManager.updateView();
             }
@@ -452,9 +446,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                         Turn turn = (Turn) gameUpdate;
 
                         this.getActualGameRound().doTurn(turn);
-
-                        // update LocalUpdateID
-                        this.getActualGameRound().setLocalUpdateID(turn.getID());
                     }
                 }
 

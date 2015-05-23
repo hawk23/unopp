@@ -55,13 +55,6 @@ public class GameLogic {
     }
 
     public void doTurn(Turn turn) {
-        // ToDo: update GameState and Player State
-        // player states have to be set correctly in doTurn etc.
-        // e.g. only an active player can draw
-        // if one has drawn he/she cannot draw again
-        // one cannot 'call' next without drawing a card
-        // after playing a card next will be called automatically
-        // ...
 
         switch (turn.getType()) {
             case DRAW:
@@ -71,7 +64,6 @@ public class GameLogic {
                 else {
                     turn.getPlayer().addCardsToHand(this.state.popFromStack(this.state.getDrawCounter()));
                 }
-                // update player and state
                 this.state.nextPlayer();
                 break;
 
@@ -130,6 +122,8 @@ public class GameLogic {
                 turn.getPlayer().setUno(true);
                 break;
         }
+
+        this.state.setLocalUpdateID(turn.getID());
     }
 
     /**
