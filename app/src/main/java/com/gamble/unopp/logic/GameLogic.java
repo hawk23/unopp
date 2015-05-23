@@ -63,6 +63,7 @@ public class GameLogic {
                 }
                 else {
                     turn.getPlayer().addCardsToHand(this.state.popFromStack(this.state.getDrawCounter()));
+                    this.state.setDrawCounter(0);
                 }
                 this.state.nextPlayer();
                 break;
