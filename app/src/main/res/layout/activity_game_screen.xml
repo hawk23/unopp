@@ -54,20 +54,7 @@
                         android:orientation="vertical"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:layout_weight="1">
-
-                        <RelativeLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_weight="1">
-
-                            <RelativeLayout
-                                android:layout_width="fill_parent"
-                                android:layout_height="fill_parent"
-                                android:layout_margin="@dimen/small_item_margin"
-                                android:id="@+id/colorIndicator"
-                                android:background="@drawable/color_indicator_shape"></RelativeLayout>
-                        </RelativeLayout>
+                        android:layout_weight="2">
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -143,7 +130,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/flPlayedCards"
-                android:layout_weight="1"></RelativeLayout>
+                android:layout_weight="1">
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"

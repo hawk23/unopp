@@ -60,7 +60,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private ChooseColorDialogFragment   chooseColorDialogFragment;
     private ImageView                   ivDirection;
     private ListView                    lvPlayers;
-    private RelativeLayout              colorIndicator;
 
     private ViewManager                 viewManager;
     private Timer                       updateTimer;
@@ -97,7 +96,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.flPlayedCards      = (RelativeLayout) findViewById(R.id.flPlayedCards);
         this.lvPlayers          = (ListView) findViewById(R.id.lvPlayers);
         this.ivDirection        = (ImageView) findViewById(R.id.ivDirection);
-        this.colorIndicator     = (RelativeLayout) findViewById(R.id.colorIndicator);
 
         // init sensors
         sensorMan               = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -506,10 +504,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     public ImageView getIvDirection() {
         return ivDirection;
-    }
-
-    public RelativeLayout getColorIndicator() {
-        return colorIndicator;
     }
 
     private void unoTimerExpired () {
