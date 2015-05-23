@@ -305,7 +305,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
                 //TODO: give feedback that uno isn't allowed now
             }
-
         }
     }
 

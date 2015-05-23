@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.shapes.Shape;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.gamble.unopp.GameScreenActivity;
@@ -110,6 +111,9 @@ public class ViewManager {
                 imageView.setOnLongClickListener(this.activity);
 
                 this.activity.getLlHand().addView(imageView);
+
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageView.getLayoutParams();
+                params.setMargins(0,0,0,0);
             }
         }
 
