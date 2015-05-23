@@ -22,41 +22,42 @@ public class GameLogic {
     }
 
     public boolean checkTurn(Turn turn) {
+
         boolean valid = false;
 
-        switch (turn.getType()) {
+        if (turn.getPlayer() == this.state.getActualPlayer()) {
 
-            case DRAW:
-                if (!turn.getPlayer().hasToChooseColor()) {
-                    valid = true;
-                }
-                break;
+            switch (turn.getType()) {
 
-            case PLAY_CARD:
-                if (checkCard(turn.getCard())) {
-                    valid = true;
-                }
-                break;
+                case DRAW:
+                    if (!turn.getPlayer().hasToChooseColor()) {
+                        valid = true;
+                    }
+                    break;
 
-            case CHOOSE_COLOR:
-                if (turn.getPlayer().hasToChooseColor()) {
-                    valid = true;
-                }
-                break;
-            case CALL_UNO:
-                if (turn.getPlayer().getHandCount() == 1) {
-                    valid = true;
-                }
-                break;
+                case PLAY_CARD:
+                    if (turn.getPlayer().getHand().size() == 1 && !turn.getPlayer().isUno()) {
+                        // Maybe set punishment draw 2 cards
+                    }
+                    else if (checkCard(turn.getCard())) {
+                        valid = true;
+                    }
+                    break;
+
+                case CHOOSE_COLOR:
+                    if (turn.getPlayer().hasToChooseColor()) {
+                        valid = true;
+                    }
+                    break;
+            }
         }
-
-
         return valid;
     }
 
     public void doTurn(Turn turn) {
 
         switch (turn.getType()) {
+
             case DRAW:
                 if (this.state.getDrawCounter() == 0) {
                     turn.getPlayer().addCardsToHand(this.state.popFromStack(1));
@@ -73,7 +74,6 @@ public class GameLogic {
                 break;
 
             case PLAY_CARD:
-
                 // push turnCard to playedStack and remove turnCard from turnPlayer's hand
                 this.state.pushToPlayedStack(turn.getCard());
                 turn.getPlayer().removeCardFromHand(turn.getCard());
