@@ -50,10 +50,6 @@ public class Turn extends GameUpdate implements Serializable {
         this.color = null;
     }
 
-    public int getID() {
-        return ID;
-    }
-
     public Player getPlayer() {
         return player;
     }

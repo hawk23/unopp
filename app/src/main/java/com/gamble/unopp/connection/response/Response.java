@@ -22,7 +22,7 @@ public abstract class Response {
 
     public abstract void parseXML (String xmlResponse) throws Exception;
 
-    protected Document getDomElement(String xml){
+    public Document getDomElement(String xml){
 
         Document doc = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

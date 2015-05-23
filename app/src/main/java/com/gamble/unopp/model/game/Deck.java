@@ -19,7 +19,6 @@ public class Deck {
     public Deck() {
         this.stack = new ArrayList<Card>();
         this.playedStack = new ArrayList<Card>();
-        this.deckCount = 1;
     }
 
     public int sizeOfStack() {
@@ -50,14 +49,20 @@ public class Deck {
 
         if (amount > sizeOfStack()) {
 
-            // TODO: do not create a new Deck. Use existing cards from played stack and schuffle them
-
-            ArrayList<Card> newDeck = DeckGenerator.createDeck((this.deckCount * GameSettings.cardDeckAmount - 1) + 1);
-            newDeck = shuffle(newDeck);
-            for (Card c : this.stack) {
-                newDeck.add(c);
+            ArrayList<Card> cardsTooShuffle = new ArrayList<Card>();
+            for (int i = this.playedStack.size() - 1; i >= 0 ; i--) {
+                cardsTooShuffle.add(this.playedStack.get(i));
+                this.playedStack.remove(i);
             }
-            this.stack = newDeck;
+
+            this.playedStack.add(cardsTooShuffle.get(0));
+            cardsTooShuffle.remove(0);
+
+            cardsTooShuffle = shuffle(cardsTooShuffle);
+            for (Card c : this.stack) {
+                cardsTooShuffle.add(c);
+            }
+            this.stack = cardsTooShuffle;
             this.deckCount++;
         }
 

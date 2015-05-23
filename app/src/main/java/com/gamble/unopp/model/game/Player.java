@@ -1,11 +1,13 @@
 package com.gamble.unopp.model.game;
 
+import com.gamble.unopp.helper.CardComparator;
 import com.gamble.unopp.model.ModelObject;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.game.GameSession;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Albert on 02.05.2015.
@@ -19,6 +21,7 @@ public class Player extends ModelObject implements Serializable {
 
     private boolean uno;
     private boolean hasToChooseColor;
+    private boolean hasToCallUno;
 
     public Player(int ID, String name) {
         this.ID = ID;
@@ -60,7 +63,7 @@ public class Player extends ModelObject implements Serializable {
 
     public void sortHand () {
 
-        // TODO
+        Collections.sort(this.hand, new CardComparator());
     }
 
     public void addCardsToHand(ArrayList<Card> cards) {
@@ -131,5 +134,13 @@ public class Player extends ModelObject implements Serializable {
         }
 
         return false;
+    }
+
+    public boolean isHasToCallUno() {
+        return hasToCallUno;
+    }
+
+    public void setHasToCallUno(boolean hasToCallUno) {
+        this.hasToCallUno = hasToCallUno;
     }
 }

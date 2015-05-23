@@ -6,11 +6,15 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.shapes.Shape;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.gamble.unopp.GameScreenActivity;
 import com.gamble.unopp.R;
 import com.gamble.unopp.adapter.GameScreenPlayerListAdapter;
+import com.gamble.unopp.model.cards.Action;
+import com.gamble.unopp.model.cards.ActionCard;
+import com.gamble.unopp.model.cards.ActionType;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.UnoColor;
 import com.gamble.unopp.model.game.GameRound;
@@ -75,6 +79,8 @@ public class ViewManager {
         ImageView imageView = new ImageView(this.activity.getBaseContext());
         imageView.setImageBitmap(topCard.getImage());
         imageView.setTag(topCard);
+        imageView.setBackgroundResource(R.drawable.color_indicator_shape);
+        imageView.setPadding(10,10,10,10);
 
         this.activity.getFlPlayedCards().removeAllViews();
         this.activity.getFlPlayedCards().addView(imageView);
@@ -110,8 +116,13 @@ public class ViewManager {
                 imageView.setOnLongClickListener(this.activity);
 
                 this.activity.getLlHand().addView(imageView);
+
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageView.getLayoutParams();
+                params.setMargins(0,0,0,0);
             }
         }
+
+        // TODO: animate new cards: scroll to new cards and let them flash/glow for a while or something.
     }
 
     private void updatePlayersList () {
@@ -143,25 +154,45 @@ public class ViewManager {
 
     private void updateColorIndicator () {
 
-        UnoColor color = this.getActualGameRound().getGamestate().getActualColor();
-        GradientDrawable shape = (GradientDrawable) this.activity.getColorIndicator().getBackground();
+        UnoColor            color       = this.getActualGameRound().getGamestate().getActualColor();
+        Card                card        = this.getActualGameRound().getGamestate().getTopCard();
+        GradientDrawable    shape       = (GradientDrawable) this.activity.getFlPlayedCards().getChildAt(0).getBackground();
+        Boolean             showColor   = false;
 
-        switch (color) {
-            case BLACK:
-                shape.setColor(this.activity.getResources().getColor(R.color.uno_black));
-                break;
-            case BLUE:
-                shape.setColor(this.activity.getResources().getColor(R.color.uno_blue));
-                break;
-            case GREEN:
-                shape.setColor(this.activity.getResources().getColor(R.color.uno_green));
-                break;
-            case RED:
-                shape.setColor(this.activity.getResources().getColor(R.color.uno_red));
-                break;
-            case YELLOW:
-                shape.setColor(this.activity.getResources().getColor(R.color.uno_yellow));
-                break;
+        // only show color indicator when black card is on top
+        if (card instanceof ActionCard) {
+            ActionCard acard = (ActionCard) card;
+
+            for (Action action : acard.getActions()) {
+                if (action.getActionType().getType() == ActionType.CHANGE_COLOR) {
+
+                    showColor = true;
+                    break;
+                }
+            }
+        }
+
+        if (showColor && !UnoDatabase.getInstance().getLocalPlayer().hasToChooseColor()) {
+            switch (color) {
+                case BLACK:
+                    shape.setStroke(10, this.activity.getResources().getColor(R.color.uno_black));
+                    break;
+                case BLUE:
+                    shape.setStroke(10, this.activity.getResources().getColor(R.color.uno_blue));
+                    break;
+                case GREEN:
+                    shape.setStroke(10, this.activity.getResources().getColor(R.color.uno_green));
+                    break;
+                case RED:
+                    shape.setStroke(10, this.activity.getResources().getColor(R.color.uno_red));
+                    break;
+                case YELLOW:
+                    shape.setStroke(10, this.activity.getResources().getColor(R.color.uno_yellow));
+                    break;
+            }
+        }
+        else {
+            shape.setStroke(10, this.activity.getResources().getColor(R.color.transparent));
         }
     }
 

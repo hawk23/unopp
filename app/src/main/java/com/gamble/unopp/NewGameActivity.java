@@ -127,9 +127,6 @@ public class NewGameActivity extends ActionBarActivity {
         }
         else {
             String errorMessage = "Neues Spiel konnte nicht erstellt werden.\n";
-            if (response.getResponseResult() != null && !response.getResponseResult().isStatus()) {
-                errorMessage += response.getResponseResult().getMessage();
-            }
 
             // display error message
             ErrorDialogFragment errorDialogFragment = new ErrorDialogFragment();

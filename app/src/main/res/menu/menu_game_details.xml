@@ -4,4 +4,5 @@
     tools:context=".GameDetailsActivity">
     <item android:id="@+id/action_settings"   android:title="@string/action_settings"       android:orderInCategory="100" app:showAsAction="never"  />
     <item android:id="@+id/action_leavegame"  android:title="@string/action_leavegame"               android:orderInCategory="1"   app:showAsAction="always" />
+    <item android:id="@+id/action_aau"          android:title="AAU" android:orderInCategory="2" android:icon="@drawable/aau_icon_white"  app:showAsAction="always" />
 </menu>

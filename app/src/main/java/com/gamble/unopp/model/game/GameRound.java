@@ -10,15 +10,27 @@ public class GameRound {
     private int ID;
     private GameSession gameSession;
     private GameState gamestate;
+    private Player winner;
     private boolean active;
     private boolean finished;
 
     private int localUpdateID = 0;
 
+    public Player getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Player winner) {
+        this.winner = winner;
+    }
+
     public GameRound (int ID, GameSession gameSession) {
         this.ID = ID;
         this.gameSession = gameSession;
         this.gamestate = new GameState(this);
+        this.winner = null;
+
+        this.finished = false;
         this.active = false;
 
     }
