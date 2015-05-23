@@ -102,7 +102,9 @@ public class GameLogic {
                         else if (actionType == ActionType.CHANGE_DIRECTION) {
                             this.state.changeDirection();
                             this.state.setActualColor(aCard.getColor());
-                            this.state.nextPlayer();
+                            if (this.state.getPlayers().size() > 2) {
+                                this.state.nextPlayer();
+                            }
                         }
                         else if (actionType == ActionType.SKIP_TURN) {
                             this.state.setActualColor(aCard.getColor());
