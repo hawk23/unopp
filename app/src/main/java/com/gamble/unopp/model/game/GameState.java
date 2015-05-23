@@ -18,6 +18,7 @@ public class GameState {
     private int drawCounter;
     private Player actualPlayer;
     private UnoColor actualColor;
+    private Player nextActualPlayer;
 
     public GameState(GameRound gameRound) {
         this.gameRound      = gameRound;
@@ -69,31 +70,42 @@ public class GameState {
         return this.gameRound.getPlayers();
     }
 
-    public void nextPlayer() {
+    public Player nextPlayer() {
+        return nextPlayer(this.actualPlayer);
+    }
+
+    public Player nextPlayer(Player referencePlayer) {
+
+        Player nextPlayer   = null;
+        referencePlayer     = referencePlayer != null ? referencePlayer : this.actualPlayer;
 
         if (this.direction == UnoDirection.CLOCKWISE) {
 
-            if (this.getPlayers().indexOf(this.actualPlayer) + 1 < this.getPlayers().size()) {
-                actualPlayer = this.getPlayers().get(this.getPlayers().indexOf(this.actualPlayer) + 1);
+            if (this.getPlayers().indexOf(referencePlayer) + 1 < this.getPlayers().size()) {
+                nextPlayer = this.getPlayers().get(this.getPlayers().indexOf(referencePlayer) + 1);
             }
             else {
-                actualPlayer = this.getPlayers().get(0);
+                nextPlayer = this.getPlayers().get(0);
             }
         }
         else {
 
-            if (this.getPlayers().indexOf(this.actualPlayer) - 1 >= 0) {
-                actualPlayer = this.getPlayers().get(this.getPlayers().indexOf(this.actualPlayer) - 1);
+            if (this.getPlayers().indexOf(referencePlayer) - 1 >= 0) {
+                nextPlayer = this.getPlayers().get(this.getPlayers().indexOf(referencePlayer) - 1);
             }
             else {
-                actualPlayer = this.getPlayers().get(this.getPlayers().size() - 1);
+                nextPlayer = this.getPlayers().get(this.getPlayers().size() - 1);
             }
         }
+
+        return nextPlayer;
     }
 
-    public void skipPlayer() {
-        this.nextPlayer();
-        this.nextPlayer();
+    public Player skipPlayer() {
+        Player player   = this.nextPlayer();
+        Player result   = this.nextPlayer(player);
+
+        return result;
     }
 
     public void changeDirection() {
@@ -163,6 +175,14 @@ public class GameState {
 
     public void setWinner(Player winner) {
         this.gameRound.setWinner(winner);
+    }
+
+    public Player getNextActualPlayer() {
+        return nextActualPlayer;
+    }
+
+    public void setNextActualPlayer(Player nextActualPlayer) {
+        this.nextActualPlayer = nextActualPlayer;
     }
 }
 

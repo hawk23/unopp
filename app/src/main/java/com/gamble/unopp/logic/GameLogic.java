@@ -6,6 +6,7 @@ import com.gamble.unopp.model.cards.ActionType;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.cards.NumberCard;
 import com.gamble.unopp.model.game.GameState;
+import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.game.Turn;
 
 import java.util.ArrayList;
@@ -50,7 +51,9 @@ public class GameLogic {
                     }
                     break;
                 case CALL_UNO:
-                    valid = true;
+                    if (turn.getPlayer().getHand().size() == 1) {
+                        valid = true;
+                    }
                     break;
             }
         }
@@ -58,6 +61,8 @@ public class GameLogic {
     }
 
     public void doTurn(Turn turn) {
+
+        Player nextPlayer = null;
 
         switch (turn.getType()) {
 
@@ -73,7 +78,16 @@ public class GameLogic {
                 if (turn.getPlayer().isUno() && turn.getPlayer().getHand().size() > 1) {
                     turn.getPlayer().setUno(false);
                 }
-                this.state.nextPlayer();
+                nextPlayer = this.state.nextPlayer();
+
+                if (this.state.getNextActualPlayer() != null && turn.getPlayer().isHasToCallUno()) {
+                    turn.getPlayer().setHasToCallUno(false);
+                    this.state.setActualPlayer(this.state.getNextActualPlayer());
+                    this.state.setNextActualPlayer(null);
+                }
+                else {
+                    this.state.setActualPlayer(nextPlayer);
+                }
                 break;
 
             case PLAY_CARD:
@@ -84,7 +98,7 @@ public class GameLogic {
                 if (turn.getCard() instanceof NumberCard) {
                     NumberCard nCard = (NumberCard) turn.getCard();
                     this.state.setActualColor(nCard.getColor());
-                    this.state.nextPlayer();
+                    nextPlayer = this.state.nextPlayer();
                 }
                 else {
 
@@ -104,18 +118,18 @@ public class GameLogic {
                         else if (actionType == ActionType.ADD2) {
                             this.state.setDrawCounter(this.state.getDrawCounter() + 2);
                             this.state.setActualColor(aCard.getColor());
-                            this.state.nextPlayer();
+                            nextPlayer = this.state.nextPlayer();
                         }
                         else if (actionType == ActionType.CHANGE_DIRECTION) {
                             this.state.changeDirection();
                             this.state.setActualColor(aCard.getColor());
                             if (this.state.getPlayers().size() > 2) {
-                                this.state.nextPlayer();
+                                nextPlayer = this.state.nextPlayer();
                             }
                         }
                         else if (actionType == ActionType.SKIP_TURN) {
                             this.state.setActualColor(aCard.getColor());
-                            this.state.skipPlayer();
+                            nextPlayer = this.state.skipPlayer();
                         }
                     }
                 }
@@ -123,17 +137,28 @@ public class GameLogic {
                 if (turn.getPlayer().getHand().size() == 0) {
                     this.state.setWinner(turn.getPlayer());
                 }
+                else if (turn.getPlayer().getHand().size() == 1) {
 
+                    this.state.setNextActualPlayer(nextPlayer);
+                    turn.getPlayer().setHasToCallUno(true);
+                }
+                else if (nextPlayer != null) {
+                    this.state.setActualPlayer(nextPlayer);
+                }
                 break;
 
             case CHOOSE_COLOR:
                 this.state.setActualColor(turn.getColor());
                 turn.getPlayer().setHasToChooseColor(false);
-                this.state.nextPlayer();
+                nextPlayer = this.state.nextPlayer();
+                this.state.setActualPlayer(nextPlayer);
                 break;
 
             case CALL_UNO:
+                turn.getPlayer().setHasToCallUno(false);
                 turn.getPlayer().setUno(true);
+                this.state.setActualPlayer(this.state.getNextActualPlayer());
+                this.state.setNextActualPlayer(null);
                 break;
         }
 

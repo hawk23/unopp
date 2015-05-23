@@ -21,6 +21,7 @@ public class Player extends ModelObject implements Serializable {
 
     private boolean uno;
     private boolean hasToChooseColor;
+    private boolean hasToCallUno;
 
     public Player(int ID, String name) {
         this.ID = ID;
@@ -133,5 +134,13 @@ public class Player extends ModelObject implements Serializable {
         }
 
         return false;
+    }
+
+    public boolean isHasToCallUno() {
+        return hasToCallUno;
+    }
+
+    public void setHasToCallUno(boolean hasToCallUno) {
+        this.hasToCallUno = hasToCallUno;
     }
 }

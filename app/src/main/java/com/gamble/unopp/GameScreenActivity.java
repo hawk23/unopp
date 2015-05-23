@@ -66,7 +66,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private boolean                     timerStopped;
     private Timer                       unoTimer;
     private boolean                     unoDoneInTime;
-    private Turn                        delayedTurn;
 
     private SensorManager               sensorMan;
     private Sensor                      accelerometer;
@@ -198,26 +197,21 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private void playCard (Turn turn) {
 
-        // check if player has to say uno
-        if (this.getLocalPlayer().getHand().size() == 2) {
+        this.getActualGameRound().doTurn(turn);
+        this.viewManager.updateView();
+        this.broadcastTurn(turn);
 
-            // delay the turn and give player chance to say uno
-            this.delayedTurn = turn;
+        // check if color has to be chosen
+        if (this.getLocalPlayer().hasToChooseColor()) {
+            chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
+        }
+
+        // check if player has to say uno
+        if (this.getLocalPlayer().isHasToCallUno()) {
             this.startUnoTimer();
         }
-        else {
 
-            this.getActualGameRound().doTurn(turn);
-            this.viewManager.updateView();
-            this.broadcastTurn(turn);
-
-            // check if color has to be chosen
-            if (this.getLocalPlayer().hasToChooseColor()) {
-                chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
-            }
-
-            this.checkWinner();
-        }
+        this.checkWinner();
     }
 
     private void checkWinner () {
@@ -513,28 +507,21 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         if (this.unoDoneInTime) {
 
+            // call uno
             Turn turn = new Turn(Turn.TurnType.CALL_UNO);
 
             this.getActualGameRound().doTurn(turn);
-            this.broadcastTurn(turn);
-
-            // update ID cause uno turn was applied before.
-            this.delayedTurn.setID(this.getActualGameRound().getLocalUpdateID()+1);
-
-            // apply the delayed turn
-            this.getActualGameRound().doTurn(this.delayedTurn);
-            this.broadcastTurn(this.delayedTurn);
-
-            this.delayedTurn = null;
-
             this.viewManager.updateView();
+            this.broadcastTurn(turn);
         }
         else {
 
-            // apply the delayed turn without saying uno.
-            this.getActualGameRound().doTurn(this.delayedTurn);
+            // player has to draw a card for punishment
+            Turn turn = new Turn(Turn.TurnType.DRAW);
+
+            this.getActualGameRound().doTurn(turn);
             this.viewManager.updateView();
-            this.broadcastTurn(this.delayedTurn);
+            this.broadcastTurn(turn);
         }
     }
 
