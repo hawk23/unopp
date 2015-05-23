@@ -209,6 +209,18 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         if (this.getLocalPlayer().hasToChooseColor()) {
             chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
         }
+
+        this.checkWinner();
+    }
+
+    private void checkWinner () {
+
+        // check if someone has one
+        if (getActualGameRound().getWinner() != null) {
+
+            Intent intent = new Intent(this, GameRoundSummaryActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -421,6 +433,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                         Turn turn = (Turn) gameUpdate;
 
                         this.getActualGameRound().doTurn(turn);
+                        this.checkWinner();
                     }
                 }
 
