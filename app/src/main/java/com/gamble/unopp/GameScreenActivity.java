@@ -130,12 +130,12 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         this.updateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                updateTimerTick();
+                sendGetUpdateRequest();
             }
-        }, 5000, 5000);
+        }, 5000, 2000);
     }
 
-    private void updateTimerTick () {
+    private void sendGetUpdateRequest () {
 
         // get udates from server
         GetUpdateRequest request = new GetUpdateRequest();

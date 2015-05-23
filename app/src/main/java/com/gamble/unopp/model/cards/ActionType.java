@@ -1,9 +1,11 @@
 package com.gamble.unopp.model.cards;
 
+import java.io.Serializable;
+
 /**
  * Created by Albert on 02.05.2015.
  */
-public class ActionType {
+public class ActionType implements Serializable {
 
     public static final int ADD2 = 0;
     public static final int ADD4 = 1;
