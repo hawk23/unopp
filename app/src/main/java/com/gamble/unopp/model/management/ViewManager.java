@@ -112,6 +112,8 @@ public class ViewManager {
                 this.activity.getLlHand().addView(imageView);
             }
         }
+
+        // TODO: animate new cards: scroll to new cards and let them flash/glow for a while or something.
     }
 
     private void updatePlayersList () {

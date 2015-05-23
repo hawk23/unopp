@@ -321,50 +321,21 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // player wants to draw from stack
         if (view == this.flUnplayedCards) {
             if (this.isMyTurn()) {
-                // TODO
+
+                Turn drawTurn = new Turn(Turn.TurnType.DRAW);
+
+                if (this.getActualGameRound().checkTurn(drawTurn)) {
+
+                    this.getActualGameRound().doTurn(drawTurn);
+                    this.viewManager.updateView();
+                    this.broadcastTurn(drawTurn);
+                }
+                else {
+
+                    // TODO update view to show that drawing is not possible
+                }
             }
-
         }
-
-        /*
-        Player self = UnoDatabase.getInstance().getLocalPlayer();
-
-        // HACK draw card - create Turn Object
-        List<Card> cardsDrawn = new ArrayList<>();
-        cardsDrawn.add(cards.get(0));
-        cardsDrawn.add(cards.get(1));
-        cardsDrawn.add(cards.get(2));
-        cardsDrawn.add(cards.get(3));
-        // END HACK
-        */
-
-        /*
-        GameRound gameRound = self.getGameSession().getActualGameRound();
-        int updateId = gameRound.getLocalUpdateID();
-        int numberCardsOld = self.getHandCount();
-
-        Turn turn = new Turn(updateId, Turn.TurnType.DRAW, self);
-        if (gameRound.doTurn() == true) {
-            cardsDrawn =
-        } else {
-            // TODO update view to show that drawing is not possible
-        }
-        int numberCardsNew = self.getHandCount();
-        int drawnCards = numberCardsNew - numberCardsOld;
-
-        for (int i = 0; i < drawnCards; i++) {
-            cardsDrawn.add(self.getHand().get(numberCardsNew - drawnCards + i));
-        }
-        */
-
-        /*
-        for (Card card : cardsDrawn) {
-            addCardToHand(card);
-        }
-
-        // add listener in order to scroll the hand to last card
-        hswHand.addOnLayoutChangeListener(this);
-        */
     }
 
     // TODO: obsolete? --> Viewmanager should do that.
@@ -462,11 +433,13 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         Turn turn = new Turn(Turn.TurnType.CHOOSE_COLOR);
         turn.setColor(dialog.getColor());
-        this.getActualGameRound().doTurn(turn);
 
-        this.viewManager.updateView();
+        if (this.getActualGameRound().checkTurn(turn)) {
 
-        this.broadcastTurn(turn);
+            this.getActualGameRound().doTurn(turn);
+            this.viewManager.updateView();
+            this.broadcastTurn(turn);
+        }
     }
 
     private GameRound getActualGameRound () {
