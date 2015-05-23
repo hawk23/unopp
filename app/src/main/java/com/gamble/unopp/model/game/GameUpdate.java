@@ -58,4 +58,12 @@ public abstract class GameUpdate implements Serializable {
 
         return null;
     }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
 }

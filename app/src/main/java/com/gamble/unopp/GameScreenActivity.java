@@ -65,6 +65,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private ViewManager                 viewManager;
     private Timer                       updateTimer;
     private boolean                     timerStopped;
+    private Timer                       unoTimer;
+    private boolean                     unoDoneInTime;
+    private Turn                        delayedTurn;
 
     private SensorManager               sensorMan;
     private Sensor                      accelerometer;
@@ -126,13 +129,8 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         // init dragging
         flPlayedCards.setOnDragListener(this);
 
-        this.updateTimer = new Timer();
-        this.updateTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                sendGetUpdateRequest();
-            }
-        }, 5000, 2000);
+        // start receiving game updates
+        this.startUpdateTimer();
     }
 
     private void sendGetUpdateRequest () {
@@ -150,12 +148,14 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     public void onResume() {
         super.onResume();
         sensorMan.registerListener(this, accelerometer,SensorManager.SENSOR_DELAY_UI);
+        this.startUpdateTimer();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         sensorMan.unregisterListener(this);
+        this.stopUpdateTimer();
     }
 
     @Override
@@ -200,17 +200,26 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private void playCard (Turn turn) {
 
-        this.getActualGameRound().doTurn(turn);
-        this.viewManager.updateView();
+        // check if player has to say uno
+        if (this.getLocalPlayer().getHand().size() == 2) {
 
-        this.broadcastTurn(turn);
-
-        // check if color has to be chosen
-        if (this.getLocalPlayer().hasToChooseColor()) {
-            chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
+            // delay the turn and give player chance to say uno
+            this.delayedTurn = turn;
+            this.startUnoTimer();
         }
+        else {
 
-        this.checkWinner();
+            this.getActualGameRound().doTurn(turn);
+            this.viewManager.updateView();
+            this.broadcastTurn(turn);
+
+            // check if color has to be chosen
+            if (this.getLocalPlayer().hasToChooseColor()) {
+                chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
+            }
+
+            this.checkWinner();
+        }
     }
 
     private void checkWinner () {
@@ -302,21 +311,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     public void callUno () {
 
-        if (this.getCurrentGameSession() != null &&
-            this.getActualGameRound() != null) {
+        if (this.getCurrentGameSession() != null && this.getActualGameRound() != null) {
 
-            Turn turn = new Turn(Turn.TurnType.CALL_UNO);
-
-            if (this.getActualGameRound().checkTurn(turn)) {
-
-                this.getActualGameRound().doTurn(turn);
-                this.viewManager.updateView();
-                this.broadcastTurn(turn);
-            }
-            else {
-
-                //TODO: give feedback that uno isn't allowed now
-            }
+            this.unoDoneInTime = true;
         }
     }
 
@@ -515,6 +512,38 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         return colorIndicator;
     }
 
+    private void unoTimerExpired () {
+
+        this.unoTimer.cancel();
+        this.unoTimer.purge();
+
+        if (this.unoDoneInTime) {
+
+            Turn turn = new Turn(Turn.TurnType.CALL_UNO);
+
+            this.getActualGameRound().doTurn(turn);
+            this.viewManager.updateView();
+            this.broadcastTurn(turn);
+
+            // update ID cause uno turn was applied before.
+            this.delayedTurn.setID(this.getActualGameRound().getLocalUpdateID()+1);
+
+            // apply the delayed turn
+            this.getActualGameRound().doTurn(this.delayedTurn);
+            this.viewManager.updateView();
+            this.broadcastTurn(this.delayedTurn);
+
+            this.delayedTurn = null;
+        }
+        else {
+
+            // apply the delayed turn without saying uno.
+            this.getActualGameRound().doTurn(this.delayedTurn);
+            this.viewManager.updateView();
+            this.broadcastTurn(this.delayedTurn);
+        }
+    }
+
     @Override
     public void onBackPressed()
     {
@@ -525,7 +554,39 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private void stopUpdateTimer () {
 
         this.timerStopped = true;
-        this.updateTimer.cancel();
-        this.updateTimer.purge();
+
+        if (this.updateTimer != null) {
+
+            this.updateTimer.cancel();
+            this.updateTimer.purge();
+        }
+    }
+
+    private void startUpdateTimer () {
+
+        this.stopUpdateTimer();
+
+        this.timerStopped = false;
+
+        this.updateTimer = new Timer();
+        this.updateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendGetUpdateRequest();
+            }
+        }, 5000, 2000);
+    }
+
+    private void startUnoTimer () {
+
+        this.unoDoneInTime = false;
+
+        this.unoTimer = new Timer();
+        this.unoTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                unoTimerExpired();
+            }
+        }, 4000);
     }
 }
