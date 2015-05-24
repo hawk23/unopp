@@ -197,19 +197,30 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
      */
     @Override
     public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-        final GameSession game = (GameSession) adapter.getItemAtPosition(position);
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest();
-        joinGameRequest.setGameId(game.getID());
-        joinGameRequest.setPlayerId(player.getID());
+        this.player = UnoDatabase.getInstance().getLocalPlayer();
+        if (player != null) {
 
-        RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
-            @Override
-            public void requestFinished(Response response) {
-                joinGameFinished((JoinGameResponse) response, game);
-            }
-        });
-        rp.execute(joinGameRequest);
+            final GameSession game = (GameSession) adapter.getItemAtPosition(position);
+
+            JoinGameRequest joinGameRequest = new JoinGameRequest();
+            joinGameRequest.setGameId(game.getID());
+            joinGameRequest.setPlayerId(player.getID());
+
+            RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
+                @Override
+                public void requestFinished(Response response) {
+                    joinGameFinished((JoinGameResponse) response, game);
+                }
+            });
+            rp.execute(joinGameRequest);
+        }
+        else {
+
+            // goto main activity to create new player
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void joinGameFinished(JoinGameResponse response, GameSession game) {
