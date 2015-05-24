@@ -114,6 +114,7 @@ public class ViewManager {
                 imageView.setImageBitmap(card.getImage());
                 imageView.setTag(card);
                 imageView.setOnLongClickListener(this.activity);
+                imageView.setAdjustViewBounds(true);
 
                 this.activity.getLlHand().addView(imageView);
 
