@@ -119,6 +119,10 @@ public class ViewManager {
 
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageView.getLayoutParams();
                 params.setMargins(0,0,0,0);
+
+                this.activity.getLlHand().setDividerPadding(0);
+                this.activity.getLlHand().setPadding(0,0,0,0);
+                this.activity.getLlHand().setShowDividers(LinearLayout.SHOW_DIVIDER_NONE);
             }
         }
 
