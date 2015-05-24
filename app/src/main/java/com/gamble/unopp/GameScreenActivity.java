@@ -426,7 +426,9 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                     }
                 }
 
-                this.viewManager.updateView();
+                if (getUpdateResponse.getGameUpdates().size() > 0) {
+                    this.viewManager.updateView();
+                }
             }
             else {
                 // TODO
