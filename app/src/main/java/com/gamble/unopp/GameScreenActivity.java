@@ -205,10 +205,11 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         if (this.getLocalPlayer().hasToChooseColor()) {
             chooseColorDialogFragment.show(getFragmentManager(), "chooseColor");
         }
-
-        // check if player has to say uno
-        if (this.getLocalPlayer().isHasToCallUno()) {
-            this.startUnoTimer();
+        else {
+            // check if player has to say uno
+            if (this.getLocalPlayer().isHasToCallUno()) {
+                this.startUnoTimer();
+            }
         }
 
         this.checkWinner();
@@ -430,8 +431,11 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                     this.viewManager.updateView();
                 }
             }
-            else {
-                // TODO
+            else if (response.getResponseResult() != null && !response.getResponseResult().isStatus()) {
+
+                // error when getting update. leave game to lobby
+                Intent intent = new Intent(this, LobbyActivity.class);
+                startActivity(intent);
             }
         }
     }
@@ -447,6 +451,11 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
             this.getActualGameRound().doTurn(turn);
             this.viewManager.updateView();
             this.broadcastTurn(turn);
+
+            // check if player has to say uno
+            if (this.getLocalPlayer().isHasToCallUno()) {
+                this.startUnoTimer();
+            }
         }
     }
 
