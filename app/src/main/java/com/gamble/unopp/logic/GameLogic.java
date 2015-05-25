@@ -67,7 +67,11 @@ public class GameLogic {
         switch (turn.getType()) {
 
             case DRAW:
-                if (this.state.getDrawCounter() == 0) {
+                if (turn.getPlayer().isHasToCallUno()) {
+                    // draw two cards as punishment
+                    turn.getPlayer().addCardsToHand(this.state.popFromStack(2));
+                }
+                else if (this.state.getDrawCounter() == 0) {
                     turn.getPlayer().addCardsToHand(this.state.popFromStack(1));
                 }
                 else {
@@ -78,7 +82,6 @@ public class GameLogic {
                 if (turn.getPlayer().isUno() && turn.getPlayer().getHand().size() > 1) {
                     turn.getPlayer().setUno(false);
                 }
-                nextPlayer = this.state.nextPlayer();
 
                 if (this.state.getNextActualPlayer() != null && turn.getPlayer().isHasToCallUno()) {
                     turn.getPlayer().setHasToCallUno(false);
@@ -86,6 +89,7 @@ public class GameLogic {
                     this.state.setNextActualPlayer(null);
                 }
                 else {
+                    nextPlayer = this.state.nextPlayer();
                     this.state.setActualPlayer(nextPlayer);
                 }
                 break;
