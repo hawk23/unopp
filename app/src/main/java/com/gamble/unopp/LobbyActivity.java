@@ -1,6 +1,10 @@
 package com.gamble.unopp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -11,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.gamble.unopp.connection.RequestProcessor;
 import com.gamble.unopp.connection.RequestProcessorCallback;
@@ -19,7 +24,6 @@ import com.gamble.unopp.connection.requests.DestroyPlayerRequest;
 import com.gamble.unopp.connection.requests.JoinGameRequest;
 import com.gamble.unopp.connection.requests.ListGamesRequest;
 import com.gamble.unopp.connection.response.DestroyGameResponse;
-import com.gamble.unopp.connection.response.DestroyPlayerResponse;
 import com.gamble.unopp.connection.response.JoinGameResponse;
 import com.gamble.unopp.connection.response.ListGamesResponse;
 import com.gamble.unopp.connection.response.Response;
@@ -34,12 +38,15 @@ import java.util.List;
 /**
  * Created by Verena on 25.04.2015.
  */
-public class LobbyActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, RequestProcessorCallback {
+public class LobbyActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, RequestProcessorCallback, LocationListener {
 
     private ListView            existingGamesListView;
     private ArrayAdapter        mArrayAdapter;
     private List<GameSession>   games;
     private Player              player;
+    private LocationManager     locationManager;
+    private String              provider;
+    private Location            location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,15 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
 
         games = new ArrayList<>();
         this.getAvailableGameSessions();
+
+        // Get the location manager
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        // use the network provider
+        provider = LocationManager.NETWORK_PROVIDER;
+        location = locationManager.getLastKnownLocation(provider);
+
+        locationManager.requestLocationUpdates(provider, 400, 0, this);
     }
 
     private void refresh () {
@@ -73,9 +89,14 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
     private void getAvailableGameSessions()
     {
         ListGamesRequest gameSessionsRequest = new ListGamesRequest();
-        gameSessionsRequest.setLatitude(0.0);
-        gameSessionsRequest.setLongitude(0.0);
-        gameSessionsRequest.setMaxdistance(10);
+        if (location != null) {
+           gameSessionsRequest.setLatitude(location.getLatitude());
+           gameSessionsRequest.setLongitude(location.getLongitude());
+        } else {
+            gameSessionsRequest.setLatitude(0.0);
+            gameSessionsRequest.setLongitude(0.0);
+        }
+        gameSessionsRequest.setMaxdistance(100);
 
         RequestProcessor rp = new RequestProcessor(new RequestProcessorCallback() {
             @Override
@@ -239,5 +260,41 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         if (response instanceof DestroyGameResponse) {
             this.refresh();
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // do nothing
+    }
+
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationManager.requestLocationUpdates(provider, 400, 0, this);
+    }
+
+    /* Remove the locationListener updates when Activity is paused */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Toast.makeText(this, "Enabled new provider " + provider,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast.makeText(this, "Disabled provider " + provider,
+                Toast.LENGTH_SHORT).show();
     }
 }
