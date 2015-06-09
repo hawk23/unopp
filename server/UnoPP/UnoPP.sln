@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Blend for Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnoPP", "UnoPP\UnoPP.csproj", "{5309CC25-5D34-4C06-AB8B-EEBF293AE397}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnoPP.Tests", "UnoPP.Tests\UnoPP.Tests.csproj", "{082CF2E2-1A99-4243-8F72-77E32B071678}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnoTest", "UnoTest\UnoTest.csproj", "{48991DB7-66F2-4523-9F26-2BEC6BA64CD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +15,6 @@ Global
 		{5309CC25-5D34-4C06-AB8B-EEBF293AE397}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5309CC25-5D34-4C06-AB8B-EEBF293AE397}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5309CC25-5D34-4C06-AB8B-EEBF293AE397}.Release|Any CPU.Build.0 = Release|Any CPU
-		{082CF2E2-1A99-4243-8F72-77E32B071678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{082CF2E2-1A99-4243-8F72-77E32B071678}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{082CF2E2-1A99-4243-8F72-77E32B071678}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{082CF2E2-1A99-4243-8F72-77E32B071678}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48991DB7-66F2-4523-9F26-2BEC6BA64CD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48991DB7-66F2-4523-9F26-2BEC6BA64CD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48991DB7-66F2-4523-9F26-2BEC6BA64CD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48991DB7-66F2-4523-9F26-2BEC6BA64CD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

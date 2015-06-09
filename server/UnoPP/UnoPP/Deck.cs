@@ -20,11 +20,35 @@ namespace UnoPP
             this.drawStack = Shuffle(stack);
             this.playedStack = new List<Card>();
             this.playedStack.Insert(0, DrawCard(this));
+
+            bool isPlus4 = false;
+
+            do
+            {
+                // if first card on played stack is a +4 a new card has to be drawn
+                if (isPlus4 = (this.playedStack.First().id <= 107 && this.playedStack.First().id >= 104))
+                {
+                    // first card in list is shown 
+                    this.playedStack.Insert(0, DrawCard(this));
+                }
+            } while (isPlus4);
         }
 
         public List<Card> Shuffle(List<Card> stack)
         {
-            // TODO
+            Random rand = new Random(new System.DateTime().Millisecond);
+            Card temp;
+            int x, y;
+
+            for (int i = 0; i < (stack.Count * 5); i++)
+            {
+                x = rand.Next(0, stack.Count);
+                y = rand.Next(0, stack.Count);
+                temp = stack[x];
+                stack[x] = stack[y];
+                stack[y] = temp;
+            }
+            
             return stack;
         }
 
@@ -32,7 +56,7 @@ namespace UnoPP
         {
             Card card = deck.drawStack.Last();
 
-            deck.drawStack.RemoveAt(deck.drawStack.Count-1);
+            deck.drawStack.RemoveAt(deck.drawStack.Count - 1);
             
             return card;
         }

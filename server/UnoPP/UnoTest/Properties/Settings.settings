@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="UnoTest.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="UnoTest_uno_UnoPP" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">http://localhost:57896/UnoPP.asmx</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>

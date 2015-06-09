@@ -6,7 +6,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>C:\Users\PeterLuca\Desktop\temp</_PublishTargetUrl>
+    <_PublishTargetUrl>C:\Users\PeterLuca\Desktop\ServerV12</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/Newtonsoft.Json.dll">
@@ -22,10 +22,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/05/2015 12:05:37</publishTime>
     </File>
     <File Include="bin/UnoPP.dll">
-      <publishTime>05/09/2015 20:36:02</publishTime>
+      <publishTime>05/20/2015 15:13:42</publishTime>
     </File>
     <File Include="bin/UnoPP.pdb">
-      <publishTime>05/09/2015 20:36:02</publishTime>
+      <publishTime>05/20/2015 15:13:42</publishTime>
     </File>
     <File Include="Global.asax">
       <publishTime>05/05/2015 12:05:37</publishTime>

@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -79,10 +80,12 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Card.cs" />
+    <Compile Include="GameUpdate.cs" />
     <Compile Include="Deck.cs" />
     <Compile Include="GameRound.cs" />
     <Compile Include="GameResult.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="GameSession.cs" />
     <Compile Include="Location.cs" />
@@ -95,10 +98,12 @@
       <DependentUpon>UnoPP.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Update.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\AnJulius.pubxml" />
+    <None Include="Properties\PublishProfiles\UnoPP.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
