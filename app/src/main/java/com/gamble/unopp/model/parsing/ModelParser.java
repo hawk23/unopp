@@ -134,11 +134,13 @@ public class ModelParser {
          * Set actual player
          */
 
-        for (Player player : players) {
+        if (players != null) {
+            for (Player player : players) {
 
-            if (player.getID() == currentPlayerId) {
-                gameState.setActualPlayer(player);
-                break;
+                if (player.getID() == currentPlayerId) {
+                    gameState.setActualPlayer(player);
+                    break;
+                }
             }
         }
 
@@ -155,22 +157,24 @@ public class ModelParser {
         Element             playedStackElement      = (Element) element.getElementsByTagName("playedStack").item(0);
         NodeList            serverCardsPlayedStack  = playedStackElement.getElementsByTagName("Card");
 
-        for (int i = 0; i < serverCardsStack.getLength(); i++) {
+        if (cards != null) {
+            for (int i = 0; i < serverCardsStack.getLength(); i++) {
 
-            Element serverCard              = (Element) serverCardsStack.item(i);
-            int     cardId                  = Integer.parseInt(serverCard.getElementsByTagName("id").item(0).getTextContent());
+                Element serverCard = (Element) serverCardsStack.item(i);
+                int cardId = Integer.parseInt(serverCard.getElementsByTagName("id").item(0).getTextContent());
 
-            Card    card                    = cards.get(cardId);
-            resultDeck.getStack().add(card);
-        }
+                Card card = cards.get(cardId);
+                resultDeck.getStack().add(card);
+            }
 
-        for (int j = 0; j < serverCardsPlayedStack.getLength(); j++) {
+            for (int j = 0; j < serverCardsPlayedStack.getLength(); j++) {
 
-            Element serverCard              = (Element) serverCardsPlayedStack.item(j);
-            int     cardId                  = Integer.parseInt(serverCard.getElementsByTagName("id").item(0).getTextContent());
+                Element serverCard = (Element) serverCardsPlayedStack.item(j);
+                int cardId = Integer.parseInt(serverCard.getElementsByTagName("id").item(0).getTextContent());
 
-            Card    card                    = cards.get(cardId);
-            resultDeck.getPlayedStack().add(card);
+                Card card = cards.get(cardId);
+                resultDeck.getPlayedStack().add(card);
+            }
         }
 
         return resultDeck;
