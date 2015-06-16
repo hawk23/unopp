@@ -21,4 +21,6 @@
     <string name="action_endGameRound">Runde beenden</string>
     <string name="action_sortHand">Hand sortieren</string>
     <string name="title_activity_game_round_summary">Ergebnis der Spielrunde</string>
+    <string name="cheatDialogMessage">Von welchem Spieler möchtest du eine Karte anschauen?</string>
+    <string name="cancel">Abbrechen</string>
 </resources>

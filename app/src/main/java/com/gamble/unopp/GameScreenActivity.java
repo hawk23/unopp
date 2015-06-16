@@ -2,7 +2,9 @@ package com.gamble.unopp;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -34,6 +36,7 @@ import com.gamble.unopp.connection.response.DestroyGameResponse;
 import com.gamble.unopp.connection.response.GetUpdateResponse;
 import com.gamble.unopp.connection.response.Response;
 import com.gamble.unopp.connection.response.SetUpdateResponse;
+import com.gamble.unopp.fragments.CheatDialogFragment;
 import com.gamble.unopp.fragments.ChooseColorDialogFragment;
 import com.gamble.unopp.model.game.GameRound;
 import com.gamble.unopp.model.game.GameSession;
@@ -42,27 +45,36 @@ import com.gamble.unopp.model.game.GameUpdate;
 import com.gamble.unopp.model.game.Player;
 import com.gamble.unopp.model.cards.Card;
 import com.gamble.unopp.model.game.Turn;
+import com.gamble.unopp.model.management.ICheatDialogListener;
 import com.gamble.unopp.model.management.IChooseColorDialogListener;
 import com.gamble.unopp.model.management.UnoDatabase;
 import com.gamble.unopp.model.management.ViewManager;
 
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener, SensorEventListener, RequestProcessorCallback, IChooseColorDialogListener {
+public class GameScreenActivity extends ActionBarActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener, View.OnLayoutChangeListener, SensorEventListener, RequestProcessorCallback, IChooseColorDialogListener, ICheatDialogListener, DialogInterface.OnDismissListener {
 
+    private RelativeLayout              rlScreen;
+    private ImageView                   ivCheatFigure;
     private HorizontalScrollView        hswHand;
     private LinearLayout                llHand;
     private TextView                    tvDrawCounter;
     private RelativeLayout              flUnplayedCards;
     private RelativeLayout              flPlayedCards;
     private ChooseColorDialogFragment   chooseColorDialogFragment;
+    private CheatDialogFragment         cheatDialogFragment;
     private ImageView                   ivDirection;
     private ListView                    lvPlayers;
+    private ImageView                   ivCardFromOtherPlayer;
 
     private ViewManager                 viewManager;
     private Timer                       updateTimer;
+    private Timer                       cheatFigureTimer;
+    private Timer                       cheatFigureShownTimer;
+    private boolean                     cheatFigureClicked;
     private boolean                     timerStopped;
     private Timer                       unoTimer;
     private boolean                     unoDoneInTime;
@@ -74,6 +86,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     private float                       mAccelCurrent;
     private float                       mAccelLast;
     private Vibrator                    vibrator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +101,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         setContentView(R.layout.activity_game_screen);
 
         // get views
+        this.rlScreen           = (RelativeLayout) findViewById(R.id.rlScreen);
         this.hswHand            = (HorizontalScrollView) findViewById(R.id.hswHand);
         this.llHand             = (LinearLayout) findViewById(R.id.llHand);
         this.tvDrawCounter      = (TextView) findViewById(R.id.tvDrawCounter);
@@ -123,11 +137,17 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         chooseColorDialogFragment   = new ChooseColorDialogFragment();
         chooseColorDialogFragment.setCancelable(false);
 
+        // init cheatDialogFragment
+        cheatDialogFragment = new CheatDialogFragment();
+
         // init dragging
         flPlayedCards.setOnDragListener(this);
 
         // start receiving game updates
         this.startUpdateTimer();
+
+        // start timer for the appearance of the cheat figure
+        this.startCheatFigureTimer();
     }
 
     private void sendGetUpdateRequest () {
@@ -144,7 +164,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     @Override
     public void onResume() {
         super.onResume();
-        sensorMan.registerListener(this, accelerometer,SensorManager.SENSOR_DELAY_UI);
+        sensorMan.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
         this.startUpdateTimer();
     }
 
@@ -188,13 +208,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         return turn;
     }
 
-    private void playCard (Card card) {
-
-        Turn turn = createPlayCardTurn(card);
-
-        this.playCard(turn);
-    }
-
     private void playCard (Turn turn) {
 
         this.getActualGameRound().doTurn(turn);
@@ -230,7 +243,6 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
         if (this.isMyTurn()) {
 
-            int     action          = event.getAction();
             View    view            = (View) event.getLocalState();
             Card    draggedCard     = (Card) view.getTag();
 
@@ -341,16 +353,15 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                     // TODO update view to show that drawing is not possible
                 }
             }
-        }
-    }
 
-    // TODO: obsolete? --> Viewmanager should do that.
-    private void addCardToHand(Card card) {
-        final ImageView   imageView = new ImageView(getBaseContext());
-        imageView.setImageBitmap(card.getImage());
-        imageView.setTag(card);
-        imageView.setOnLongClickListener(this);
-        this.llHand.addView(imageView);
+        // cheating figure was touched
+        } else if (view == this.ivCheatFigure) {
+            cheatFigureClicked = true;
+
+            cheatDialogFragment.show(getFragmentManager(), "cheatDialog");
+        } else if (view == this.ivCardFromOtherPlayer) {
+            this.rlScreen.removeView(ivCardFromOtherPlayer);
+        }
     }
 
     @Override
@@ -511,6 +522,22 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         return ivDirection;
     }
 
+    public ImageView getIvCheatFigure() {
+        return ivCheatFigure;
+    }
+
+    public void setIvCheatFigure(ImageView ivCheatFigure) {
+        this.ivCheatFigure = ivCheatFigure;
+    }
+
+    public void setCheatFigureClicked(boolean cheatFigureClicked) {
+        this.cheatFigureClicked = cheatFigureClicked;
+    }
+
+    public RelativeLayout getRlScreen() {
+        return rlScreen;
+    }
+
     private void unoTimerExpired () {
 
         this.unoTimer.cancel();
@@ -540,6 +567,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
     public void onBackPressed()
     {
         this.stopUpdateTimer();
+        this.stopCheatFigureTimer();
         super.onBackPressed();
     }
 
@@ -587,5 +615,120 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
                 });
             }
         }, 4000);
+    }
+
+    private void startCheatFigureTimer () {
+        this.stopCheatFigureTimer();
+        Random r = new Random();
+
+        // wait randomly between 20 and 120 seconds
+        int randomDelay = r.nextInt(10000 - 5000 + 1) + 5000;
+
+        this.cheatFigureTimer = new Timer();
+        this.cheatFigureTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        viewManager.drawCheatFigure();
+                    }
+                });
+            }
+        }, randomDelay);
+    }
+
+    private void stopCheatFigureTimer() {
+        if (this.cheatFigureTimer != null) {
+
+            this.cheatFigureTimer.cancel();
+            this.cheatFigureTimer.purge();
+        }
+    }
+
+    public void startCheatFigureShownTimer() {
+
+        // show cheatFigure for 3 seconds
+        this.cheatFigureShownTimer = new Timer();
+        cheatFigureShownTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        // if it was not clicked remove cheatFigure and restart cheatFigureTimer
+                        if (!cheatFigureClicked) {
+                            rlScreen.removeView(ivCheatFigure);
+
+                            startCheatFigureTimer();
+                        }
+                    }
+                });
+            }
+        }, 3000);
+    }
+
+    @Override
+    public void onDialogClosed(CheatDialogFragment dialog) {
+
+        // remove cheating figure from view
+        this.rlScreen.removeView(this.ivCheatFigure);
+
+        // display random card from the selected player
+        Player selectedPlayer = cheatDialogFragment.getSelectedPlayer();
+
+        // display a random card from the selected player in the middle of the screen
+        if (selectedPlayer != null) {
+            this.displayRandomCard(selectedPlayer);
+        }
+
+        // start cheatFigureTimer again
+        startCheatFigureTimer();
+    }
+
+    private void displayRandomCard(Player selectedPlayer) {
+
+        // get random card
+        Random r = new Random();
+        int randomIndex = r.nextInt(selectedPlayer.getHand().size());
+        Card card = selectedPlayer.getHand().get(randomIndex);
+
+        // create imageView and upscale the image
+        ivCardFromOtherPlayer = new ImageView(this.getBaseContext());
+        Bitmap bitmapImage = card.getImage();
+        int nh = (int) (bitmapImage.getHeight() * (300d / bitmapImage.getWidth()));
+        Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, 300, nh, true);
+        ivCardFromOtherPlayer.setImageBitmap(scaled);
+        ivCardFromOtherPlayer.setTag(card);
+
+        // set card half transparent
+        ivCardFromOtherPlayer.setAlpha(210);
+        ivCardFromOtherPlayer.setOnClickListener(this);
+        ivCardFromOtherPlayer.setAdjustViewBounds(true);
+
+        // center the Image View
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams
+                (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        ivCardFromOtherPlayer.setLayoutParams(layoutParams);
+
+        // display card
+        this.rlScreen.addView(ivCardFromOtherPlayer);
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+
+        // remove cheating figure from view
+        this.rlScreen.removeView(this.ivCheatFigure);
+
+        // start cheatFigureTimer again
+        startCheatFigureTimer();
     }
 }

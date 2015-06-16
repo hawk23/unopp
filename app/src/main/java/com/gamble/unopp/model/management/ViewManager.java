@@ -1,9 +1,12 @@
 package com.gamble.unopp.model.management;
 
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.shapes.Shape;
+import android.view.Display;
+import android.view.Gravity;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +27,7 @@ import com.gamble.unopp.model.game.UnoDirection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Mario on 19.05.2015.
@@ -35,12 +39,22 @@ public class ViewManager {
     private ArrayList<Player>           players;
     private ArrayAdapter                arrayAdapter;
 
+    private float                       screenWidth;
+    private float                       screenHeight;
+
     public ViewManager(GameScreenActivity activity) {
 
         this.activity = activity;
     }
 
     public void init () {
+
+        // get screen size
+        Display display = this.activity.getWindowManager().getDefaultDisplay();
+        Point screenSize = new Point();
+        display.getSize(screenSize);
+        screenWidth = screenSize.x;
+        screenHeight = screenSize.y;
 
     }
 
@@ -199,6 +213,28 @@ public class ViewManager {
         else {
             shape.setStroke(10, this.activity.getResources().getColor(R.color.transparent));
         }
+    }
+
+    public void drawCheatFigure() {
+
+        // get random position
+        Random random = new Random();
+        int randomWidth = (int) (random.nextFloat() * screenWidth);
+        int randomHeight = (int) (random.nextFloat() * screenHeight);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.RIGHT | Gravity.TOP;
+        ImageView ivCheatFigure = new ImageView(this.activity.getBaseContext());
+        ivCheatFigure.setImageResource(R.mipmap.cheat_figure);
+        ivCheatFigure.setPadding(randomWidth, 0, 0, randomHeight);
+        ivCheatFigure.setOnClickListener(this.activity);
+        ivCheatFigure.setLayoutParams(params);
+        this.activity.setIvCheatFigure(ivCheatFigure);
+        this.activity.getRlScreen().addView(this.activity.getIvCheatFigure());
+        this.activity.setCheatFigureClicked(false);
+
+        this.activity.startCheatFigureShownTimer();
+
     }
 
     /**

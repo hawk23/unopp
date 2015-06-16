@@ -2,6 +2,7 @@ package com.gamble.unopp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -63,8 +64,6 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
 
         setContentView(R.layout.actitvity_lobby);
 
-        ArrayList existingGames = new ArrayList();
-
         existingGamesListView = (ListView) findViewById(R.id.existingGamesListView);
         existingGamesListView.setOnItemClickListener(this);
 
@@ -74,11 +73,15 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
         // Get the location manager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        // use the network provider
-        provider = LocationManager.NETWORK_PROVIDER;
-        location = locationManager.getLastKnownLocation(provider);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        provider = locationManager.getBestProvider(criteria, true);
 
-        locationManager.requestLocationUpdates(provider, 400, 0, this);
+        if (provider != null) {
+            location = locationManager.getLastKnownLocation(provider);
+
+            locationManager.requestLocationUpdates(provider, 400, 0, this);
+        }
     }
 
     private void refresh () {
@@ -294,7 +297,6 @@ public class LobbyActivity extends ActionBarActivity implements AdapterView.OnIt
 
     @Override
     public void onProviderDisabled(String provider) {
-        Toast.makeText(this, "Disabled provider " + provider,
-                Toast.LENGTH_SHORT).show();
+        // do nothing
     }
 }

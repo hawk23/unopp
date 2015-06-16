@@ -3,6 +3,7 @@ package com.gamble.unopp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -65,9 +66,16 @@ public class NewGameActivity extends ActionBarActivity implements LocationListen
 
         // use the network provider
         provider = LocationManager.NETWORK_PROVIDER;
-        location = locationManager.getLastKnownLocation(provider);
 
-        locationManager.requestLocationUpdates(provider, 400, 0, this);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        provider = locationManager.getBestProvider(criteria, true);
+
+        if (provider != null) {
+            location = locationManager.getLastKnownLocation(provider);
+
+            locationManager.requestLocationUpdates(provider, 400, 0, this);
+        }
     }
 
 
