@@ -622,7 +622,7 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
         Random r = new Random();
 
         // wait randomly between 20 and 120 seconds
-        int randomDelay = r.nextInt(10000 - 5000 + 1) + 5000;
+        int randomDelay = r.nextInt(120000 - 20000 + 1) + 20000;
 
         this.cheatFigureTimer = new Timer();
         this.cheatFigureTimer.schedule(new TimerTask() {
