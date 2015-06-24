@@ -692,6 +692,10 @@ public class GameScreenActivity extends ActionBarActivity implements View.OnDrag
 
     private void displayRandomCard(Player selectedPlayer) {
 
+        if (this.ivCardFromOtherPlayer != null && this.rlScreen.indexOfChild(this.ivCardFromOtherPlayer) >= 0) {
+            this.rlScreen.removeView(this.ivCardFromOtherPlayer);
+        }
+
         // get random card
         Random r = new Random();
         int randomIndex = r.nextInt(selectedPlayer.getHand().size());
