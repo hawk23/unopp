@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.shapes.Shape;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
 import android.widget.ArrayAdapter;
@@ -217,24 +218,26 @@ public class ViewManager {
 
     public void drawCheatFigure() {
 
-        // get random position
-        Random random = new Random();
-        int randomWidth = (int) (random.nextFloat() * screenWidth);
-        int randomHeight = (int) (random.nextFloat() * screenHeight);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.RIGHT | Gravity.TOP;
         ImageView ivCheatFigure = new ImageView(this.activity.getBaseContext());
         ivCheatFigure.setImageResource(R.mipmap.cheat_figure);
-        ivCheatFigure.setPadding(randomWidth, 0, 0, randomHeight);
         ivCheatFigure.setOnClickListener(this.activity);
-        ivCheatFigure.setLayoutParams(params);
         this.activity.setIvCheatFigure(ivCheatFigure);
         this.activity.getRlScreen().addView(this.activity.getIvCheatFigure());
+
+        // get random position
+        Random  random          = new Random();
+        int     randomWidth     = (int) (random.nextFloat() * this.activity.getRlScreen().getWidth()) - ivCheatFigure.getDrawable().getIntrinsicWidth() - this.activity.getRlScreen().getPaddingLeft() - this.activity.getRlScreen().getPaddingRight();
+        int     randomHeight    = (int) (random.nextFloat() * this.activity.getRlScreen().getHeight()) - ivCheatFigure.getDrawable().getIntrinsicHeight() - this.activity.getRlScreen().getPaddingTop() - this.activity.getRlScreen().getPaddingBottom();
+
+        randomWidth             = Math.max(randomWidth,0);
+        randomHeight            = Math.max(randomHeight,0);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(randomWidth, randomHeight, 0, 0);
+        ivCheatFigure.setLayoutParams(params);
+
         this.activity.setCheatFigureClicked(false);
-
         this.activity.startCheatFigureShownTimer();
-
     }
 
     /**
