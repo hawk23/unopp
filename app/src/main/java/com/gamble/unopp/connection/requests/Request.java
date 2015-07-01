@@ -42,8 +42,8 @@ import javax.xml.transform.stream.StreamSource;
  */
 public abstract class Request
 {
-    //protected static final String           MAIN_SERVICE_URL        = "http://game.administrator.at/UnoPP.asmx";
-    protected static final String           MAIN_SERVICE_URL        = "https://unopp.azurewebsites.net/Unopp.asmx";
+    protected static final String           MAIN_SERVICE_URL        = "http://game.administrator.at/UnoPP.asmx";
+    //protected static final String           MAIN_SERVICE_URL        = "https://unopp.azurewebsites.net/Unopp.asmx";
     protected static final String           NAMESPACE               = "http://tempuri.org/";
 
     protected String                        soapAction;
