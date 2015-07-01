@@ -81,7 +81,11 @@ public class Deck {
     }
 
     public Card getTopCard() {
-        return this.playedStack.get(sizeOfPlayedStack() - 1);
+        if (!playedStack.isEmpty()) {
+            return this.playedStack.get(sizeOfPlayedStack() - 1);
+        } else {
+            return null;
+        }
     }
 
     // ToDo TESTING

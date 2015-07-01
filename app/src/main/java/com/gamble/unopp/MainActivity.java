@@ -73,6 +73,12 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
+        if (id == R.id.action_help) {
+
+            Intent helpIntent = new Intent(this, HelpActivity.class);
+            startActivity(helpIntent);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

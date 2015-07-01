@@ -3,8 +3,6 @@ package com.gamble.unopp;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.transition.Transition;
-import android.transition.TransitionValues;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -137,7 +135,7 @@ public class GameDetailsActivity extends ActionBarActivity implements RequestPro
                 StartGameResponse startGameResponse = (StartGameResponse) response;
 
                 if (startGameResponse.getResponseResult() != null) {
-                    if (startGameResponse.getResponseResult() != null && startGameResponse.getResponseResult().isStatus()) {
+                    if (startGameResponse.getResponseResult().isStatus()) {
                         this.stopUpdateTimer ();
 
                         // send get game to get initial status

@@ -25,11 +25,11 @@ namespace UnoPP
         public Player(string name)
         {
             this.Cards = new List<Card>();
+            this.name = name;
 
             lock (objLock)
             {
                 this.id = nextID++;
-                this.name = SetName(name, 0);
                 Player.players.Add(this);
             }           
         }
@@ -40,6 +40,23 @@ namespace UnoPP
             this.Cards = new List<Card>();
 
             new Player(name);
+        }
+
+        public static bool RemovePlayer(int playerID)
+        {
+            lock (objLock)
+            {
+                for(int i = 0; i < Player.players.Count(); i++)
+                {
+                    if (Player.players[i].id == playerID)
+                    {
+                        Player.players.RemoveAt(i);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public static Player GetPlayerByID(int playerID)
@@ -55,33 +72,45 @@ namespace UnoPP
             return null;
         }
 
-        private string SetName(string name, int count)
+        public static int GetActivePlayers(Player[] players)
         {
-            bool changeName = false;
+            int i = 0;
 
-            for (int i = 0; i < Player.players.Count; i++)
+            for (; i < players.Count(); i++)
             {
-                // name is already taken
-                if((0 == String.Compare(Player.players[i].name, name) && count == 0) || (0 == String.Compare(Player.players[i].name + " (" + count + ")", name)))
+                if (players[i] == null)
                 {
-                    count++;
-                    changeName = true;
-                    break;
+                    return i;
                 }
-            }   
+            }
+
+            return i;
+        }
+
+        public void SortCards()
+        {
+            bool swapped = true;
+            int j = 0;
+            Card tmp;
             
-            if (changeName)
+            while (swapped)
             {
-                return SetName(name, count);
-            }
-            if (count >= 1)
-            {
-                return name + " (" + count + ")";
-            }
-            else
-            {
-                return name;
+                swapped = false;
+                j++;
+
+                for (int i = 0; i < this.Cards.Count - j; i++)
+                {
+                    if (this.Cards[i].id > this.Cards[i + 1].id)
+                    {
+                        tmp = this.Cards[i];
+                        this.Cards[i] = this.Cards[i + 1];
+                        this.Cards[i + 1] = tmp;
+                        swapped = true;
+                    }
+                }
             }
         }
+
+
     }
 }

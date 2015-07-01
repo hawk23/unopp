@@ -67,7 +67,11 @@ public class GameLogic {
         switch (turn.getType()) {
 
             case DRAW:
-                if (this.state.getDrawCounter() == 0) {
+                if (turn.getPlayer().isHasToCallUno()) {
+                    // draw two cards as punishment
+                    turn.getPlayer().addCardsToHand(this.state.popFromStack(2));
+                }
+                else if (this.state.getDrawCounter() == 0) {
                     turn.getPlayer().addCardsToHand(this.state.popFromStack(1));
                 }
                 else {
@@ -78,7 +82,6 @@ public class GameLogic {
                 if (turn.getPlayer().isUno() && turn.getPlayer().getHand().size() > 1) {
                     turn.getPlayer().setUno(false);
                 }
-                nextPlayer = this.state.nextPlayer();
 
                 if (this.state.getNextActualPlayer() != null && turn.getPlayer().isHasToCallUno()) {
                     turn.getPlayer().setHasToCallUno(false);
@@ -86,6 +89,7 @@ public class GameLogic {
                     this.state.setNextActualPlayer(null);
                 }
                 else {
+                    nextPlayer = this.state.nextPlayer();
                     this.state.setActualPlayer(nextPlayer);
                 }
                 break;
@@ -138,7 +142,6 @@ public class GameLogic {
                     this.state.setWinner(turn.getPlayer());
                 }
                 else if (turn.getPlayer().getHand().size() == 1) {
-
                     this.state.setNextActualPlayer(nextPlayer);
                     turn.getPlayer().setHasToCallUno(true);
                 }
@@ -150,13 +153,24 @@ public class GameLogic {
             case CHOOSE_COLOR:
                 this.state.setActualColor(turn.getColor());
                 turn.getPlayer().setHasToChooseColor(false);
+
                 nextPlayer = this.state.nextPlayer();
-                this.state.setActualPlayer(nextPlayer);
+
+                if (!turn.getPlayer().isHasToCallUno()) {
+
+                    // only switch to next player if player don't has to call uno
+                    this.state.setActualPlayer(nextPlayer);
+                }
+                else {
+                    // remember the next player and give current player chance to call uno
+                    this.state.setNextActualPlayer(nextPlayer);
+                }
                 break;
 
             case CALL_UNO:
                 turn.getPlayer().setHasToCallUno(false);
                 turn.getPlayer().setUno(true);
+
                 this.state.setActualPlayer(this.state.getNextActualPlayer());
                 this.state.setNextActualPlayer(null);
                 break;

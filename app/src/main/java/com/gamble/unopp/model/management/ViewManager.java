@@ -1,9 +1,13 @@
 package com.gamble.unopp.model.management;
 
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.shapes.Shape;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.Gravity;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +28,7 @@ import com.gamble.unopp.model.game.UnoDirection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Mario on 19.05.2015.
@@ -35,12 +40,22 @@ public class ViewManager {
     private ArrayList<Player>           players;
     private ArrayAdapter                arrayAdapter;
 
+    private float                       screenWidth;
+    private float                       screenHeight;
+
     public ViewManager(GameScreenActivity activity) {
 
         this.activity = activity;
     }
 
     public void init () {
+
+        // get screen size
+        Display display = this.activity.getWindowManager().getDefaultDisplay();
+        Point screenSize = new Point();
+        display.getSize(screenSize);
+        screenWidth = screenSize.x;
+        screenHeight = screenSize.y;
 
     }
 
@@ -114,11 +129,16 @@ public class ViewManager {
                 imageView.setImageBitmap(card.getImage());
                 imageView.setTag(card);
                 imageView.setOnLongClickListener(this.activity);
+                imageView.setAdjustViewBounds(true);
 
                 this.activity.getLlHand().addView(imageView);
 
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageView.getLayoutParams();
                 params.setMargins(0,0,0,0);
+
+                this.activity.getLlHand().setDividerPadding(0);
+                this.activity.getLlHand().setPadding(0,0,0,0);
+                this.activity.getLlHand().setShowDividers(LinearLayout.SHOW_DIVIDER_NONE);
             }
         }
 
@@ -194,6 +214,30 @@ public class ViewManager {
         else {
             shape.setStroke(10, this.activity.getResources().getColor(R.color.transparent));
         }
+    }
+
+    public void drawCheatFigure() {
+
+        ImageView ivCheatFigure = new ImageView(this.activity.getBaseContext());
+        ivCheatFigure.setImageResource(R.mipmap.cheat_figure);
+        ivCheatFigure.setOnClickListener(this.activity);
+        this.activity.setIvCheatFigure(ivCheatFigure);
+        this.activity.getRlScreen().addView(this.activity.getIvCheatFigure());
+
+        // get random position
+        Random  random          = new Random();
+        int     randomWidth     = (int) (random.nextFloat() * this.activity.getRlScreen().getWidth()) - ivCheatFigure.getDrawable().getIntrinsicWidth() - this.activity.getRlScreen().getPaddingLeft() - this.activity.getRlScreen().getPaddingRight();
+        int     randomHeight    = (int) (random.nextFloat() * this.activity.getRlScreen().getHeight()) - ivCheatFigure.getDrawable().getIntrinsicHeight() - this.activity.getRlScreen().getPaddingTop() - this.activity.getRlScreen().getPaddingBottom();
+
+        randomWidth             = Math.max(randomWidth,0);
+        randomHeight            = Math.max(randomHeight,0);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(randomWidth, randomHeight, 0, 0);
+        ivCheatFigure.setLayoutParams(params);
+
+        this.activity.setCheatFigureClicked(false);
+        this.activity.startCheatFigureShownTimer();
     }
 
     /**
